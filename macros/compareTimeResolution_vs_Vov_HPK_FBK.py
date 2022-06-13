@@ -9,68 +9,65 @@ import time
 import argparse
 
 import ROOT
-ROOT.gROOT.SetBatch(True)
-#ROOT.gROOT.SetBatch(False)
-ROOT.gErrorIgnoreLevel = ROOT.kWarning
+import CMS_lumi, tdrstyle                                                                                                                                               
+                                                                                                                                                                        
+#set the tdr style                                                                                                                                                      
+tdrstyle.setTDRStyle()
 ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetOptFit(1)
+ROOT.gStyle.SetOptTitle(0)                                                                                                                                             
+ROOT.gStyle.SetLabelSize(0.055,'X')
+ROOT.gStyle.SetLabelSize(0.055,'Y')
+ROOT.gStyle.SetTitleSize(0.07,'X')
+ROOT.gStyle.SetTitleSize(0.07,'Y')
+ROOT.gStyle.SetTitleOffset(1.05,'X')
+ROOT.gStyle.SetTitleOffset(1.1,'Y')
+ROOT.gStyle.SetLegendFont(42)
+ROOT.gStyle.SetLegendTextSize(0.040)
+ROOT.gStyle.SetPadTopMargin(0.07)
+ROOT.gROOT.SetBatch(True)
+ROOT.gErrorIgnoreLevel = ROOT.kWarning   
 
 
-outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Oct21/'
+#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Oct21/'
+outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/'
 
 
-#irr = 'unirr'
-irr = '1E13'
+irr = 'unirr'
 #irr = '2E14'
-sipmTypes = ['HPK_%s_T0'%irr,'FBK_%s_T0'%irr]
-if (irr == '2E14'):
-    #sipmTypes = ['HPK_%s_T-40'%irr,'FBK_%s_T-40'%irr, 'FBK_%s_T-32'%irr, 'FBK_%s_T-22'%irr]
-    sipmTypes = ['HPK_%s_T-40'%irr,'FBK_%s_T-40'%irr]
-if (irr == 'unirr'):
-    sipmTypes = ['HPK_unirr_LYSO528','FBK_unirr_LYSO422', 'HPK_unirr_LYSOwithSlit']
-#fnames = {}
-fnames = {'HPK_unirr_LYSO528' : '../plots/HPK528_unirr_52deg_T10C_summary.root',
-          'FBK_unirr_LYSO422' : '../plots/FBK_unirr_52deg_T10C_summary.root',
-          'HPK_unirr_LYSOwithSlit' : '../plots/HPK_unirr_LYSOwithSlit_52deg_T18C_new_summary.root',
-          'HPK_1E13_T0' : '../plots/HPK_1E13_52deg_T0C_summary.root',
-          'FBK_1E13_T0' : '../plots/FBK_1E13_52deg_T0C_summary.root',
-          'HPK_2E14_T-40' : '../plots/HPK_2E14_52deg_T-40C_summary.root',
-          'FBK_2E14_T-32' : '../plots/FBK_2E14_52deg_T-32C_summary.root',
-          'FBK_2E14_T-40' : '../plots/FBK_2E14_52deg_T-40C_summary.root',
-          'FBK_2E14_T-22' : '../plots/FBK_2E14_52deg_T-22C_summary.root' }
 
+sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO522']
+if (irr == '2E14'):
+    sipmTypes = ['HPK_%s_T-40'%irr,'FBK_%s_T-40'%irr]
+
+fnames = {'HPK_nonIrr_LYSO528' : '../plots/HPK_nonIrr_LYSO528_T10C_summary.root',
+          'FBK_nonIrr_LYSO800' : '../plots/FBK_nonIrr_LYSO800_T10C_summary.root',
+          'FBK_nonIrr_LYSO522' : '../plots/FBK_nonIrr_LYSO522_T10C_summary.root',
+          'HPK_2E14_T-40' : '../plots/HPK_2E14_52deg_T-40C_summary.root',
+          'FBK_2E14_T-40' : '../plots/FBK_2E14_52deg_T-40C_summary.root'}
+
+labels = {'HPK_nonIrr_LYSO528' : 'HPK + LYSO528 (prod5, type2)',
+          'FBK_nonIrr_LYSO800' : 'FBK + LYSO800 (prod5, type2)',
+          'FBK_nonIrr_LYSO522' : 'FBK + LYSO522 (prod5, type1)'}
 
 VovsEff = {}
-VovsEff['HPK_unirr_LYSO528'] = { 1.50 : 1.50 ,
-                                 1.75 : 1.75 ,
+VovsEff['HPK_nonIrr_LYSO528'] = { 1.50 : 1.50 ,
+                                  2.50 : 2.50 ,
+                                  3.50 : 3.50 ,
+                                  5.00 : 5.00 }
+
+VovsEff['FBK_nonIrr_LYSO800'] = { 1.50 : 1.50 ,
                                  2.00 : 2.00 ,
-                                 2.50 : 2.50 ,
+                                 3.00 : 3.00 ,
                                  3.50 : 3.50 ,
-                                 5.00 : 5.00 }
+                                 4.00 : 4.00 ,
+                                 7.00 : 7.00 }
 
-VovsEff['FBK_unirr_LYSO422'] = { 1.50 : 1.50 ,
-                                 1.75 : 1.75 ,
+VovsEff['FBK_nonIrr_LYSO522'] = { 1.50 : 1.50 ,
                                  2.00 : 2.00 ,
-                                 2.50 : 2.50 ,
+                                 3.00 : 3.00 ,
                                  3.50 : 3.50 ,
-                                 5.00 : 5.00 }
-
-VovsEff['HPK_unirr_LYSOwithSlit'] = { 1.50 : 1.50 ,
-                                      2.50 : 2.50 ,
-                                      3.50 : 3.50 }
-
-VovsEff['HPK_1E13_T0'] = { 1.50 : 1.21 ,
-                       1.65 : 1.30 ,
-                       1.80 : 1.40 ,
-                       2.00 : 1.53 ,
-                       2.30 : 1.72 ,
-                       2.80 : 2.01 ,
-                       3.20 : 2.19 }   
-
-VovsEff['FBK_1E13_T0'] = { 1.50 : 1.19 ,
-                       1.70 : 1.39 ,
-                       2.00 : 1.57 ,
-                       2.50 : 1.88 ,
-                       3.00 : 2.17 }
+                                 4.00 : 4.00 }
 
 VovsEff['HPK_2E14_T-40'] = { 1.60 : 1.40,
                        1.70 : 1.46,
@@ -78,42 +75,24 @@ VovsEff['HPK_2E14_T-40'] = { 1.60 : 1.40,
                        1.90 : 1.55,
                        2.00 : 1.59}
 
-VovsEff['FBK_2E14_T-32'] = { 1.40 : 1.30 ,
-                       1.70 : 1.52 ,
-                       2.10 : 1.76 ,
-                       2.80 : 2.07 ,
-                       3.70 : 2.33 }
+VovsEff['FBK_2E14_T-40'] = { 1.70 : 1.57,
+                            2.00  : 1.78,
+                            2.50  : 2.06,
+                            3.00  : 2.27,
+                            3.50  : 2.40}
 
-dV = -0.6 # Vbd shift at TB
-VovsEff['FBK_2E14_T-40'] = { 1.70 : 1.57+dV,
-                            2.00  : 1.78+dV ,
-                            2.50  : 2.06+dV ,
-                            3.00  : 2.27+dV ,
-                            3.50  : 2.40+dV }
-print VovsEff['FBK_2E14_T-40']
 
-VovsEff['FBK_2E14_T-22'] = { 1.50 : 1.23 ,
-                             2.00 : 1.50 ,
-                             2.50 : 1.69 ,
-                             2.70 : 1.76 }
-
-g = {}
-gMax = {}
-gMin = {}
 g = {}
 Vovs = {}
 for sipm in sipmTypes:
     f = ROOT.TFile.Open(fnames[sipm])
     g[sipm] = ROOT.TGraphErrors()
-    gMax[sipm] = ROOT.TGraphErrors()
-    gMin[sipm] = ROOT.TGraphErrors()
     Vovs[sipm] = []
     listOfKeys = [key.GetName().replace('g_deltaT_energyRatioCorr_bestTh_vs_bar_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('g_deltaT_energyRatioCorr_bestTh_vs_bar_')]
     for k in listOfKeys:
         Vovs[sipm].append( float (k[3:7]) )
     Vovs[sipm].sort()    
     print sipm, Vovs[sipm]
-    if (sipm=='HPK1E13'):Vovs[sipm].remove(1.50)
     for i,vov in enumerate(Vovs[sipm]):
         gg = f.Get('g_deltaT_energyRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%(vov))
         fitFun = ROOT.TF1('fitFun','pol0',0,16)
@@ -125,8 +104,6 @@ for sipm in sipmTypes:
         g[sipm].SetPointError( g[sipm].GetN()-1, 0, gg.GetRMS(2) )# use RMS as error on the points
         #g[sipm].SetPoint(g[sipm].GetN(), VovsEff[sipm][vov], gg.GetMean(2))
         #g[sipm].SetPointError(g[sipm].GetN()-1, 0, gg.GetRMS(2)/math.sqrt(gg.GetN()))
-        gMax[sipm].SetPoint(gMax[sipm].GetN(), VovsEff[sipm][vov], max(gg.GetY()))
-        gMin[sipm].SetPoint(gMin[sipm].GetN(), VovsEff[sipm][vov], min(gg.GetY()))
         
 c1 =  ROOT.TCanvas('c_timeResolution_bestTh_vs_Vov','c_timeResolution_bestTh_vs_Vov',600,600)
 c1.SetGridy()
@@ -144,7 +121,7 @@ hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.Draw()
 #leg = ROOT.TLegend(0.15,0.60,0.45,0.89)
-leg = ROOT.TLegend(0.55,0.60,0.89,0.89)
+leg = ROOT.TLegend(0.25,0.74,0.92,0.92)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 for i,sipm in enumerate(sipmTypes):
@@ -155,22 +132,12 @@ for i,sipm in enumerate(sipmTypes):
     g[sipm].SetLineStyle(1)
     g[sipm].SetLineWidth(1)
     g[sipm].Draw('plsame')
-    gMax[sipm].SetLineColor(2+i*2)
-    gMax[sipm].SetLineStyle(2)
-    gMin[sipm].SetLineColor(2+i*2)
-    gMin[sipm].SetLineStyle(1)
-    if (irr != 'unirr'):
-        #gMax[sipm].Draw('lsame')
-        #gMin[sipm].Draw('lsame')
-        leg.AddEntry( g[sipm], sipm.replace(irr,'').replace('_',' ').replace('T','T=')+'^{o}C' , 'PL')
-    else:
-        leg.AddEntry( g[sipm], sipm.replace(irr,''), 'PL')
+    leg.AddEntry( g[sipm], labels[sipm], 'PL')
 leg.Draw('same')
 
-#latex = ROOT.TLatex(0.6,0.85,'%s 1 MeV n_{eq}'%irr)
-latex = ROOT.TLatex(0.15,0.82,'%s'%irr)
+latex = ROOT.TLatex(0.65,0.68,'%s'%irr)
 if (irr == 'unirr'):
-    latex = ROOT.TLatex(0.15,0.82,'non-irradiated')
+    latex = ROOT.TLatex(0.65,0.68,'non-irradiated')
 latex.SetNDC()
 latex.SetTextSize(0.045)
 latex.SetTextFont(42)

@@ -41,18 +41,18 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 source = 'TB'
-#tResMin = 0
-#tResMax = 120
-#tResMaxTh = 200
-#vovMax = 6
+tResMin = 0
+tResMax = 120
+tResMaxTh = 200
+vovMax = 7.5
 #tResMin = 0
 #tResMax = 180
 #tResMaxTh = 240
 #vovMax = 5 
-tResMin = 0
-tResMax = 200
-tResMaxTh = 250
-vovMax = 2.0
+#tResMin = 0
+#tResMax = 200
+#tResMaxTh = 250
+#vovMax = 2.0
 
 # create files list
 label_list = (args.inputLabels.split(','))
@@ -127,8 +127,8 @@ cols = { 1.00 : 49,
          3.50  : 51 + 48,
          3.70  : 51 + 48,
          4.00  : 1,
-         5.00  : 1,
-         3.83  : 4}
+         5.00  : 12,
+         7.00  : 15}
 
 
 
@@ -175,7 +175,7 @@ VovsEff = {}
 plots_label = ''
 
 if ('528' in args.outFolder):
-    plots_label = 'HPK + LYSO528 (type2)'
+    plots_label = 'HPK + LYSO528 (prod5, type2)'
     for vov in Vovs:
         VovsEff[vov] = vov 
     goodBars[5.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
@@ -184,29 +184,29 @@ if ('528' in args.outFolder):
     goodBars[1.50] = [0,3,4,7,8,9,10,11,12,13] 
 
 elif ('800' in args.outFolder):
-    plots_label = 'FBK + LYSO800 (type2)'
+    plots_label = 'FBK + LYSO800 (prod5, type2)'
     for vov in Vovs:
         VovsEff[vov] = vov 
+    goodBars[7.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[4.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[2.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[2.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[1.75] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[1.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15] 
 
 elif ('522' in args.outFolder):
-    plots_label = 'FBK + LYSO522 (type1)'
+    plots_label = 'FBK + LYSO522 (prod5, type1)'
     for vov in Vovs:
         VovsEff[vov] = vov 
-    goodBars[4.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13] 
-    goodBars[2.00] = [0,1,2,3,4,6,7,8,9,10,11,12,13] 
-    goodBars[1.75] = [0,1,2,3,4,6,8,9,10,11,12,13] 
-    goodBars[1.50] = [0,1,2,3,4,6,7,8,9,10,11,12,13] 
+    goodBars[7.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[4.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[1.50] = [0,3,7,8,9,10,11,12,13,14,15] 
 
 elif ('HPK_2E14' in args.outFolder):
-    plots_label = 'HPK 2E14 T=-40#circC'
+    plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-40#circC'
     VovsEff = { 1.10 : 1.02,
                 1.20 : 1.10,
                 1.30 : 1.17,
@@ -225,13 +225,12 @@ elif ('HPK_2E14' in args.outFolder):
     goodBars[2.50] = [0,3,7,10,11,13,14,15]
 
 elif ('FBK_2E14_52deg_T-40C' in args.outFolder):
-    plots_label = 'FBK 2E14 T=-40#circC'
-    dV = -0.6
-    VovsEff = { 1.70 : 1.57+dV ,
-                2.00 : 1.78+dV ,
-                2.50 : 2.06+dV , 
-                3.00 : 2.27+dV , 
-                3.50 : 2.40+dV }
+    plots_label = 'FBK 2E14 + + LYSO797 (prod10)   T=-40#circC'
+    VovsEff = { 1.70 : 1.57,
+                2.00 : 1.78,
+                2.50 : 2.06, 
+                3.00 : 2.27, 
+                3.50 : 2.40}
     goodBars[1.70] = [10,12]
     goodBars[2.00] = [0,1,2,8,9,10,12]
     goodBars[2.50] = [0,1,2,6,8,9,10,12]
@@ -716,7 +715,7 @@ for enBin in enBins:
     hPadT3.Draw()
     ctres3.SetGridy()
     #leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
-    leg = ROOT.TLegend(0.20, 0.20, 0.60, 0.45)
+    leg = ROOT.TLegend(0.20, 0.90, 0.60, 0.70)
     leg.SetBorderSize(0)
     leg.SetFillStyle(0)
     if (len(Vovs)>4): 
