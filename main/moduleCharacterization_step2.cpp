@@ -149,15 +149,19 @@ int main(int argc, char** argv)
   system(Form("mkdir -p %s/energyRatio/",plotDir.c_str()));
   system(Form("mkdir -p %s/t1fine/",plotDir.c_str()));
   system(Form("mkdir -p %s/energyRatioCorr/",plotDir.c_str()));
+  system(Form("mkdir -p %s/energyRatioCorr_totRatioCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/totRatioCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/phaseCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/positionCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/CTR_energyRatioCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/CTR_totRatioCorr/",plotDir.c_str()));
+  system(Form("mkdir -p %s/CTR_energyRatioCorr_totRatioCorr/",plotDir.c_str()));  
   system(Form("mkdir -p %s/CTR_energyRatioPhaseCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/CTR_totRatioPhaseCorr/",plotDir.c_str()));
+  system(Form("mkdir -p %s/CTR_energyRatiototRatioPhaseCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/CTR_energyRatioPhasePosCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/CTR_totRatioPhasePosCorr/",plotDir.c_str()));
+
   
 
   
@@ -303,22 +307,24 @@ int main(int argc, char** argv)
   std::map<double,TH1F*> h1_deltaT;
   std::map<double,TProfile*> p1_deltaT_vs_energyRatio;
   std::map<double,TProfile*> p1_deltaT_vs_totRatio;
+  std::map<double,TProfile*> p1_deltaT_energyRatioCorr_vs_totRatio; 
   std::map<double,TProfile*> p1_deltaT_energyRatioCorr_vs_t1fineMean;
   std::map<double,TProfile*> p1_deltaT_totRatioCorr_vs_t1fineMean;
+  std::map<double,TProfile*> p1_deltaT_energyRatioCorr_totRatioCorr_vs_t1fineMean;
   std::map<double,TH2F*> h2_deltaT_energyRatioCorr_vs_t1fineMean;
   std::map<double,TH2F*> h2_deltaT_totRatioCorr_vs_t1fineMean;
+ 
   std::map<double,TProfile*> p1_deltaT_energyRatioCorr_vs_posX;
   std::map<double,TProfile*> p1_deltaT_totRatioCorr_vs_posX;
   
   std::map<double,TH2F*> h2_deltaT_vs_totRatio;
   std::map<double,TProfile*> p1_deltaT_totRatioCorr_vs_totRatio;
   std::map<double,TH2F*> h2_deltaT_totRatioCorr_vs_totRatio;
-
-  std::map<double,TProfile*> p1_deltaT_energyRatioCorr_vs_totRatio;
   std::map<double,TH2F*> h2_deltaT_energyRatioCorr_vs_totRatio;
 
   std::map<double,TH1F*> h1_deltaT_energyRatioCorr;
   std::map<double,TH1F*> h1_deltaT_totRatioCorr;
+  std::map<double,TH1F*> h1_deltaT_energyRatioCorr_totRatioCorr;
   std::map<double,TH1F*> h1_deltaT_energyRatioPhaseCorr;
   std::map<double,TH1F*> h1_deltaT_totRatioPhaseCorr;
   std::map<double,TH1F*> h1_deltaT_energyRatioPhasePosCorr;

@@ -305,8 +305,8 @@ int main(int argc, char** argv)
 	      }
 	    }
 	  }
-	  if (nActiveBarsArray > 5 ) continue;
-	  //if (nActiveBarsArray > 3 ) continue;
+	  //if (nActiveBarsArray > 5 ) continue;
+	  if (nActiveBarsArray > 3 ) continue;
 	}
 	
 	energyL_ext = (*energy)[channelIdx[chL_ext]];
@@ -566,7 +566,7 @@ int main(int argc, char** argv)
 	  //if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nActiveBarsArray > 5)) continue; // to remove showering events
 	  //if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nActiveBarsArray > 3)) continue; // to remove showering events
 	  int maxActiveBars = 3;
-	  if (Vov > 4.00) maxActiveBars = 5; // forse meglio, altrimenti si rimuovono molti piu' eventi...
+	  //if (Vov > 4.00) maxActiveBars = 5; // forse meglio, altrimenti si rimuovono molti piu' eventi...
 	  if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nActiveBarsArray > maxActiveBars)) continue; // to remove showering events
 	  
 
