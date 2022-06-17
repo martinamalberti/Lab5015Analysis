@@ -41,18 +41,18 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 source = 'TB'
-tResMin = 0
-tResMax = 120
-tResMaxTh = 200
-vovMax = 7.5
+#tResMin = 0
+#tResMax = 120
+#tResMaxTh = 200
+#vovMax = 7.5
 #tResMin = 0
 #tResMax = 180
 #tResMaxTh = 240
 #vovMax = 5 
-#tResMin = 0
-#tResMax = 200
-#tResMaxTh = 250
-#vovMax = 2.0
+tResMin = 0
+tResMax = 200
+tResMaxTh = 250
+vovMax = 2.0
 
 # create files list
 label_list = (args.inputLabels.split(','))
@@ -198,14 +198,13 @@ elif ('522' in args.outFolder):
     plots_label = 'FBK + LYSO522 (prod5, type1)'
     for vov in Vovs:
         VovsEff[vov] = vov 
-    goodBars[7.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[4.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[4.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
     goodBars[1.50] = [0,3,7,8,9,10,11,12,13,14,15] 
 
-elif ('HPK_2E14' in args.outFolder):
+elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-40#circC'
     VovsEff = { 1.10 : 1.02,
                 1.20 : 1.10,
@@ -223,6 +222,25 @@ elif ('HPK_2E14' in args.outFolder):
     goodBars[1.90] = [0,3,7,10,11,13,14,15]
     goodBars[2.10] = [0,3,7,10,11,13,14,15]
     goodBars[2.50] = [0,3,7,10,11,13,14,15]
+
+elif ('HPK_2E14_LYSO796_T-35C' in args.outFolder):
+    plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-35#circC'
+    VovsEff = { 0.90 : 0.83,
+                1.10 : 0.99,
+                1.25 : 1.09,
+                1.40 : 1.19,
+                1.60 : 1.31,
+                1.80 : 1.40,
+                2.00 : 1.48,
+                2.40 : 1.59}
+    goodBars[0.90] = [0,3,7,10,11,13,14,15]
+    goodBars[1.10] = [0,3,7,10,11,13,14,15]
+    goodBars[1.25] = [0,3,7,10,11,13,14,15]
+    goodBars[1.40] = [0,3,7,10,11,13,14,15]
+    goodBars[1.60] = [0,3,7,10,11,13,14,15]
+    goodBars[1.80] = [0,3,7,10,11,13,14,15]
+    goodBars[2.00] = [0,3,7,10,11,13,14,15]
+    goodBars[2.40] = [0,3,7,10,11,13,14,15]
 
 elif ('FBK_2E14_52deg_T-40C' in args.outFolder):
     plots_label = 'FBK 2E14 + + LYSO797 (prod10)   T=-40#circC'

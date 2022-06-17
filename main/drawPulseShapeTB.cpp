@@ -183,7 +183,8 @@ int main(int argc, char** argv)
   
   std::map<int,bool> acceptEvent; 
 
-  float fract = 0.90;
+  //float fract = 0.90;
+  float fract = 0.95;
   int minEntries = 100;
 
   //-----------------
@@ -231,8 +232,8 @@ int main(int argc, char** argv)
       if (coincidence.find("yes") != std::string::npos){
 	if( channelIdx[ch1Ext] < 0 ) continue; 
 	if( channelIdx[ch2Ext] < 0 ) continue; 
-	if( (*tot)[channelIdx[ch1Ext]]/1000. < 0. || (*tot)[channelIdx[ch1Ext]]/1000. > 50. ) continue;
-	if( (*tot)[channelIdx[ch2Ext]]/1000. < 0. || (*tot)[channelIdx[ch2Ext]]/1000. > 50. ) continue;
+	if( (*tot)[channelIdx[ch1Ext]]/1000. < -10. || (*tot)[channelIdx[ch1Ext]]/1000. > 100. ) continue;
+	if( (*tot)[channelIdx[ch2Ext]]/1000. < -10. || (*tot)[channelIdx[ch2Ext]]/1000. > 100. ) continue;
 	float energyExt = 0.5 * (  (*energy)[channelIdx[ch1Ext]] + (*energy)[channelIdx[ch2Ext]] );
 	if ( energyExt < energyMinExt  || energyExt > energyMaxExt) continue;
       }
@@ -258,8 +259,8 @@ int main(int argc, char** argv)
 	timeL[iBar]=(*time)[channelIdx[chL[iBar]]];
 	timeR[iBar]=(*time)[channelIdx[chR[iBar]]];
 	
-	if( totL[iBar]/1000 <= 0. || totR[iBar]/1000 <= 0. ) continue;
-	if( totL[iBar]/1000 >= 50. ||  totR[iBar]/1000 >= 50.) continue;
+	if( totL[iBar]/1000 <= -10. || totR[iBar]/1000 <= -10. ) continue;
+	if( totL[iBar]/1000 >= 100. ||  totR[iBar]/1000 >= 100.) continue;
 	if( ( thrZero.GetThresholdZero(chL[iBar],ithMode) + ith) > 63. ) continue;
 	if( ( thrZero.GetThresholdZero(chR[iBar],ithMode) + ith) > 63. ) continue;
 
@@ -267,8 +268,10 @@ int main(int argc, char** argv)
 
 	// -- book histograms if needed
 	if (!h1_energyLR[index]){
-	  h1_totL[index] = new TH1F(Form("h1_tot_bar%02dL_Vov%.2f_ith%02d",iBar,Vov,ith),"",1000,0.,100.);
-	  h1_totR[index] = new TH1F(Form("h1_tot_bar%02dR_Vov%.2f_ith%02d",iBar,Vov,ith),"",1000,0.,100.);
+	  //h1_totL[index] = new TH1F(Form("h1_tot_bar%02dL_Vov%.2f_ith%02d",iBar,Vov,ith),"",1100,-10.,100.);
+	  //h1_totR[index] = new TH1F(Form("h1_tot_bar%02dR_Vov%.2f_ith%02d",iBar,Vov,ith),"",1100,-10.,100.);
+	  h1_totL[index] = new TH1F(Form("h1_tot_bar%02dL_Vov%.2f_ith%02d",iBar,Vov,ith),"",2000,-10.,10.);
+	  h1_totR[index] = new TH1F(Form("h1_tot_bar%02dR_Vov%.2f_ith%02d",iBar,Vov,ith),"",2000,-10.,10.);
 	  h1_energyL[index] = new TH1F(Form("h1_energy_bar%02dL_Vov%.2f_ith%02d",iBar,Vov,ith),"",1024,0.,1024.);
 	  h1_energyR[index] = new TH1F(Form("h1_energy_bar%02dR_Vov%.2f_ith%02d",iBar,Vov,ith),"",1024,0.,1024.);
 	  h1_energyLR[index] = new TH1F(Form("h1_energy_bar%02dL-R_Vov%.2f_ith%02d",iBar,Vov,ith),"",1024,0.,1024.);
@@ -279,8 +282,8 @@ int main(int argc, char** argv)
 	h1_energyL[index]  -> Fill( energyL[iBar] );
 	h1_energyR[index]  -> Fill( energyR[iBar] );
 	h1_energyLR[index] -> Fill( 0.5*(energyL[iBar] + energyR[iBar]) );
-	h1_totL[index]  -> Fill( totL[iBar]/1000. );
-	h1_totR[index]  -> Fill( totR[iBar]/1000. );
+	//h1_totL[index]  -> Fill( totL[iBar]/1000. );
+	//h1_totR[index]  -> Fill( totR[iBar]/1000. );
 	
 	if ( 0.5*(energyL[iBar] + energyR[iBar]) < minE[std::make_pair(iBar,Vov)] ||  0.5*(energyL[iBar] + energyR[iBar]) > 940. ) continue;
     
@@ -430,8 +433,8 @@ int main(int argc, char** argv)
     if (coincidence.find("yes") != std::string::npos){
       if( channelIdx[ch1Ext] < 0 ) continue;
       if( channelIdx[ch2Ext] < 0 ) continue;
-      if( (*tot)[channelIdx[ch1Ext]]/1000. < 0. || (*tot)[channelIdx[ch1Ext]]/1000. > 50. ) continue;
-      if( (*tot)[channelIdx[ch2Ext]]/1000. < 0. || (*tot)[channelIdx[ch2Ext]]/1000. > 50. ) continue;
+      if( (*tot)[channelIdx[ch1Ext]]/1000. < -10. || (*tot)[channelIdx[ch1Ext]]/1000. > 100. ) continue;
+      if( (*tot)[channelIdx[ch2Ext]]/1000. < -10. || (*tot)[channelIdx[ch2Ext]]/1000. > 100. ) continue;
       float energyExt = 0.5 * (  (*energy)[channelIdx[ch1Ext]] + (*energy)[channelIdx[ch2Ext]] );
       if ( energyExt < energyMinExt  || energyExt > energyMaxExt) continue;
     }
@@ -461,8 +464,8 @@ int main(int argc, char** argv)
       timeL[iBar]=(*time)[channelIdx[chL[iBar]]];
       timeR[iBar]=(*time)[channelIdx[chR[iBar]]];
       
-      if( totL[iBar]/1000 <= 0. || totR[iBar]/1000 <= 0. ) continue;
-      if( totL[iBar]/1000 >= 50. ||  totR[iBar]/1000 >= 50.) continue;
+      if( totL[iBar]/1000 <= -10. || totR[iBar]/1000 <= -10. ) continue;
+      if( totL[iBar]/1000 >= 100. ||  totR[iBar]/1000 >= 100.) continue;
     
       if( ( thrZero.GetThresholdZero(chL[iBar],ithMode) + ith) > 63. ) continue;
       if( ( thrZero.GetThresholdZero(chR[iBar],ithMode) + ith) > 63. ) continue;
@@ -490,6 +493,9 @@ int main(int argc, char** argv)
       h1_time2_totSel_chR[index] -> Fill( (timeR[iBar] - (*time)[channelIdx[chRef]])/1000.  + totR[iBar]/1000. );
       h2_time1_vs_energy_totSel_chL[index]->Fill(0.5*(energyL[iBar] + energyR[iBar]) , (timeL[iBar] - (*time)[channelIdx[chRef]])/1000. );
       h2_time1_vs_tot_totSel_chL[index]->Fill( totL[iBar]/1000. , (timeL[iBar] - (*time)[channelIdx[chRef]])/1000. );
+
+      h1_totL[index]  -> Fill( totL[iBar]/1000. );
+      h1_totR[index]  -> Fill( totR[iBar]/1000. );
 
     }// end loop over bars
   }// end loop over events
@@ -666,8 +672,8 @@ int main(int argc, char** argv)
       float mean = vals[0];
       float meanErr = vals[1];
       histo->GetXaxis()->SetRangeUser(vals[4],vals[5]);
-      g_pulseShapeL[index2] -> SetPoint(g_pulseShapeL[index2]->GetN(),mean-timeOffsetL[index2],ith*dac_to_uA);
-      g_pulseShapeL[index2] -> SetPointError(g_pulseShapeL[index2]->GetN()-1,meanErr,0.);
+      //g_pulseShapeL[index2] -> SetPoint(g_pulseShapeL[index2]->GetN(),mean-timeOffsetL[index2],ith*dac_to_uA);
+      //g_pulseShapeL[index2] -> SetPointError(g_pulseShapeL[index2]->GetN()-1,meanErr,0.);
             
       histo -> Write();
     }
@@ -718,8 +724,8 @@ int main(int argc, char** argv)
       float mean = vals[0];
       float meanErr = vals[1];
       histo->GetXaxis()->SetRangeUser(vals[4],vals[5]);
-      g_pulseShapeR[index2] -> SetPoint(g_pulseShapeR[index2]->GetN(),mean-timeOffsetR[index2],ith*dac_to_uA);
-      g_pulseShapeR[index2] -> SetPointError(g_pulseShapeR[index2]->GetN()-1,meanErr,0.);      
+      //g_pulseShapeR[index2] -> SetPoint(g_pulseShapeR[index2]->GetN(),mean-timeOffsetR[index2],ith*dac_to_uA);
+      //g_pulseShapeR[index2] -> SetPointError(g_pulseShapeR[index2]->GetN()-1,meanErr,0.);      
             
       histo -> Write();
     }
@@ -856,7 +862,8 @@ int main(int argc, char** argv)
     int iBar = index2 - (Vov*10000*100);
 
     c = new TCanvas("c","c");
-    hPad = (TH1F*)( gPad->DrawFrame(-0.5,0.,63.5,50.) );
+    //    hPad = (TH1F*)( gPad->DrawFrame(-0.5,0.,63.5,50.) );
+    hPad = (TH1F*)( gPad->DrawFrame(-0.5,0.,63.5,2.) );
     hPad -> SetTitle(Form(";%s [DAC]; ToT [ns]",ithMode.c_str()));
     hPad -> Draw();
     g_totL[index2] -> SetMarkerColor(kRed);
@@ -868,6 +875,9 @@ int main(int argc, char** argv)
     c -> Print(Form("%s/g_tot_bar%02d_Vov%.2f.png",plotDir.c_str(),iBar,Vov));
     c -> Print(Form("%s/g_tot_bar%02d_Vov%.2f.pdf",plotDir.c_str(),iBar,Vov));
     delete c;
+
+    g_totL[index2] -> Write(Form("g_totL_bar%02d_Vov%.2f",iBar,Vov));
+    g_totR[index2] -> Write(Form("g_totR_bar%02d_Vov%.2f",iBar,Vov));
   }
   
   for(auto mapIt : g_energyLR)

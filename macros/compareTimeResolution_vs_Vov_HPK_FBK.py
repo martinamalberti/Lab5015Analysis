@@ -38,17 +38,18 @@ irr = 'unirr'
 
 sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO522']
 if (irr == '2E14'):
-    sipmTypes = ['HPK_%s_T-40'%irr,'FBK_%s_T-40'%irr]
+    sipmTypes = ['HPK_2E14_LYSO796_T-40C']
 
 fnames = {'HPK_nonIrr_LYSO528' : '../plots/HPK_nonIrr_LYSO528_T10C_summary.root',
           'FBK_nonIrr_LYSO800' : '../plots/FBK_nonIrr_LYSO800_T10C_summary.root',
           'FBK_nonIrr_LYSO522' : '../plots/FBK_nonIrr_LYSO522_T10C_summary.root',
-          'HPK_2E14_T-40' : '../plots/HPK_2E14_52deg_T-40C_summary.root',
+          'HPK_2E14_LYSO796_T-40C' : '../plots/HPK_2E14_LYSO796_T-40C_summary.root',
           'FBK_2E14_T-40' : '../plots/FBK_2E14_52deg_T-40C_summary.root'}
 
 labels = {'HPK_nonIrr_LYSO528' : 'HPK + LYSO528 (prod5, type2)',
           'FBK_nonIrr_LYSO800' : 'FBK + LYSO800 (prod5, type2)',
-          'FBK_nonIrr_LYSO522' : 'FBK + LYSO522 (prod5, type1)'}
+          'FBK_nonIrr_LYSO522' : 'FBK + LYSO522 (prod5, type1)',
+          'HPK_2E14_LYSO796_T-40C' : 'HPK + LYSO796 (prod10 opt) - T=-40#circC'}
 
 VovsEff = {}
 VovsEff['HPK_nonIrr_LYSO528'] = { 1.50 : 1.50 ,
@@ -69,11 +70,14 @@ VovsEff['FBK_nonIrr_LYSO522'] = { 1.50 : 1.50 ,
                                  3.50 : 3.50 ,
                                  4.00 : 4.00 }
 
-VovsEff['HPK_2E14_T-40'] = { 1.60 : 1.40,
-                       1.70 : 1.46,
-                       1.80 : 1.50,
-                       1.90 : 1.55,
-                       2.00 : 1.59}
+VovsEff['HPK_2E14_LYSO796_T-40C'] = { 1.10 : 1.02,
+                                      1.20 : 1.10,
+                                      1.30 : 1.17,
+                                      1.50 : 1.31,
+                                      1.70 : 1.43,
+                                      1.90 : 1.53,
+                                      2.10 : 1.60,
+                                      2.50 : 1.71}
 
 VovsEff['FBK_2E14_T-40'] = { 1.70 : 1.57,
                             2.00  : 1.78,
@@ -108,9 +112,11 @@ for sipm in sipmTypes:
 c1 =  ROOT.TCanvas('c_timeResolution_bestTh_vs_Vov','c_timeResolution_bestTh_vs_Vov',600,600)
 c1.SetGridy()
 c1.cd()
-n = g[sipmTypes[1]].GetN()
-xmax = g[sipmTypes[1]].GetX()[n-1] + 0.5
-xmin = g[sipmTypes[1]].GetX()[0]   - 0.5 
+jsipm= 1
+if len(sipmTypes)==1: jsipm = 0 
+n = g[sipmTypes[jsipm]].GetN()
+xmax = g[sipmTypes[jsipm]].GetX()[n-1] + 0.5
+xmin = g[sipmTypes[jsipm]].GetX()[0]   - 0.5 
 ymin = 70
 ymax = 180
 if (irr=='unirr'):
@@ -121,7 +127,7 @@ hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.Draw()
 #leg = ROOT.TLegend(0.15,0.60,0.45,0.89)
-leg = ROOT.TLegend(0.25,0.74,0.92,0.92)
+leg = ROOT.TLegend(0.15,0.74,0.80,0.92)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 for i,sipm in enumerate(sipmTypes):
@@ -148,7 +154,9 @@ for c in [c1]:
     c.SaveAs(outdir+c.GetName()+'_%s.pdf'%irr)
 
 
-#outfile = ROOT.TFile('timeResolution_averaged_vs_VOV_%s.root'%irr,'recreate')
-
+outfile = ROOT.TFile('timeResolution_averaged_vs_Vov_%s_TBJune22.root'%irr,'recreate')
+for sipm in sipmTypes:
+    g[sipm].Write('g_%s'%sipm)
+outfile.Close()
     
 #raw_input('OK?')
