@@ -4,6 +4,7 @@ import math
 def PDE(ov, sipm, irr='0'):
     k = 1.
     if (irr == '2E14' and 'HPK' in sipm): k = 0.78 # 22% PDE reduction for HPK SiPMs irradiated 2E14   
+    if (irr == '1E14' and 'HPK' in sipm): k = 0.89 # 11% PDE reduction for HPK SiPMs irradiated 1E14 ?(assume that for 1E14 is half of 2E14) 
     if ('HPK' in sipm):
         return k * 1.0228 * 0.384 * ( 1. - math.exp(-1.*0.583*ov) ) # 1.0228 factor to account for LYSO emission spectrum
     # FBK-MS
@@ -16,6 +17,7 @@ def PDE(ov, sipm, irr='0'):
 def Gain(ov, sipm, irr='0'):
     k = 1.
     if (irr == '2E14' and 'HPK' in sipm): k = 0.92 # gain reduction for HPK 2E14 irradiated SiPMs 
+    if (irr == '1E14' and 'HPK' in sipm): k = 0.96 # gain reduction for HPK 2E14 irradiated SiPMs (assume that for 1E14 is half of 2E14)
     if ('HPK' in sipm):
         return k*(36890. + 97602.*ov) # HPK
     # FBK-MS

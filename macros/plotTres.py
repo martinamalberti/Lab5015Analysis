@@ -102,7 +102,6 @@ tau = { 'HPK_nonIrr_LYSO528' : 38.6,
         'FBK_nonIrr_LYSO800' : 38.6,  
         'FBK_nonIrr_LYSO522' : 38.6}
 
-#fitFunc_SR = (ROOT.TFile.Open('SR_vs_amp.root')).Get('fitFunc_SR_vs_amp')
 
 np = 3
 errSRsyst  = 0.10 # error on the slew rate

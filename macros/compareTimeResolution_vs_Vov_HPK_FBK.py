@@ -33,23 +33,41 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/'
 
 
-irr = 'unirr'
-#irr = '2E14'
+#irr = 'unirr'
+#irr = '1E14'
+irr = '2E14'
 
 sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO522']
+if (irr == '1E14'):
+    sipmTypes = ['HPK_1E14_LYSO802_T-40C','HPK_1E14_LYSO802_T-35C','FBK_1E14_LYSO803_T-40C','FBK_1E14_LYSO803_T-35C']
+    #sipmTypes = ['HPK_1E14_LYSO802_T-40C','HPK_1E14_LYSO802_T-35C']
 if (irr == '2E14'):
-    sipmTypes = ['HPK_2E14_LYSO796_T-40C']
+    sipmTypes = ['HPK_2E14_LYSO796_T-40C','HPK_2E14_LYSO796_T-35C','FBK_2E14_LYSO797_T-40C','FBK_2E14_LYSO797_T-35C']
+    #sipmTypes = ['HPK_2E14_LYSO796_T-40C','HPK_2E14_LYSO796_T-35C']
 
 fnames = {'HPK_nonIrr_LYSO528' : '../plots/HPK_nonIrr_LYSO528_T10C_summary.root',
           'FBK_nonIrr_LYSO800' : '../plots/FBK_nonIrr_LYSO800_T10C_summary.root',
           'FBK_nonIrr_LYSO522' : '../plots/FBK_nonIrr_LYSO522_T10C_summary.root',
+          'HPK_1E14_LYSO802_T-40C' : '../plots/HPK_1E14_LYSO802_T-40C_summary.root',
+          'HPK_1E14_LYSO802_T-35C' : '../plots/HPK_1E14_LYSO802_T-35C_summary.root',
           'HPK_2E14_LYSO796_T-40C' : '../plots/HPK_2E14_LYSO796_T-40C_summary.root',
-          'FBK_2E14_T-40' : '../plots/FBK_2E14_52deg_T-40C_summary.root'}
+          'HPK_2E14_LYSO796_T-35C' : '../plots/HPK_2E14_LYSO796_T-35C_summary.root',
+          'FBK_1E14_LYSO803_T-40C' : '../plots/FBK_1E14_LYSO803_T-40C_summary.root',
+          'FBK_1E14_LYSO803_T-35C' : '../plots/FBK_1E14_LYSO803_T-35C_summary.root',
+          'FBK_2E14_LYSO797_T-40C' : '../plots/FBK_2E14_LYSO797_T-40C_summary.root',
+          'FBK_2E14_LYSO797_T-35C' : '../plots/FBK_2E14_LYSO797_T-35C_summary.root'}
 
 labels = {'HPK_nonIrr_LYSO528' : 'HPK + LYSO528 (prod5, type2)',
           'FBK_nonIrr_LYSO800' : 'FBK + LYSO800 (prod5, type2)',
           'FBK_nonIrr_LYSO522' : 'FBK + LYSO522 (prod5, type1)',
-          'HPK_2E14_LYSO796_T-40C' : 'HPK + LYSO796 (prod10 opt) - T=-40#circC'}
+          'HPK_1E14_LYSO802_T-40C' : 'HPK + LYSO802 (prod9 opt) - T=-40#circC',
+          'HPK_1E14_LYSO802_T-35C' : 'HPK + LYSO802 (prod9 opt) - T=-35#circC',
+          'HPK_2E14_LYSO796_T-40C' : 'HPK + LYSO796 (prod10 opt) - T=-40#circC',
+          'HPK_2E14_LYSO796_T-35C' : 'HPK + LYSO796 (prod10 opt) - T=-35#circC',
+          'FBK_1E14_LYSO803_T-40C' : 'FBK + LYSO803 (prod9 opt) - T=-40#circC',
+          'FBK_1E14_LYSO803_T-35C' : 'FBK + LYSO803 (prod9 opt) - T=-35#circC',
+          'FBK_2E14_LYSO797_T-40C' : 'FBK + LYSO797 (prod10 opt) - T=-40#circC',
+          'FBK_2E14_LYSO797_T-35C' : 'FBK + LYSO797 (prod10 opt) - T=-35#circC'}
 
 VovsEff = {}
 VovsEff['HPK_nonIrr_LYSO528'] = { 1.50 : 1.50 ,
@@ -79,11 +97,83 @@ VovsEff['HPK_2E14_LYSO796_T-40C'] = { 1.10 : 1.02,
                                       2.10 : 1.60,
                                       2.50 : 1.71}
 
-VovsEff['FBK_2E14_T-40'] = { 1.70 : 1.57,
-                            2.00  : 1.78,
-                            2.50  : 2.06,
-                            3.00  : 2.27,
-                            3.50  : 2.40}
+VovsEff['HPK_2E14_LYSO796_T-35C'] = { 0.90 : 0.83,
+                                      1.10 : 0.99,
+                                      1.25 : 1.09,                                                                  
+                                      1.40 : 1.19,  
+                                      1.60 : 1.31,   
+                                      1.80 : 1.40,   
+                                      2.00 : 1.48,
+                                      2.40 : 1.59}  
+
+VovsEff['HPK_1E14_LYSO802_T-40C'] = { 1.10 : 1.06,
+                                      1.25 : 1.19,
+                                      1.40 : 1.32,
+                                      1.60 : 1.49,
+                                      1.80 : 1.65,
+                                      2.00 : 1.80,
+                                      2.40 : 2.06,
+                                      2.80 : 2.26} 
+
+VovsEff['HPK_1E14_LYSO802_T-35C'] = { 1.10 : 1.04,
+                                      1.25 : 1.17,
+                                      1.40 : 1.30,
+                                      1.60 : 1.46,
+                                      1.80 : 1.61,
+                                      2.00 : 1.74,
+                                      2.40 : 1.99,
+                                      3.10 : 2.28}
+
+VovsEff['FBK_1E14_LYSO803_T-35C'] = { 1.10 : 1.07,
+                                      1.25 : 1.21,
+                                      1.40 : 1.34,
+                                      1.60 : 1.52,
+                                      1.80 : 1.70,
+                                      2.00 : 1.86,
+                                      2.40 : 2.18,
+                                      2.80 : 2.45,
+                                      3.60 : 2.89}           
+
+VovsEff['FBK_1E14_LYSO803_T-40C'] = { 1.10 : 1.07,
+                                      1.25 : 1.21,
+                                      1.40 : 1.35,
+                                      1.60 : 1.53,
+                                      1.80 : 1.71,
+                                      2.00 : 1.88,
+                                      2.40 : 2.21,
+                                      2.80 : 2.49,
+                                      3.60 : 2.93}
+
+
+VovsEff['FBK_2E14_LYSO797_T-35C'] = { 1.20 : 1.10,
+                                      1.40 : 1.26,
+                                      1.60 : 1.41,
+                                      1.80 : 1.55,
+                                      2.00 : 1.67,
+                                      2.40 : 1.87,
+                                      2.80 : 2.02,
+                                      3.00 : 2.08}
+
+
+VovsEff['FBK_2E14_LYSO797_T-40C'] = { 1.20 : 1.12,
+                                      1.40 : 1.29,
+                                      1.60 : 1.44,
+                                      1.80 : 1.58,
+                                      2.00 : 1.71,
+                                      2.40 : 1.92,
+                                      2.80 : 2.08,
+                                      3.00 : 2.14}
+
+
+# plots attr: markerStyle, color
+attrs = { 'HPK_2E14_LYSO796_T-35C' : [ 20, ROOT.kRed], 
+          'HPK_2E14_LYSO796_T-40C' : [ 24, ROOT.kRed], 
+          'HPK_1E14_LYSO802_T-35C' : [ 21, ROOT.kRed-4], 
+          'HPK_1E14_LYSO802_T-40C' : [ 25, ROOT.kRed-4], 
+          'FBK_2E14_LYSO797_T-35C' : [ 20, ROOT.kBlue], 
+          'FBK_2E14_LYSO797_T-40C' : [ 24, ROOT.kBlue], 
+          'FBK_1E14_LYSO803_T-35C' : [ 21, ROOT.kBlue-4], 
+          'FBK_1E14_LYSO803_T-40C' : [ 25, ROOT.kBlue-4]}
 
 
 g = {}
@@ -112,12 +202,12 @@ for sipm in sipmTypes:
 c1 =  ROOT.TCanvas('c_timeResolution_bestTh_vs_Vov','c_timeResolution_bestTh_vs_Vov',600,600)
 c1.SetGridy()
 c1.cd()
-jsipm= 1
+jsipm = len(sipmTypes)-1
 if len(sipmTypes)==1: jsipm = 0 
 n = g[sipmTypes[jsipm]].GetN()
 xmax = g[sipmTypes[jsipm]].GetX()[n-1] + 0.5
 xmin = g[sipmTypes[jsipm]].GetX()[0]   - 0.5 
-ymin = 70
+ymin = 60
 ymax = 180
 if (irr=='unirr'):
     ymin = 20
@@ -131,10 +221,10 @@ leg = ROOT.TLegend(0.15,0.74,0.80,0.92)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 for i,sipm in enumerate(sipmTypes):
-    g[sipm].SetMarkerStyle(20+i)
+    g[sipm].SetMarkerStyle(attrs[sipm][0])
     g[sipm].SetMarkerSize(1)
-    g[sipm].SetMarkerColor(2+i*2)
-    g[sipm].SetLineColor(2+i*2)
+    g[sipm].SetMarkerColor(attrs[sipm][1])
+    g[sipm].SetLineColor(attrs[sipm][1])
     g[sipm].SetLineStyle(1)
     g[sipm].SetLineWidth(1)
     g[sipm].Draw('plsame')

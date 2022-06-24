@@ -40,6 +40,8 @@ ROOT.gStyle.SetPadTopMargin(0.07)
 ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
+tofhir2b = False
+
 source = 'TB'
 #tResMin = 0
 #tResMax = 120
@@ -52,20 +54,10 @@ source = 'TB'
 tResMin = 0
 tResMax = 200
 tResMaxTh = 250
-vovMax = 2.0
+vovMax = 3.0
 
 # create files list
 label_list = (args.inputLabels.split(','))
-'''
-print label_list
-for run in label_list:
-    if ('-' in run ): 
-        all_runs = [i for i in range(int(run.split('-')[0]), int(run.split('-')[1]))]
-        label_list.remove(run)
-        label_list=label_list+all_runs
-label_list = [int(r) for r in label_list]
-label_list.sort()
-'''
 print label_list
 
 # resolution mode : 0 : /1;  1: /sqrt(2) if CTR, 2: /2 if TDiff
@@ -75,11 +67,11 @@ if (args.resMode == 1): kscale = math.sqrt(2)
 
 # output
 outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
-#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Oct21/ModuleCharacterization/'+args.outFolder 
-print 'Saving plots in ', outdir
-#outFileName = '/home/cmsdaq/Lab5015Analysis_new/TB_CERN_Oct21/Lab5015Analysis/plots/'+args.outFolder+'.root'
 outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/'+args.outFolder+'.root'
-#outFileName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8Oct2021/Lab5015Analysis/plots/'+args.outFolder+'.root' 
+if (tofhir2b):
+    outdir = '/var/www/html/TOFHIR2B/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
+    outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/'+args.outFolder+'.root'
+print 'Saving plots in ', outdir
 outfile = ROOT.TFile(outFileName, 'RECREATE' )
 
 
@@ -100,7 +92,8 @@ if (source == 'TB'):
 
 
 # --- colors
-cols = { 1.00 : 49,  
+cols = { 0.90 : 48,  
+         1.10 : 49,  
          1.20 : 49,  
          1.25 : 50,  
          1.27 : 50,  
@@ -123,8 +116,10 @@ cols = { 1.00 : 49,
          2.70  : 51 + 35,
          2.80  : 51 + 36,
          3.00  : 51 + 40,
+         3.10  : 51 + 42,
          3.20  : 51 + 44,
          3.50  : 51 + 48,
+         3.60  : 51 + 48,
          3.70  : 51 + 48,
          4.00  : 1,
          5.00  : 12,
@@ -150,7 +145,8 @@ thresholds = []
 Vovs = [] 
 for label in label_list:
     inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-    #inputFile = ROOT.TFile.Open('/afs/cern.ch/work/m/malberti/MTD/TBatH8Oct2021/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+    if (tofhir2b):
+        inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
     listOfKeys = [key.GetName().replace('h1_deltaT_energyRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_energyRatioCorr')]
     for k in listOfKeys:
         barNum = int (k.split('_')[0][3:5])
@@ -167,14 +163,11 @@ bars.sort()
 Vovs.sort()
 thresholds.sort()
 
-#bars.remove(14)
-#if (15 in bars): bars.remove(15)
-
 goodBars = {}
 VovsEff = {}
 plots_label = ''
 
-if ('528' in args.outFolder):
+if ('528' in args.outFolder and tofhir2b==False):
     plots_label = 'HPK + LYSO528 (prod5, type2)'
     for vov in Vovs:
         VovsEff[vov] = vov 
@@ -182,6 +175,15 @@ if ('528' in args.outFolder):
     goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
     goodBars[2.50] = [0,3,4,6,7,8,9,10,11,12,13,14] 
     goodBars[1.50] = [0,3,4,7,8,9,10,11,12,13] 
+
+if ('528' in args.outFolder and tofhir2b):
+    plots_label = 'HPK + LYSO528 (prod5, type2)'
+    for vov in Vovs:
+        VovsEff[vov] = vov 
+    goodBars[5.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
+    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
+    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
+    goodBars[1.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
 
 elif ('800' in args.outFolder):
     plots_label = 'FBK + LYSO800 (prod5, type2)'
@@ -204,6 +206,7 @@ elif ('522' in args.outFolder):
     goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
     goodBars[1.50] = [0,3,7,8,9,10,11,12,13,14,15] 
 
+
 elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-40#circC'
     VovsEff = { 1.10 : 1.02,
@@ -214,14 +217,8 @@ elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
                 1.90 : 1.53,
                 2.10 : 1.60,
                 2.50 : 1.71}
-    goodBars[1.10] = [0,3,7,10,11,13,14,15]
-    goodBars[1.20] = [0,3,7,10,11,13,14,15]
-    goodBars[1.30] = [0,3,7,10,11,13,14,15]
-    goodBars[1.50] = [0,3,7,10,11,13,14,15]
-    goodBars[1.70] = [0,3,7,10,11,13,14,15]
-    goodBars[1.90] = [0,3,7,10,11,13,14,15]
-    goodBars[2.10] = [0,3,7,10,11,13,14,15]
-    goodBars[2.50] = [0,3,7,10,11,13,14,15]
+    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+
 
 elif ('HPK_2E14_LYSO796_T-35C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-35#circC'
@@ -233,27 +230,121 @@ elif ('HPK_2E14_LYSO796_T-35C' in args.outFolder):
                 1.80 : 1.40,
                 2.00 : 1.48,
                 2.40 : 1.59}
-    goodBars[0.90] = [0,3,7,10,11,13,14,15]
-    goodBars[1.10] = [0,3,7,10,11,13,14,15]
-    goodBars[1.25] = [0,3,7,10,11,13,14,15]
-    goodBars[1.40] = [0,3,7,10,11,13,14,15]
+    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+
+
+elif ('HPK_1E14_LYSO802_T-40C' in args.outFolder):
+    plots_label = 'HPK 1E14 + LYSO802 (prod9)  T=-40#circC'
+    VovsEff = { 1.10 : 1.06,
+                1.25 : 1.19,
+                1.40 : 1.32,
+                1.60 : 1.49,
+                1.80 : 1.65,
+                2.00 : 1.80,
+                2.40 : 2.06,
+                2.80 : 2.26}
+    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+
+
+elif ('HPK_1E14_LYSO802_T-35C' in args.outFolder):
+    plots_label = 'HPK 1E14 + LYSO802 (prod9)  T=-35#circC'
+    VovsEff = { 1.10 : 1.04,
+                1.25 : 1.17,
+                1.40 : 1.30,
+                1.60 : 1.46,
+                1.80 : 1.61,
+                2.00 : 1.74,
+                2.40 : 1.99,
+                3.10 : 2.28}
+    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+
+
+#CONF 8
+elif ('FBK_1E14_LYSO803_T-35C' in args.outFolder):
+    plots_label = 'FBK 1E14 + LYSO803 (prod9)  T=-35#circC'
+    VovsEff = { 1.10 : 1.07,
+                1.25 : 1.21,
+                1.40 : 1.34,
+                1.60 : 1.52,
+                1.80 : 1.70,
+                2.00 : 1.86,
+                2.40 : 2.18,
+                2.80 : 2.45,
+                3.60 : 2.89}
+    goodBars[1.10] = [0,3,7,10,13,15]
+    goodBars[1.25] = [0,3,7,10,13,15]
+    goodBars[1.40] = [0,3,7,10,13,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
     goodBars[2.00] = [0,3,7,10,11,13,14,15]
     goodBars[2.40] = [0,3,7,10,11,13,14,15]
+    goodBars[2.80] = [0,3,7,10,11,13,14,15]
+    goodBars[3.60] = [0,3,7,10,11,13,14,15]
 
-elif ('FBK_2E14_52deg_T-40C' in args.outFolder):
+#CONF 8.01
+elif ('FBK_1E14_LYSO803_T-40C' in args.outFolder):
+    plots_label = 'FBK 1E14 + LYSO803 (prod9)  T=-40#circC'
+    VovsEff = { 1.10 : 1.07,
+                1.25 : 1.21,
+                1.40 : 1.35,
+                1.60 : 1.53,
+                1.80 : 1.71,
+                2.00 : 1.88,
+                2.40 : 2.21,
+                2.80 : 2.49,
+                3.60 : 2.93}
+    goodBars[1.10] = [0,3,7,10,13,15]
+    goodBars[1.25] = [0,3,7,10,13,15]
+    goodBars[1.40] = [0,3,7,10,13,15]
+    goodBars[1.60] = [0,3,7,10,11,13,14,15]
+    goodBars[1.80] = [0,3,7,10,11,13,14,15]
+    goodBars[2.00] = [0,3,7,10,11,13,14,15]
+    goodBars[2.40] = [0,3,7,10,11,13,14,15]
+    goodBars[2.80] = [0,3,7,10,11,13,14,15]
+    goodBars[3.60] = [0,3,7,10,11,13,14,15]
+
+
+#CONF 9.00
+elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
+    plots_label = 'FBK 2E14 + + LYSO797 (prod10)   T=-35#circC'
+    VovsEff = { 1.20 : 1.10,
+                1.40 : 1.26,
+                1.60 : 1.41,
+                1.80 : 1.55,
+                2.00 : 1.67,
+                2.40 : 1.87,
+                2.80 : 2.02,
+                3.00 : 2.08}
+    goodBars[1.20] = [7,11,15]
+    goodBars[1.40] = [0,3,7,11,13,15]
+    goodBars[1.60] = [0,3,7,10,11,13,14,15]
+    goodBars[1.80] = [0,3,7,10,11,13,14,15]
+    goodBars[2.00] = [0,3,7,10,11,13,14,15]
+    goodBars[2.40] = [0,3,7,10,11,13,14,15]
+    goodBars[2.80] = [0,3,7,10,11,13,14,15]
+    goodBars[3.00] = [0,3,7,10,11,13,14,15]
+
+
+#CONF 9.01
+elif ('FBK_2E14_LYSO797_T-40C' in args.outFolder):
     plots_label = 'FBK 2E14 + + LYSO797 (prod10)   T=-40#circC'
-    VovsEff = { 1.70 : 1.57,
-                2.00 : 1.78,
-                2.50 : 2.06, 
-                3.00 : 2.27, 
-                3.50 : 2.40}
-    goodBars[1.70] = [10,12]
-    goodBars[2.00] = [0,1,2,8,9,10,12]
-    goodBars[2.50] = [0,1,2,6,8,9,10,12]
-    goodBars[3.00] = [0,1,2,6,8,9,10,12]
-    goodBars[3.50] = [0,1,2,6,8,9,10,12]
+    VovsEff = { 1.20 : 1.12,
+                1.40 : 1.29,
+                1.60 : 1.44,
+                1.80 : 1.58,
+                2.00 : 1.71,
+                2.40 : 1.92,
+                2.80 : 2.08,
+                3.00 : 2.14}
+    goodBars[1.20] = [7,11,15]
+    goodBars[1.40] = [0,3,7,11,13,15]
+    goodBars[1.60] = [0,3,7,10,11,13,14,15]
+    goodBars[1.80] = [0,3,7,10,11,13,14,15]
+    goodBars[2.00] = [0,3,7,10,11,13,14,15]
+    goodBars[2.40] = [0,3,7,10,11,13,14,15]
+    goodBars[2.80] = [0,3,7,10,11,13,14,15]
+    goodBars[3.00] = [0,3,7,9,10,11,13,14,15]
+
 
 else:
     for vov in Vovs:
@@ -268,16 +359,6 @@ print 'good bars:', goodBars
 print 'Vovs:',Vovs
 print 'thresholds:', thresholds
 
-#if ('HPK528' in args.outFolder):
-#bars = [4,5,6,7,8,9,10,11,12]
-
-#if ('FBK' in args.outFolder or '4355' in args.outFolder):
-#    bars = [5,6,7,8,9,10,11,12]
-#
-#if ('thick' in args.outFolder):
-#    bars = [4,5,6,7,9,10,11,12] 
-
-#raw_input('continue?')
 
 # --- Summary graphs
 g_tot_vs_th  = {} # g [bar, l, vov] 
@@ -327,7 +408,10 @@ for vov in Vovs:
 for label in label_list:
     print label
     inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-    #inputFile = ROOT.TFile.Open('/afs/cern.ch/work/m/malberti/MTD/TBatH8Oct2021/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+    if (tofhir2b):
+        inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
+
+    print '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label
 
     for bar in bars:
         for l in ['L','R','L-R']:
@@ -447,8 +531,10 @@ for label in label_list:
                     #print bar, vov, thr, tRes[enBin]
                     #print 'best res, par2 , err2 : ', (bestRes[bar, vov, enBin], fitFunc.GetParameter(2), fitFunc.GetParError(2))
                     if (fitFunc.GetParameter(2) < bestRes[bar, vov, enBin][0]):
-                        if ('HPK_2E14' in args.outFolder and vov == 1.20 and thr > 13): continue
-                        if ('HPK_2E14' in args.outFolder and vov == 1.30 and thr > 13): continue
+                        if ('HPK_2E14' in args.outFolder and vov <=1.40 and thr > 13): continue
+                        if ('HPK_1E14' in args.outFolder and vov <=1.40 and thr > 13): continue
+                        if ('FBK_2E14' in args.outFolder and vov <=1.40 and thr > 13): continue
+                        if ('FBK_1E14' in args.outFolder and vov <=1.40 and thr > 13): continue
                         bestRes[bar, vov, enBin] = [fitFunc.GetParameter(2),fitFunc.GetParError(2)]
                         bestTh[bar, vov, enBin]  = thr
                         
