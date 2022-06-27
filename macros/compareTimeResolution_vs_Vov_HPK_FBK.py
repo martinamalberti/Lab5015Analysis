@@ -34,8 +34,8 @@ outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/'
 
 
 #irr = 'unirr'
-#irr = '1E14'
-irr = '2E14'
+irr = '1E14'
+#irr = '2E14'
 
 sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO522']
 if (irr == '1E14'):

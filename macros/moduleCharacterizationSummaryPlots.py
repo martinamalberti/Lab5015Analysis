@@ -271,10 +271,10 @@ elif ('FBK_1E14_LYSO803_T-35C' in args.outFolder):
                 2.40 : 2.18,
                 2.80 : 2.45,
                 3.60 : 2.89}
-    goodBars[1.10] = [0,3,7,10,13,15]
-    goodBars[1.25] = [0,3,7,10,13,15]
+    goodBars[1.10] = [7]
+    goodBars[1.25] = [7]
     goodBars[1.40] = [0,3,7,10,13,15]
-    goodBars[1.60] = [0,3,7,10,11,13,14,15]
+    goodBars[1.60] = [0,3,7,10,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
     goodBars[2.00] = [0,3,7,10,11,13,14,15]
     goodBars[2.40] = [0,3,7,10,11,13,14,15]
@@ -293,10 +293,10 @@ elif ('FBK_1E14_LYSO803_T-40C' in args.outFolder):
                 2.40 : 2.21,
                 2.80 : 2.49,
                 3.60 : 2.93}
-    goodBars[1.10] = [0,3,7,10,13,15]
-    goodBars[1.25] = [0,3,7,10,13,15]
+    goodBars[1.10] = [7]
+    goodBars[1.25] = [7]
     goodBars[1.40] = [0,3,7,10,13,15]
-    goodBars[1.60] = [0,3,7,10,11,13,14,15]
+    goodBars[1.60] = [0,3,7,10,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
     goodBars[2.00] = [0,3,7,10,11,13,14,15]
     goodBars[2.40] = [0,3,7,10,11,13,14,15]
@@ -306,7 +306,7 @@ elif ('FBK_1E14_LYSO803_T-40C' in args.outFolder):
 
 #CONF 9.00
 elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
-    plots_label = 'FBK 2E14 + + LYSO797 (prod10)   T=-35#circC'
+    plots_label = 'FBK 2E14 + LYSO797 (prod10)   T=-35#circC'
     VovsEff = { 1.20 : 1.10,
                 1.40 : 1.26,
                 1.60 : 1.41,
@@ -316,18 +316,18 @@ elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
                 2.80 : 2.02,
                 3.00 : 2.08}
     goodBars[1.20] = [7,11,15]
-    goodBars[1.40] = [0,3,7,11,13,15]
+    goodBars[1.40] = [0,3,7,10,11,13,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
     goodBars[2.00] = [0,3,7,10,11,13,14,15]
     goodBars[2.40] = [0,3,7,10,11,13,14,15]
     goodBars[2.80] = [0,3,7,10,11,13,14,15]
-    goodBars[3.00] = [0,3,7,10,11,13,14,15]
+    goodBars[3.00] = [7]
 
 
 #CONF 9.01
 elif ('FBK_2E14_LYSO797_T-40C' in args.outFolder):
-    plots_label = 'FBK 2E14 + + LYSO797 (prod10)   T=-40#circC'
+    plots_label = 'FBK 2E14 + LYSO797 (prod10)   T=-40#circC'
     VovsEff = { 1.20 : 1.12,
                 1.40 : 1.29,
                 1.60 : 1.44,
@@ -337,12 +337,10 @@ elif ('FBK_2E14_LYSO797_T-40C' in args.outFolder):
                 2.80 : 2.08,
                 3.00 : 2.14}
     goodBars[1.20] = [7,11,15]
-    goodBars[1.40] = [0,3,7,11,13,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
     goodBars[2.00] = [0,3,7,10,11,13,14,15]
     goodBars[2.40] = [0,3,7,10,11,13,14,15]
-    goodBars[2.80] = [0,3,7,10,11,13,14,15]
     goodBars[3.00] = [0,3,7,9,10,11,13,14,15]
 
 
