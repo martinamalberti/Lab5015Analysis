@@ -9,17 +9,23 @@ def PDE(ov, sipm, irr='0'):
         return k * 1.0228 * 0.384 * ( 1. - math.exp(-1.*0.583*ov) ) # 1.0228 factor to account for LYSO emission spectrum
     # FBK-MS
     #if ('FBK' in sipm):
-    #    return k * 0.8847*0.466 * ( 1. - math.exp(-1.*0.314*ov) ) # 0.8847 factor to account for LYSO emission spectrum
+    #    return k * 0.8847 * 0.466 * ( 1. - math.exp(-1.*0.314*ov) ) # 0.8847 factor to account for LYSO emission spectrum
     #FBK W4C
     if ('FBK' in sipm):
-        return k * 0.490 * ( 1. - math.exp(-1.*0.225*ov) )/1.071 # 1.071 factor to account for bech calib, convolution PDE with LYSO already accounted for
+        return k * 0.490 * ( 1. - math.exp(-1.*0.225*ov) )/1.071 # 1.071 factor to account for bench calib, convolution PDE with LYSO already accounted for
 
 def Gain(ov, sipm, irr='0'):
     k = 1.
     if (irr == '2E14' and 'HPK' in sipm): k = 0.92 # gain reduction for HPK 2E14 irradiated SiPMs 
     if (irr == '1E14' and 'HPK' in sipm): k = 0.96 # gain reduction for HPK 2E14 irradiated SiPMs (assume that for 1E14 is half of 2E14)
+
+    # HPK - simple linear fit to data points from some slides
     if ('HPK' in sipm):
-        return k*(36890. + 97602.*ov) # HPK
+        return k*(36890. + 97602.*ov)
+    
+    #if ('HPK' in sipm):
+    #    return k*(ov+0.25)*(12.940-0.2*ov+3.2)/1.602/0.0001      # Arjan defininition
+
     # FBK-MS
     #if ('FBK' in sipm):
     #    return k*(50739. + 95149.*ov) # FBK-MS

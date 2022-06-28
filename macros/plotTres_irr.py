@@ -91,12 +91,15 @@ def getSlewRateFromPulseShape(g1, timingThreshold, npoints, gtemp, canvas=None):
     return(sr,err_sr)
 
 
-def findTimingThreshold(g2):
+def findTimingThreshold(g2, ov):
     xmin = 0
     ymin = 9999
     for i in range(0, g2.GetN()):
-        y = g2.GetY()[i]
-        x = g2.GetX()[i]
+        y = g2.GetY()[i] #tRes
+        x = g2.GetX()[i] #threshold
+        # best th < 13 for low OV to avoid cases where MIP peak is cut out by the threshold
+        if ( ov <= 1.40 and x > 13): continue
+ 
         if ( y < ymin):
             ymin = y
             xmin = x 
@@ -104,58 +107,62 @@ def findTimingThreshold(g2):
 
 # =====================================
 
-mysipm = 'HPK'
+#mysipm = 'HPK'
 mysipm = 'FBK'
 
 outdir = ''
 outfile = None
 sipmTypes = []
 
-if (mysipm=='HPK'):
-    outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_HPK_2E14_1E14/'        
-    outfile = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_2E14_1E14_TBJune22.root','recreate')
+if (mysipm == 'HPK'):
+    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_HPK_2E14_1E14/'        
+    if (os.path.exists(outdir)==False):
+        os.mkdir(outdir)   
+    outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_2E14_1E14_TBJune22.root','recreate')
     sipmTypes = ['HPK_2E14_T-40C','HPK_2E14_T-35C', 'HPK_1E14_T-40C', 'HPK_1E14_T-35C']
+    ov_ref    = 1.5
 
-if (mysipm=='FBK'):
-    outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_2E14_1E14/'        
-    outfile = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_2E14_1E14_TBJune22.root','recreate')
-    sipmTypes = ['FBK_2E14_T-35C','FBK_2E14_T-40C']
+if (mysipm == 'FBK'):
+    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_2E14_1E14/'        
+    if (os.path.exists(outdir)==False):
+        os.mkdir(outdir)   
+    outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_2E14_1E14_TBJune22.root','recreate')
+    sipmTypes = ['FBK_2E14_T-35C','FBK_2E14_T-40C','FBK_1E14_T-35C','FBK_1E14_T-40C']
+    ov_ref    = 1.9
 
-
-
-if (os.path.exists(outdir)==False):
-    os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 
 
-
-#inputs
+# inputs
 fnames = {'HPK_2E14_T-40C' : '../plots/HPK_2E14_LYSO796_T-40C_summary.root',
           'HPK_2E14_T-35C' : '../plots/HPK_2E14_LYSO796_T-35C_summary.root',
           'HPK_1E14_T-40C' : '../plots/HPK_1E14_LYSO802_T-40C_summary.root',
           'HPK_1E14_T-35C' : '../plots/HPK_1E14_LYSO802_T-35C_summary.root',
           'FBK_2E14_T-40C' : '../plots/FBK_2E14_LYSO797_T-40C_summary.root',
-          'FBK_2E14_T-35C' : '../plots/FBK_2E14_LYSO797_T-35C_summary.root'}
+          'FBK_2E14_T-35C' : '../plots/FBK_2E14_LYSO797_T-35C_summary.root',
+          'FBK_1E14_T-40C' : '../plots/FBK_1E14_LYSO803_T-40C_summary.root',
+          'FBK_1E14_T-35C' : '../plots/FBK_1E14_LYSO803_T-35C_summary.root'}
           
 LO = { 'HPK_2E14_T-40C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
        'HPK_2E14_T-35C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
        'HPK_1E14_T-40C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
        'HPK_1E14_T-35C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
        'FBK_2E14_T-40C': 1050., # uso LO misurato su FBK non irr in lab
-       'FBK_2E14_T-35C': 1050.}
+       'FBK_2E14_T-35C': 1050.,
+       'FBK_1E14_T-40C': 1050.,
+       'FBK_1E14_T-35C': 1050.}
 
 sigma_stoch_ref = {'HPK_2E14_T-40C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
                    'HPK_2E14_T-35C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
                    'HPK_1E14_T-40C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
                    'HPK_1E14_T-35C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
-                   'FBK_2E14_T-40C' : 50., # uso valore misurato a OV = 1.50V su FBK non irr?
-                   'FBK_2E14_T-35C' : 50., # uso valore misurato a OV = 1.50V su FBK non irr?
+                   'FBK_2E14_T-40C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
+                   'FBK_2E14_T-35C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
+                   'FBK_1E14_T-40C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
+                   'FBK_1E14_T-35C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
                    }
-
-ov_ref = 1.50
-
 
 
 np = 3
@@ -240,6 +247,8 @@ for sipm in sipmTypes:
         if (sipm == 'HPK_1E14_T-35C'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_HPK_1E14_LYSO802_T-35C_Vov%.2f.root'%ov)
         if (sipm == 'FBK_2E14_T-40C'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_2E14_LYSO797_T-40C_Vov%.2f.root'%ov)
         if (sipm == 'FBK_2E14_T-35C'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_2E14_LYSO797_T-35C_Vov%.2f.root'%ov)
+        if (sipm == 'FBK_1E14_T-40C'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_1E14_LYSO803_T-40C_Vov%.2f.root'%ov)
+        if (sipm == 'FBK_1E14_T-35C'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_1E14_LYSO803_T-35C_Vov%.2f.root'%ov)
         
         g_SR_vs_bar[sipm][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[sipm][ov] = ROOT.TGraphErrors()
@@ -283,17 +292,13 @@ for sipm in sipmTypes:
             if ('1E13' in sipm): irr = '1E13'
             Npe[sipm][ov] = 4.2*LO[sipm]*PDE(ovEff,sipm,irr)/PDE(3.50,sipm,'0') #LO is referred to 3.50 V OV
             gain = Gain(ovEff, sipm, irr)
-            if ('type1' in sipm):
-                Npe[sipm][ov]  = 1.07*0.86*3.75/math.cos(58*math.pi/180)*LO[sipm]*PDE(ovEff,sipm,'1E13')/PDE(3.50,sipm,'0') # +7% LCE for type1
-                gain = Gain(ovEff, sipm, '1E13')
             # get pulse shapes
             g_psL = fPS[sipm][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
             g_psR = fPS[sipm][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
             if (g_psL==None and g_psR==None): continue
             if (g_psL!=None): g_psL.SetName('g_pulseShapeL_bar%02d_Vov%.2f_%s'%(bar,ov,sipm))
             if (g_psR!=None): g_psR.SetName('g_pulseShapeR_bar%02d_Vov%.2f_%s'%(bar,ov,sipm))
-            
-            timingThreshold = findTimingThreshold(f[sipm].Get('g_deltaT_energyRatioCorr_vs_th_bar%02d_Vov%.2f_enBin01'%(bar,ov)))
+            timingThreshold = findTimingThreshold(f[sipm].Get('g_deltaT_energyRatioCorr_vs_th_bar%02d_Vov%.2f_enBin01'%(bar,ov)), ov)
             srL = -1
             srR = -1
             sr = -1
@@ -307,8 +312,9 @@ for sipm in sipmTypes:
             hdummy.Draw()
             gtempL = ROOT.TGraphErrors()
             gtempR = ROOT.TGraphErrors()
-            np = 3
-            if ( ov == 1.20 ): np = 1
+
+            if ( 'FBK' in sipm and ov == 1.20 ): np = 1
+            else: np = 3
 
             if (g_psL!=None): srL,err_srL = getSlewRateFromPulseShape(g_psL, timingThreshold, np, gtempL, c)
             if (g_psR!=None): srR,err_srR = getSlewRateFromPulseShape(g_psR, timingThreshold, np, gtempR, c) 
@@ -385,7 +391,7 @@ for sipm in sipmTypes:
                 if ('2E14' in sipm and 'HPK' in sipm): dcr = dcr/0.92 #8% gain reduction
                 if ('1E14' in sipm and 'HPK' in sipm): dcr = dcr/0.96 #4% gain reduction ???
 
-                print sipm, bar, ov, ovEff, dcr, Npe[sipm][ov], math.sqrt(dcr)/Npe[sipm][ov]/(math.sqrt(30.)/3000.)
+                #print sipm, bar, ov, ovEff, dcr, Npe[sipm][ov], math.sqrt(dcr)/Npe[sipm][ov]/(math.sqrt(30.)/3000.)
                 g_DCR_vs_Npe[sipm][bar].SetPoint( g_DCR_vs_Npe[sipm][bar].GetN(), math.sqrt(dcr)/Npe[sipm][ov]/(math.sqrt(30.)/3000.), sigma_dcr )
                 g_DCR_vs_Npe[sipm][bar].SetPointError( g_DCR_vs_Npe[sipm][bar].GetN()-1, 0,  err_sigma_dcr)
 
@@ -579,7 +585,9 @@ markers = { 'HPK_2E14_T-40C' : 20 ,
             'HPK_1E14_T-40C' : 20 ,
             'HPK_1E14_T-35C' : 24 ,
             'FBK_2E14_T-40C' : 21,
-            'FBK_2E14_T-35C' : 25}
+            'FBK_2E14_T-35C' : 25,
+            'FBK_1E14_T-40C' : 21,
+            'FBK_1E14_T-35C' : 25}
 
 
 cols = { 'HPK_2E14_T-40C' : ROOT.kBlack ,
@@ -587,7 +595,9 @@ cols = { 'HPK_2E14_T-40C' : ROOT.kBlack ,
          'HPK_1E14_T-40C' : ROOT.kBlue  ,
          'HPK_1E14_T-35C' : ROOT.kBlue  ,
          'FBK_2E14_T-40C' : ROOT.kRed   ,
-         'FBK_2E14_T-35C' : ROOT.kRed   }
+         'FBK_2E14_T-35C' : ROOT.kRed   ,
+         'FBK_1E14_T-40C' : ROOT.kOrange+1   ,
+         'FBK_1E14_T-35C' : ROOT.kOrange+1  }
 
 # vs npe
 print 'Plotting tRes_DCR vs Npe...'
@@ -759,6 +769,8 @@ c7 = {}
 hdummy7 = {}
 c8 = {}
 hdummy8 = {}
+c9 = {}
+hdummy9 = {}
 for j,sipm in enumerate(sipmTypes):
     for ov in Vovs[sipm]:
         if (ov not in g_SR_vs_bar[sipm].keys()): continue
@@ -823,6 +835,21 @@ for j,sipm in enumerate(sipmTypes):
         leg2.Draw()
         c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.png')
         c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.pdf')
+        
+        c9[ov] = ROOT.TCanvas('c_dcr_vs_bar_%s_Vov%.2f'%(sipm,ovEff),'c_dcr_vs_bar_%s_Vov%.2f'%(sipm,ovEff),600,600)
+        c9[ov].SetGridy()
+        c9[ov].cd()
+        hdummy9[ov] = ROOT.TH2F('hdummy9_%s_%.2f'%(sipm,ov),'',100,-0.5,15.5,100,0,140)
+        hdummy9[ov].GetXaxis().SetTitle('bar')
+        hdummy9[ov].GetYaxis().SetTitle('#sigma_{t, DCR} [ps]')
+        hdummy9[ov].Draw()
+        g_DCR_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
+        g_DCR_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
+        g_DCR_vs_bar[sipm][ov].SetLineColor(cols[sipm])
+        g_DCR_vs_bar[sipm][ov].Draw('psame')
+        leg2.Draw()
+        c9[ov].SaveAs(outdir+'/'+c9[ov].GetName()+'.png')
+        c9[ov].SaveAs(outdir+'/'+c9[ov].GetName()+'.pdf')
 
 outfile.Close()
 

@@ -186,7 +186,13 @@ for sipm in sipmTypes:
     for k in listOfKeys:
         Vovs[sipm].append( float (k[3:7]) )
     Vovs[sipm].sort()    
+    print sipm, Vovs[sipm]   
+    if ('FBK' in sipm and 'E14' in sipm): 
+        if (1.10 in Vovs[sipm]) : Vovs[sipm].remove(1.10)
+        if (1.25 in Vovs[sipm]) : Vovs[sipm].remove(1.25)
+
     print sipm, Vovs[sipm]
+        
     for i,vov in enumerate(Vovs[sipm]):
         gg = f.Get('g_deltaT_energyRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%(vov))
         fitFun = ROOT.TF1('fitFun','pol0',0,16)
