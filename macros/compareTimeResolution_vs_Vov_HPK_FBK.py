@@ -33,8 +33,8 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/'
 
 
-#irr = 'unirr'
-irr = '1E14'
+irr = 'unirr'
+#irr = '1E14'
 #irr = '2E14'
 
 sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO522']
@@ -166,7 +166,10 @@ VovsEff['FBK_2E14_LYSO797_T-40C'] = { 1.20 : 1.12,
 
 
 # plots attr: markerStyle, color
-attrs = { 'HPK_2E14_LYSO796_T-35C' : [ 20, ROOT.kRed], 
+attrs = { 'HPK_nonIrr_LYSO528'     : [ 20, ROOT.kRed],
+          'FBK_nonIrr_LYSO800'     : [ 20, ROOT.kBlue],
+          'FBK_nonIrr_LYSO522'     : [ 20, ROOT.kMagenta],
+          'HPK_2E14_LYSO796_T-35C' : [ 20, ROOT.kRed], 
           'HPK_2E14_LYSO796_T-40C' : [ 24, ROOT.kRed], 
           'HPK_1E14_LYSO802_T-35C' : [ 21, ROOT.kRed-4], 
           'HPK_1E14_LYSO802_T-40C' : [ 25, ROOT.kRed-4], 
@@ -208,7 +211,8 @@ for sipm in sipmTypes:
 c1 =  ROOT.TCanvas('c_timeResolution_bestTh_vs_Vov','c_timeResolution_bestTh_vs_Vov',600,600)
 c1.SetGridy()
 c1.cd()
-jsipm = len(sipmTypes)-1
+#jsipm = len(sipmTypes)-1
+jsipm = 1
 if len(sipmTypes)==1: jsipm = 0 
 n = g[sipmTypes[jsipm]].GetN()
 xmax = g[sipmTypes[jsipm]].GetX()[n-1] + 0.5

@@ -9,19 +9,46 @@ import time
 import argparse
 
 import ROOT
+import CMS_lumi, tdrstyle
+
+#set the tdr style
+tdrstyle.setTDRStyle()
+ROOT.gStyle.SetOptStat(0)
+ROOT.gStyle.SetOptFit(1)
+ROOT.gStyle.SetOptTitle(0)
+#ROOT.gStyle.SetLabelSize(0.04,'X')
+#ROOT.gStyle.SetLabelSize(0.04,'Y')
+#ROOT.gStyle.SetTitleSize(0.04,'X')
+#ROOT.gStyle.SetTitleSize(0.04,'Y')
+ROOT.gStyle.SetLabelSize(0.055,'X')
+ROOT.gStyle.SetLabelSize(0.055,'Y')
+ROOT.gStyle.SetTitleSize(0.06,'X')
+ROOT.gStyle.SetTitleSize(0.06,'Y')
+ROOT.gStyle.SetTitleOffset(1.05,'X')
+ROOT.gStyle.SetTitleOffset(1.1,'Y')
+ROOT.gStyle.SetLegendFont(42)
+ROOT.gStyle.SetLegendTextSize(0.045)
+ROOT.gStyle.SetPadTopMargin(0.07)
+
 ROOT.gROOT.SetBatch(True)
 #ROOT.gROOT.SetBatch(False)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptFit(0111)
 
+
+
 from SiPM import *
 
-outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_nonIrr/'
+outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_nonIrr/'
+#outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_nonIrr/'
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_FBK_nonIrr_TBJune22.root','recreate')  
+outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_nonIrr_TBJune22.root','recreate')  
+
 
 def getSlewRateFromPulseShape(g1, timingThreshold, npoints, gtemp, canvas=None):
     if ( g1.GetN() < npoints): return (-1, -1)
@@ -83,24 +110,41 @@ def findTimingThreshold(g2):
             ymin = y
             xmin = x 
     return xmin
+    
 
 # =====================================
 
-sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800','FBK_nonIrr_LYSO522']
+sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO522', 'FBK_nonIrr_LYSO524']
+#sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800','FBK_nonIrr_LYSO522']
+#sipmTypes = ['FBK_nonIrr_LYSO800','FBK_nonIrr_LYSO522', 'FBK_nonIrr_LYSO524']
 
 fnames = {'HPK_nonIrr_LYSO528' : '../plots/HPK_nonIrr_LYSO528_T10C_summary.root',
           'FBK_nonIrr_LYSO800' : '../plots/FBK_nonIrr_LYSO800_T10C_summary.root',
           'FBK_nonIrr_LYSO522' : '../plots/FBK_nonIrr_LYSO522_T10C_summary.root',
+          'FBK_nonIrr_LYSO524' : '../plots/FBK_nonIrr_LYSO524_T10C_summary.root',
           }
 
+labels = { 'HPK_nonIrr_LYSO528' : 'HPK+LYSO528',
+           'FBK_nonIrr_LYSO800' : 'FBK+LYSO800',
+           'FBK_nonIrr_LYSO522' : 'FBK+LYSO522',
+           'FBK_nonIrr_LYSO524' : 'FBK+LYSO524',
+       }
+
+
+# LO
 LO = { 'HPK_nonIrr_LYSO528' : 1300.,
        'FBK_nonIrr_LYSO800' : 1042.,
-       'FBK_nonIrr_LYSO522' : 1100.}
+       'FBK_nonIrr_LYSO522' : 1100.,
+       'FBK_nonIrr_LYSO524' :  950.,
+}
 
 
-tau = { 'HPK_nonIrr_LYSO528' : 38.6,
-        'FBK_nonIrr_LYSO800' : 38.6,  
-        'FBK_nonIrr_LYSO522' : 38.6}
+# rise time
+tau = { 'HPK_nonIrr_LYSO528' : 38.6,   # MiB measurements
+        'FBK_nonIrr_LYSO800' : 38.7,   # MiB measurements
+        'FBK_nonIrr_LYSO522' : 41.6,   # MiB measurements
+        'FBK_nonIrr_LYSO524' : 40.4}   # MiB measurements
+
 
 
 np = 3
@@ -181,6 +225,7 @@ for sipm in sipmTypes:
         if (sipm == 'HPK_nonIrr_LYSO528'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_HPK_nonIrr_LYSO528_T10C_Vov%.2f.root'%ov)
         if (sipm == 'FBK_nonIrr_LYSO800'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_nonIrr_LYSO800_T10C_Vov%.2f.root'%ov)
         if (sipm == 'FBK_nonIrr_LYSO522'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_nonIrr_LYSO522_T10C_Vov%.2f.root'%ov)
+        if (sipm == 'FBK_nonIrr_LYSO524'): fPS[sipm][ov] = ROOT.TFile.Open('../plots/pulseShape_FBK_nonIrr_LYSO524_T10C_Vov%.2f.root'%ov)
         g_SR_vs_bar[sipm][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[sipm][ov] = ROOT.TGraphErrors()
         g_Noise_vs_bar[sipm][ov] = ROOT.TGraphErrors()
@@ -250,6 +295,8 @@ for sipm in sipmTypes:
             Npe[sipm][ov]  = LO[sipm]*4.2*PDE(ov,sipm)/PDE(3.5,sipm) #module type2
             if ('522' in sipm):                                                                                                                                       
                 Npe[sipm][ov] = 3.75/3.00*LO[sipm]*4.2*PDE(ov,sipm)/PDE(3.5,sipm) # module of type1
+            if ('524' in sipm):                                                                                                                                       
+                Npe[sipm][ov] = 2.4/3.00*LO[sipm]*4.2*PDE(ov,sipm)/PDE(3.5,sipm) # module of type3
             gain = Gain(ov, sipm) 
             g_psL = fPS[sipm][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
             g_psR = fPS[sipm][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
@@ -333,6 +380,20 @@ for sipm in sipmTypes:
             g_Tot_vs_SR[sipm][ov].SetPoint(g_Tot_vs_SR[sipm][ov].GetN(), sr, sigma_meas)
             g_Tot_vs_SR[sipm][ov].SetPointError(g_Tot_vs_SR[sipm][ov].GetN()-1, errSR, err_sigma_meas)
 
+
+# average slew rate
+g_SR_vs_Vov_average = {}                                                                                                                                                                                                         
+
+for sipm in sipmTypes:                                                                                                                                                                                                           
+    g_SR_vs_Vov_average[sipm] = ROOT.TGraphErrors()
+    for ov in Vovs[sipm]:                                       
+        if (ov in  g_SR_vs_bar[sipm].keys()):
+            fitpol0 = ROOT.TF1('fitpol0','pol0',-100,100)
+            g_SR_vs_bar[sipm][ov].Fit(fitpol0,'QNR')
+            g_SR_vs_Vov_average[sipm].SetPoint(g_SR_vs_Vov_average[sipm].GetN(), ov, fitpol0.GetParameter(0))
+            g_SR_vs_Vov_average[sipm].SetPointError(g_SR_vs_Vov_average[sipm].GetN()-1, 0, fitpol0.GetParError(0)) 
+
+
 # ratio of stochatic terms at 3.5 OV
 g_ratio_stoch1 = ROOT.TGraphErrors()
 g_ratio_stoch2 = ROOT.TGraphErrors()
@@ -352,8 +413,8 @@ for bar in range(0,16):
 
 for bar in range(0,16):
     if (bar not in bars[sipmTypes[1]]): continue
-    if (bar not in bars[sipmTypes[2]]): continue
-    if (g_Stoch_vs_Vov[sipmTypes[2]][bar].Eval(3.5)<=0): continue
+    if ( len(sipmTypes)>2 and bar not in bars[sipmTypes[2]]): continue
+    if ( len(sipmTypes)>2 and g_Stoch_vs_Vov[sipmTypes[2]][bar].Eval(3.5)<=0): continue
     if (g_Stoch_vs_Vov[sipmTypes[1]][bar].Eval(3.5)<=0): continue
     ratio_stoch =  g_Stoch_vs_Vov[sipmTypes[1]][bar].Eval(3.5)/g_Stoch_vs_Vov[sipmTypes[2]][bar].Eval(3.5)
     err1 = [  g_Stoch_vs_Vov[sipmTypes[1]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipmTypes[1]][bar].GetN()) if g_Stoch_vs_Vov[sipmTypes[1]][bar].GetX()[i] == 3.50]
@@ -396,8 +457,9 @@ for sipm in sipmTypes:
     c2[sipm] = {}
     hdummy2[sipm] = {}
     h[sipm] = ROOT.TH1F('h_coeff_%s'%sipm,'',100,-2.0,1.0)
-    leg[sipm] = ROOT.TLegend(0.55,0.70,0.89,0.89)
+    leg[sipm] = ROOT.TLegend(0.60,0.70,0.85,0.89) 
     leg[sipm].SetBorderSize(0)
+    leg[sipm].SetFillStyle(0) 
     for i,bar in enumerate(bars[sipm]):
         c1[sipm][bar] =  ROOT.TCanvas('c_timeResolution_vs_Vov_%s_bar%02d'%(sipm,bar),'c_timeResolution_vs_Vov_%s_bar%02d'%(sipm,bar),600,600)
         c1[sipm][bar].SetGridy()
@@ -430,15 +492,21 @@ for sipm in sipmTypes:
         g_Tot_vs_Vov[sipm][bar].SetFillColorAlpha(ROOT.kRed+1,0.5)
         g_Tot_vs_Vov[sipm][bar].SetFillStyle(3001)
         g_Tot_vs_Vov[sipm][bar].Draw('E3lsame')
+        #save on file
+        outfile.cd()
+        g[sipm][bar].Write('g_Data_vs_Vov_%s_bar%02d'%(sipm,bar))
+        g_Noise_vs_Vov[sipm][bar].Write('g_Noise_vs_Vov_%s_bar%02d'%(sipm,bar))
+        g_Stoch_vs_Vov[sipm][bar].Write('g_Stoch_vs_Vov_%s_bar%02d'%(sipm,bar))
+        g_Tot_vs_Vov[sipm][bar].Write('g_Tot_vs_Vov_%s_bar%02d'%(sipm,bar))
         if (i==0):
             leg[sipm].AddEntry(g[sipm][bar], 'data', 'PL')
-            leg[sipm].AddEntry(g_Noise_vs_Vov[sipm][bar], 'noise', 'PL')
-            leg[sipm].AddEntry(g_Stoch_vs_Vov[sipm][bar], 'stoch', 'PL')
-            leg[sipm].AddEntry(g_Tot_vs_Vov[sipm][bar], 'stoch #oplus noise', 'PL')
+            leg[sipm].AddEntry(g_Noise_vs_Vov[sipm][bar], 'noise', 'L')
+            leg[sipm].AddEntry(g_Stoch_vs_Vov[sipm][bar], 'stoch', 'L')
+            leg[sipm].AddEntry(g_Tot_vs_Vov[sipm][bar], 'stoch #oplus noise', 'L')
         leg[sipm].Draw('same')
-        latex = ROOT.TLatex(0.15,0.83,'%s'%(sipm.replace('_nonIrr_','+')))
+        latex = ROOT.TLatex(0.20,0.86,'%s'%(sipm.replace('_nonIrr_','+')))
         latex.SetNDC()
-        latex.SetTextSize(0.035)
+        latex.SetTextSize(0.045)
         latex.SetTextFont(42)
         latex.Draw('same')
         c1[sipm][bar].SaveAs(outdir+'/'+c1[sipm][bar].GetName()+'.png')
@@ -472,7 +540,6 @@ for sipm in sipmTypes:
     h[sipm].Draw('')
     cc.SaveAs(outdir+'/'+cc.GetName()+'.png')
     ROOT.gStyle.SetOptStat(0)
-    #cc.Delete()
 
 
 # total time resolution vs SR
@@ -499,19 +566,22 @@ for sipm in sipmTypes:
         c.SaveAs(outdir+'/'+c.GetName()+'.png')
         c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
         hdummy.Delete()
-        c.Delete()
 
 
 # SR and best threshold vs Vov
+print 'Plotting slew rate vs Vov...'
+
 markers = { 'HPK_nonIrr_LYSO528' : 20 ,
             'FBK_nonIrr_LYSO800' : 24 ,
-            'FBK_nonIrr_LYSO522' : 24 }
+            'FBK_nonIrr_LYSO522' : 24 ,
+            'FBK_nonIrr_LYSO524' : 24 }
 
 cols = { 'HPK_nonIrr_LYSO528' : ROOT.kBlack ,
          'FBK_nonIrr_LYSO800' : ROOT.kBlue ,
-         'FBK_nonIrr_LYSO522' : ROOT.kRed }
+         'FBK_nonIrr_LYSO522' : ROOT.kRed  , 
+         'FBK_nonIrr_LYSO524' : ROOT.kMagenta }
 
-leg2 = ROOT.TLegend(0.15,0.70,0.45,0.89)
+leg2 = ROOT.TLegend(0.20,0.70,0.45,0.89)
 leg2.SetBorderSize(0)
 leg2.SetFillStyle(0)
 for i,bar in enumerate(bars[sipm]):
@@ -530,17 +600,18 @@ for i,bar in enumerate(bars[sipm]):
         g_SR_vs_Vov[sipm][bar].SetMarkerColor(cols[sipm])
         g_SR_vs_Vov[sipm][bar].SetLineColor(cols[sipm])
         g_SR_vs_Vov[sipm][bar].Draw('psame')
+    outfile.cd()
+    g_SR_vs_Vov[sipm][bar].Write('g_SR_vs_Vov_%s_bar%02d'%(sipm,bar))
     leg2.Draw()
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.png')
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.pdf')
-    c3[bar].Delete()
     hdummy3[bar].Delete() 
 
     c3[bar] = ROOT.TCanvas('c_slewRate_vs_GainNpe_bar%02d'%(bar),'c_slewRate_vs_GainNpe_bar%02d'%(bar),600,600)
     c3[bar].SetGridy()
     c3[bar].cd()
     #hdummy3[bar] = ROOT.TH2F('hdummy3_%d'%(bar),'',100,0,2,100,0,35)
-    hdummy3[bar] = ROOT.TH2F('hdummy3_%d'%(bar),'',100,0,3E09,100,0,35)
+    hdummy3[bar] = ROOT.TH2F('hdummy3_sr_%d'%(bar),'',100,0,3E09,100,0,35)
     hdummy3[bar].GetXaxis().SetTitle('gain x Npe')
     hdummy3[bar].GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
     hdummy3[bar].Draw()
@@ -553,7 +624,7 @@ for i,bar in enumerate(bars[sipm]):
     leg2.Draw()
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.png')
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.pdf')
-    
+
     c4[bar] = ROOT.TCanvas('c_bestTh_vs_Vov_bar%02d'%(bar),'c_bestTh_vs_Vov_bar%02d'%(bar),600,600)
     c4[bar].SetGridy()
     c4[bar].cd()
@@ -572,8 +643,33 @@ for i,bar in enumerate(bars[sipm]):
 
 
 
+# average slew rate vs OV
+c2 =  ROOT.TCanvas('c_slewRate_vs_Vov_average','c_slewRate_vs_Vov_average',600,600)
+c2.SetGridx()
+c2.SetGridy()
+c2.cd()    
+#hdummy2 = ROOT.TH2F('hdummy2','',16, 0.5, 2.5,100,0,15)
+hdummy2 = ROOT.TH2F('hdummy2','',100, 0.5, 7.5,100,0,35)
+hdummy2.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
+hdummy2.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
+hdummy2.Draw()
+for sipm in sipmTypes:
+    g_SR_vs_Vov_average[sipm].SetMarkerStyle(markers[sipm])
+    g_SR_vs_Vov_average[sipm].SetMarkerColor(cols[sipm])
+    g_SR_vs_Vov_average[sipm].SetLineWidth(1)
+    g_SR_vs_Vov_average[sipm].SetLineColor(cols[sipm])
+    g_SR_vs_Vov_average[sipm].Draw('plsame')
+    outfile.cd()
+    g_SR_vs_Vov_average[sipm].Write('g_SR_vs_Vov_average_%s'%sipm)
+leg2.Draw()  
+c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
+c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
+hdummy2.Delete()
+
+
     
 # SR and best threshold vs bar
+print 'Plotting slew rate vs bar...'
 c5 = {}
 hdummy5 = {}
 c6 = {}
@@ -582,88 +678,91 @@ c7 = {}
 hdummy7 = {}
 c8 = {}
 hdummy8 = {}
-for sipm in sipmTypes:  
-    for ov in Vovs[sipm]:
-        c5[ov] = ROOT.TCanvas('c_slewRate_vs_bar_Vov%.2f'%(ov),'c_slewRate_vs_bar_Vov%.2f'%(ov),600,600)
-        c5[ov].SetGridy()
-        c5[ov].cd()
-        ymax = 35.
-        if (ov == 1.50): ymax = 15.
-        hdummy5[ov] = ROOT.TH2F('hdummy5_%d'%(ov),'',100,-0.5,15.5,100,0,ymax)
-        hdummy5[ov].GetXaxis().SetTitle('bar')
-        hdummy5[ov].GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
-        hdummy5[ov].Draw()
-        for j,sipm in enumerate(sipmTypes):
-            if (ov not in g_SR_vs_bar[sipm].keys()): continue
-            g_SR_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
-            g_SR_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
-            g_SR_vs_bar[sipm][ov].SetLineColor(cols[sipm])
-            g_SR_vs_bar[sipm][ov].Draw('psame')
-        leg2.Draw()
-        latex = ROOT.TLatex(0.65,0.82,'V_{OV} = %.02f V'%ov)
-        latex.SetNDC()
-        latex.SetTextSize(0.035)
-        latex.SetTextFont(42)
-        latex.Draw('same')
-        c5[ov].SaveAs(outdir+'/'+c5[ov].GetName()+'.png')
-        c5[ov].SaveAs(outdir+'/'+c5[ov].GetName()+'.pdf')
+for ov in Vovs[sipm]:
+    c5[ov] = ROOT.TCanvas('c_slewRate_vs_bar_Vov%.2f'%(ov),'c_slewRate_vs_bar_Vov%.2f'%(ov),600,600)
+    c5[ov].SetGridy()
+    c5[ov].cd()
+    ymax = 35.
+    if (ov == 1.50): ymax = 15.
+    hdummy5[ov] = ROOT.TH2F('hdummy5_%s_%d'%(sipm,ov),'',100,-0.5,15.5,100,0,ymax)
+    hdummy5[ov].GetXaxis().SetTitle('bar')
+    hdummy5[ov].GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
+    hdummy5[ov].Draw()
+    for j,sipm in enumerate(sipmTypes):
+        if (ov not in g_SR_vs_bar[sipm].keys()): continue
+        g_SR_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
+        g_SR_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
+        g_SR_vs_bar[sipm][ov].SetLineColor(cols[sipm])
+        g_SR_vs_bar[sipm][ov].Draw('psame')
+    leg2.Draw()
+    latex = ROOT.TLatex(0.65,0.82,'V_{OV} = %.02f V'%ov)
+    latex.SetNDC()
+    latex.SetTextSize(0.035)
+    latex.SetTextFont(42)
+    latex.Draw('same')
+    c5[ov].SaveAs(outdir+'/'+c5[ov].GetName()+'.png')
+    c5[ov].SaveAs(outdir+'/'+c5[ov].GetName()+'.pdf')
+    hdummy5[ov].Delete()
 
-        c6[ov] = ROOT.TCanvas('c_bestTh_vs_bar_Vov%.2f'%(ov),'c_bestTh_vs_bar_Vov%.2f'%(ov),600,600)
-        c6[ov].SetGridy()
-        c6[ov].cd()
-        hdummy6[ov] = ROOT.TH2F('hdummy6_%d'%(ov),'',100,-0.5,15.5,100,0,20)
-        hdummy6[ov].GetXaxis().SetTitle('bar')
-        hdummy6[ov].GetYaxis().SetTitle('timing threshold [DAC]')
-        hdummy6[ov].Draw()
-        for j,sipm in enumerate(sipmTypes):
-            if (ov not in g_bestTh_vs_bar[sipm].keys()): continue
-            g_bestTh_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
-            g_bestTh_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
-            g_bestTh_vs_bar[sipm][ov].SetLineColor(cols[sipm])
-            g_bestTh_vs_bar[sipm][ov].Draw('plsame')
-        leg2.Draw()        
-        c6[ov].SaveAs(outdir+'/'+c6[ov].GetName()+'.png')
-        c6[ov].SaveAs(outdir+'/'+c6[ov].GetName()+'.pdf')
+    c6[ov] = ROOT.TCanvas('c_bestTh_vs_bar_Vov%.2f'%(ov),'c_bestTh_vs_bar_Vov%.2f'%(ov),600,600)
+    c6[ov].SetGridy()
+    c6[ov].cd()
+    hdummy6[ov] = ROOT.TH2F('hdummy6_%s_%d'%(sipm,ov),'',100,-0.5,15.5,100,0,20)
+    hdummy6[ov].GetXaxis().SetTitle('bar')
+    hdummy6[ov].GetYaxis().SetTitle('timing threshold [DAC]')
+    hdummy6[ov].Draw()
+    for j,sipm in enumerate(sipmTypes):
+        if (ov not in g_bestTh_vs_bar[sipm].keys()): continue
+        g_bestTh_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
+        g_bestTh_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
+        g_bestTh_vs_bar[sipm][ov].SetLineColor(cols[sipm])
+        g_bestTh_vs_bar[sipm][ov].Draw('plsame')
+    leg2.Draw()        
+    c6[ov].SaveAs(outdir+'/'+c6[ov].GetName()+'.png')
+    c6[ov].SaveAs(outdir+'/'+c6[ov].GetName()+'.pdf')
+    hdummy6[ov].Delete() 
 
-        c7[ov] = ROOT.TCanvas('c_noise_vs_bar_Vov%.2f'%(ov),'c_noise_vs_bar_Vov%.2f'%(ov),600,600)
-        c7[ov].SetGridy()
-        c7[ov].cd()
-        hdummy7[ov] = ROOT.TH2F('hdummy7_%d'%(ov),'',100,-0.5,15.5,100,0,80)
-        hdummy7[ov].GetXaxis().SetTitle('bar')
-        hdummy7[ov].GetYaxis().SetTitle('#sigma_{t, noise} [ps]')
-        hdummy7[ov].Draw()
-        for j,sipm in enumerate(sipmTypes):
-            if (ov not in g_Noise_vs_bar[sipm].keys()): continue
-            g_Noise_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
-            g_Noise_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
-            g_Noise_vs_bar[sipm][ov].SetLineColor(cols[sipm])
-            g_Noise_vs_bar[sipm][ov].Draw('psame')
-        leg2.Draw()        
-        latex = ROOT.TLatex(0.65,0.82,'V_{OV} = %.02f V'%ov)
-        latex.SetNDC()
-        latex.SetTextSize(0.035)
-        latex.SetTextFont(42)
-        latex.Draw('same')
-        c7[ov].SaveAs(outdir+'/'+c7[ov].GetName()+'.png')
-        c7[ov].SaveAs(outdir+'/'+c7[ov].GetName()+'.pdf')
+    c7[ov] = ROOT.TCanvas('c_noise_vs_bar_Vov%.2f'%(ov),'c_noise_vs_bar_Vov%.2f'%(ov),600,600)
+    c7[ov].SetGridy()
+    c7[ov].cd()
+    hdummy7[ov] = ROOT.TH2F('hdummy7_%s_%d'%(sipm,ov),'',100,-0.5,15.5,100,0,80)
+    hdummy7[ov].GetXaxis().SetTitle('bar')
+    hdummy7[ov].GetYaxis().SetTitle('#sigma_{t, noise} [ps]')
+    hdummy7[ov].Draw()
+    for j,sipm in enumerate(sipmTypes):
+        if (ov not in g_Noise_vs_bar[sipm].keys()): continue
+        g_Noise_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
+        g_Noise_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
+        g_Noise_vs_bar[sipm][ov].SetLineColor(cols[sipm])
+        g_Noise_vs_bar[sipm][ov].Draw('psame')
+    leg2.Draw()        
+    latex = ROOT.TLatex(0.65,0.82,'V_{OV} = %.02f V'%ov)
+    latex.SetNDC()
+    latex.SetTextSize(0.035)
+    latex.SetTextFont(42)
+    latex.Draw('same')
+    c7[ov].SaveAs(outdir+'/'+c7[ov].GetName()+'.png')
+    c7[ov].SaveAs(outdir+'/'+c7[ov].GetName()+'.pdf')
+    hdummy7[ov].Delete() 
 
-        c8[ov] = ROOT.TCanvas('c_stoch_vs_bar_Vov%.2f'%(ov),'c_stoch_vs_bar_Vov%.2f'%(ov),600,600)
-        c8[ov].SetGridy()
-        c8[ov].cd()
-        hdummy8[ov] = ROOT.TH2F('hdummy8_%d'%(ov),'',100,-0.5,15.5,100,0,80)
-        hdummy8[ov].GetXaxis().SetTitle('bar')
-        hdummy8[ov].GetYaxis().SetTitle('#sigma_{t, stoch} [ps]')
-        hdummy8[ov].Draw()
-        for j,sipm in enumerate(sipmTypes):
-            if (ov not in g_Stoch_vs_bar[sipm].keys()): continue
-            g_Stoch_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
-            g_Stoch_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
-            g_Stoch_vs_bar[sipm][ov].SetLineColor(cols[sipm])
-            g_Stoch_vs_bar[sipm][ov].Draw('psame')
-        leg2.Draw()        
-        c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.png')
-        c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.pdf')
-    
+    c8[ov] = ROOT.TCanvas('c_stoch_vs_bar_Vov%.2f'%(ov),'c_stoch_vs_bar_Vov%.2f'%(ov),600,600)
+    c8[ov].SetGridy()
+    c8[ov].cd()
+    hdummy8[ov] = ROOT.TH2F('hdummy8_%s_%d'%(sipm,ov),'',100,-0.5,15.5,100,0,80)
+    hdummy8[ov].GetXaxis().SetTitle('bar')
+    hdummy8[ov].GetYaxis().SetTitle('#sigma_{t, stoch} [ps]')
+    hdummy8[ov].Draw()
+    for j,sipm in enumerate(sipmTypes):
+        if (ov not in g_Stoch_vs_bar[sipm].keys()): continue
+        g_Stoch_vs_bar[sipm][ov].SetMarkerStyle( markers[sipm] )
+        g_Stoch_vs_bar[sipm][ov].SetMarkerColor(cols[sipm])
+        g_Stoch_vs_bar[sipm][ov].SetLineColor(cols[sipm])
+        g_Stoch_vs_bar[sipm][ov].Draw('psame')
+    leg2.Draw()        
+    c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.png')
+    c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.pdf')
+    hdummy8[ov].Delete() 
+
 # ratio of photo-stat. terms:
 for i,g in enumerate([g_ratio_stoch1, g_ratio_stoch2, g_ratio_stoch3]):
     if i == 0:
@@ -679,16 +778,15 @@ for i,g in enumerate([g_ratio_stoch1, g_ratio_stoch2, g_ratio_stoch3]):
     cc = ROOT.TCanvas('c_ratioStoch_vs_bar_%s_%s'%(sipm1, sipm2),'c_ratioStoch_vs_bar_%s_%s_'%(sipm1, sipm2),600,600)
     print cc.GetName()
     cc.cd()
-    hdummy = ROOT.TH2F('hdummy','',16,-0.5,15.5,100,0.0,2.0)
+    hdummy = ROOT.TH2F('hdummy','',16,-0.5,15.5,100,0.2,1.5)
     hdummy.GetXaxis().SetTitle('bar')
-    hdummy.GetYaxis().SetTitle('ratio photostat.')
+    hdummy.GetYaxis().SetTitle('#sigma_{stoch.}^{%s}/#sigma_{stoch.}^{%s}'%(labels[sipm1],labels[sipm2]))
+    hdummy.GetYaxis().SetTitleOffset(1.1)
     hdummy.Draw('')
     g.SetMarkerStyle(20)
     g.Draw('psame')
     expRatioLO    = math.sqrt(Npe[sipm2][ov_ref]/Npe[sipm1][ov_ref])
     expRatioLOTau = math.sqrt((Npe[sipm2][ov_ref]/tau[sipm2])/(Npe[sipm1][ov_ref]/tau[sipm1]))
-    #expRatioLO    = math.sqrt(LO[sipm2]/LO[sipm1])
-    #expRatioLOTau = math.sqrt((LO[sipm2]/tau[sipm2])/(LO[sipm1]/tau[sipm1]))
     ll = ROOT.TLine(0, expRatioLO, 15, expRatioLO)
     ll.SetLineStyle(7)
     ll.SetLineWidth(2)
@@ -699,15 +797,22 @@ for i,g in enumerate([g_ratio_stoch1, g_ratio_stoch2, g_ratio_stoch3]):
     lll.SetLineWidth(2)
     lll.SetLineColor(ROOT.kBlue)
     lll.Draw('same')
-    leg2 = ROOT.TLegend(0.15,0.15,0.55,0.35)
+    leg2 = ROOT.TLegend(0.20,0.20,0.60,0.40)
     leg2.SetBorderSize(0)
     leg2.AddEntry(g,'ratio of photostat. terms','PL')
-    leg2.AddEntry(ll,'sqrt(LO)','L')
-    leg2.AddEntry(lll,'sqrt(LO/#tau)','L')
+    leg2.AddEntry(ll,'sqrt(LO) = %.2f'%expRatioLO,'L')
+    leg2.AddEntry(lll,'sqrt(LO/#tau) = %.2f'%expRatioLOTau,'L')
     leg2.Draw('same')
     fitFun=ROOT.TF1('fitFun','pol0',0,16)
     fitFun.SetLineColor(1)
     g.Fit(fitFun,'QRS')
+    hint = ROOT.TH1F("hint","Fitted Gaussian with .95 conf.band", 16, -0.5, 15.5);
+    hint.SetMarkerStyle(1)
+    hint.SetMarkerSize(0)
+    tvf = ROOT.TVirtualFitter.GetFitter()
+    tvf.GetConfidenceIntervals(hint);
+    hint.SetFillColorAlpha(1,0.2);
+    hint.Draw("e3 same");
     print 'ratio of stoch. terms expected from sqrt(LO)      = ', expRatioLO
     print 'ratio of stoch. terms expected from sqrt(LO/tau)  = ', expRatioLOTau
     print 'ratio of stoch. terms measured at 3.5 V           = ', fitFun.GetParameter(0)
@@ -721,5 +826,5 @@ for sipm in sipmTypes:
             print sipm, ov, '  average noise  term = ', g_Noise_vs_bar[sipm][ov].GetMean(2),' ps'
     
 
-
+outfile.Close()    
 raw_input('OK?')

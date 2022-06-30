@@ -17,7 +17,7 @@ def PDE(ov, sipm, irr='0'):
 def Gain(ov, sipm, irr='0'):
     k = 1.
     if (irr == '2E14' and 'HPK' in sipm): k = 0.92 # gain reduction for HPK 2E14 irradiated SiPMs 
-    if (irr == '1E14' and 'HPK' in sipm): k = 0.96 # gain reduction for HPK 2E14 irradiated SiPMs (assume that for 1E14 is half of 2E14)
+    if (irr == '1E14' and 'HPK' in sipm): k = 0.96 # gain reduction for HPK 1E14 irradiated SiPMs (assume that for 1E14 is half of 2E14)
 
     # HPK - simple linear fit to data points from some slides
     if ('HPK' in sipm):
@@ -31,7 +31,7 @@ def Gain(ov, sipm, irr='0'):
     #    return k*(50739. + 95149.*ov) # FBK-MS
     # FBK-W4C 
     if ('FBK' in sipm):
-        return 91541.7*(ov+0.408182) # FBK-W4C
+        return k*91541.7*(ov+0.408182) # FBK-W4C
     
 def sigma_noise(sr):
     noise_single = math.sqrt( pow(420./sr,2) + 16.7*16.7 )

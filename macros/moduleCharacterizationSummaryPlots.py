@@ -43,18 +43,18 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 tofhir2b = False
 
 source = 'TB'
-#tResMin = 0
-#tResMax = 120
-#tResMaxTh = 200
-#vovMax = 7.5
+tResMin = 0
+tResMax = 120
+tResMaxTh = 200
+vovMax = 7.5
 #tResMin = 0
 #tResMax = 180
 #tResMaxTh = 240
 #vovMax = 5 
-tResMin = 0
-tResMax = 200
-tResMaxTh = 250
-vovMax = 3.0
+#tResMin = 0
+#tResMax = 200
+#tResMaxTh = 250
+#vovMax = 3.0
 
 # create files list
 label_list = (args.inputLabels.split(','))
@@ -173,8 +173,8 @@ if ('528' in args.outFolder and tofhir2b==False):
         VovsEff[vov] = vov 
     goodBars[5.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
     goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[2.50] = [0,3,4,6,7,8,9,10,11,12,13,14] 
-    goodBars[1.50] = [0,3,4,7,8,9,10,11,12,13] 
+    goodBars[2.50] = [0,3,4,5,6,7,8,9,10,11,12,13,14] 
+    goodBars[1.50] = [0,3,7,8,9,10,11,13,14] 
 
 if ('528' in args.outFolder and tofhir2b):
     plots_label = 'HPK + LYSO528 (prod5, type2)'
@@ -192,7 +192,7 @@ elif ('800' in args.outFolder):
     goodBars[7.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[4.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.00] = [0,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
     goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15] 
 
@@ -202,9 +202,9 @@ elif ('522' in args.outFolder):
         VovsEff[vov] = vov 
     goodBars[4.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+    goodBars[3.00] = [0,1,3,4,5,6,7,8,9,10,11,12,13,14,15] 
     goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[1.50] = [0,3,7,8,9,10,11,12,13,14,15] 
+    goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15] 
 
 
 elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
