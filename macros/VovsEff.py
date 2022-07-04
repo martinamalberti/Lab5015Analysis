@@ -1,6 +1,18 @@
 #! /usr/bin/env python
 import math
 
+
+def getVovEffDCR(data, sipm, ov_set) :
+  ov_eff_A = float(data[sipm+'_A'][ov_set][0])
+  dcr_A    = float(data[sipm+'_A'][ov_set][1])
+  ov_eff_B = float(data[sipm+'_B'][ov_set][0])
+  dcr_B    = float(data[sipm+'_B'][ov_set][1])
+  ov_eff =  0.5*(ov_eff_A+ov_eff_B)
+  dcr    =  0.5*(dcr_A+dcr_B)
+  return ([ov_eff, dcr])      
+
+
+'''
 VovsEff={}
 
 # VovsEff[sipm] = [effective Vov, DCR]
@@ -76,3 +88,6 @@ VovsEff['FBK_1E14_T-40C'] = { 1.25 : [1.21,  3.8],
                               2.40 : [2.21, 12.7],
                               2.80 : [2.49, 18.0],
                               3.60 : [2.93, 34.0]}
+
+
+'''

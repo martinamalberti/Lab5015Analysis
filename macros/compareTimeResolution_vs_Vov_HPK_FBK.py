@@ -7,7 +7,10 @@ import array
 import sys
 import time
 import argparse
+import json
 
+
+from VovsEff import *
 import ROOT
 import CMS_lumi, tdrstyle                                                                                                                                               
                                                                                                                                                                         
@@ -29,12 +32,16 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning   
 
 
+# import file with VovEff and DCR
+with open('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/Currents/VovsEff.json', 'r') as f:
+   data = json.load(f)                                                                                                                                                            
+                       
 #outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Oct21/'
 outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/'
 
 
-irr = 'unirr'
-#irr = '1E14'
+#irr = 'unirr'
+irr = '1E14'
 #irr = '2E14'
 
 sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO522']
@@ -70,100 +77,8 @@ labels = {'HPK_nonIrr_LYSO528' : 'HPK + LYSO528 (prod5, type2)',
           'FBK_2E14_LYSO797_T-35C' : 'FBK + LYSO797 (prod10 opt) - T=-35#circC'}
 
 VovsEff = {}
-VovsEff['HPK_nonIrr_LYSO528'] = { 1.50 : 1.50 ,
-                                  2.50 : 2.50 ,
-                                  3.50 : 3.50 ,
-                                  5.00 : 5.00 }
-
-VovsEff['FBK_nonIrr_LYSO800'] = { 1.50 : 1.50 ,
-                                 2.00 : 2.00 ,
-                                 3.00 : 3.00 ,
-                                 3.50 : 3.50 ,
-                                 4.00 : 4.00 ,
-                                 7.00 : 7.00 }
-
-VovsEff['FBK_nonIrr_LYSO522'] = { 1.50 : 1.50 ,
-                                 2.00 : 2.00 ,
-                                 3.00 : 3.00 ,
-                                 3.50 : 3.50 ,
-                                 4.00 : 4.00 }
-
-VovsEff['HPK_2E14_LYSO796_T-40C'] = { 1.10 : 1.02,
-                                      1.20 : 1.10,
-                                      1.30 : 1.17,
-                                      1.50 : 1.31,
-                                      1.70 : 1.43,
-                                      1.90 : 1.53,
-                                      2.10 : 1.60,
-                                      2.50 : 1.71}
-
-VovsEff['HPK_2E14_LYSO796_T-35C'] = { 0.90 : 0.83,
-                                      1.10 : 0.99,
-                                      1.25 : 1.09,                                                                  
-                                      1.40 : 1.19,  
-                                      1.60 : 1.31,   
-                                      1.80 : 1.40,   
-                                      2.00 : 1.48,
-                                      2.40 : 1.59}  
-
-VovsEff['HPK_1E14_LYSO802_T-40C'] = { 1.10 : 1.06,
-                                      1.25 : 1.19,
-                                      1.40 : 1.32,
-                                      1.60 : 1.49,
-                                      1.80 : 1.65,
-                                      2.00 : 1.80,
-                                      2.40 : 2.06,
-                                      2.80 : 2.26} 
-
-VovsEff['HPK_1E14_LYSO802_T-35C'] = { 1.10 : 1.04,
-                                      1.25 : 1.17,
-                                      1.40 : 1.30,
-                                      1.60 : 1.46,
-                                      1.80 : 1.61,
-                                      2.00 : 1.74,
-                                      2.40 : 1.99,
-                                      3.10 : 2.28}
-
-VovsEff['FBK_1E14_LYSO803_T-35C'] = { 1.10 : 1.07,
-                                      1.25 : 1.21,
-                                      1.40 : 1.34,
-                                      1.60 : 1.52,
-                                      1.80 : 1.70,
-                                      2.00 : 1.86,
-                                      2.40 : 2.18,
-                                      2.80 : 2.45,
-                                      3.60 : 2.89}           
-
-VovsEff['FBK_1E14_LYSO803_T-40C'] = { 1.10 : 1.07,
-                                      1.25 : 1.21,
-                                      1.40 : 1.35,
-                                      1.60 : 1.53,
-                                      1.80 : 1.71,
-                                      2.00 : 1.88,
-                                      2.40 : 2.21,
-                                      2.80 : 2.49,
-                                      3.60 : 2.93}
-
-
-VovsEff['FBK_2E14_LYSO797_T-35C'] = { 1.20 : 1.10,
-                                      1.40 : 1.26,
-                                      1.60 : 1.41,
-                                      1.80 : 1.55,
-                                      2.00 : 1.67,
-                                      2.40 : 1.87,
-                                      2.80 : 2.02,
-                                      3.00 : 2.08}
-
-
-VovsEff['FBK_2E14_LYSO797_T-40C'] = { 1.20 : 1.12,
-                                      1.40 : 1.29,
-                                      1.60 : 1.44,
-                                      1.80 : 1.58,
-                                      2.00 : 1.71,
-                                      2.40 : 1.92,
-                                      2.80 : 2.08,
-                                      3.00 : 2.14}
-
+for sipm in sipmTypes:
+   VovsEff[sipm] = {}
 
 # plots attr: markerStyle, color
 attrs = { 'HPK_nonIrr_LYSO528'     : [ 20, ROOT.kRed],
@@ -199,29 +114,36 @@ for sipm in sipmTypes:
     for i,vov in enumerate(Vovs[sipm]):
         gg = f.Get('g_deltaT_energyRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%(vov))
         fitFun = ROOT.TF1('fitFun','pol0',0,16)
-        #fitFun.SetRange(3,12)
         gg.Fit(fitFun,'QR')
-        print sipm, VovsEff[sipm][vov], fitFun.GetParameter(0)
+
+        if ('nonIrr' not in sipm):  
+           VovsEff[sipm][vov] = getVovEffDCR(data, sipm[:9]+sipm[17:], '%.02f'%vov)[0]
+           print sipm, sipm[:9]+sipm[17:], vov,  VovsEff[sipm][vov]
+        else:
+           VovsEff[sipm][vov] = vov
+
         g[sipm].SetPoint(g[sipm].GetN(), VovsEff[sipm][vov], fitFun.GetParameter(0))
         #g[sipm].SetPointError(g[sipm].GetN()-1, 0, fitFun.GetParError(0))
         g[sipm].SetPointError( g[sipm].GetN()-1, 0, gg.GetRMS(2) )# use RMS as error on the points
-        #g[sipm].SetPoint(g[sipm].GetN(), VovsEff[sipm][vov], gg.GetMean(2))
-        #g[sipm].SetPointError(g[sipm].GetN()-1, 0, gg.GetRMS(2)/math.sqrt(gg.GetN()))
+
         
 c1 =  ROOT.TCanvas('c_timeResolution_bestTh_vs_Vov','c_timeResolution_bestTh_vs_Vov',600,600)
 c1.SetGridy()
 c1.cd()
-#jsipm = len(sipmTypes)-1
-jsipm = 1
-if len(sipmTypes)==1: jsipm = 0 
-n = g[sipmTypes[jsipm]].GetN()
-xmax = g[sipmTypes[jsipm]].GetX()[n-1] + 0.5
-xmin = g[sipmTypes[jsipm]].GetX()[0]   - 0.5 
-ymin = 60
-ymax = 180
-if (irr=='unirr'):
-    ymin = 20
-    ymax = 100
+xmin = 1
+xmax = 7.5
+ymin = 20
+ymax = 100
+if (irr =='1E14'):
+   xmin = 0.5
+   xmax = 3.5
+   ymin = 60
+   ymax = 180
+if (irr =='2E14'):
+   xmin = 0.6
+   xmax = 2.6
+   ymin = 60
+   ymax = 180
 hdummy = ROOT.TH2F('hdummy','',100,xmin,xmax,100,ymin,ymax)
 hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')

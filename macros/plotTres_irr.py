@@ -7,8 +7,8 @@ import array
 import sys
 import time
 import argparse
+import json                                                                                                                                                                      
 
-import ROOT
 import ROOT
 import CMS_lumi, tdrstyle
 
@@ -39,6 +39,8 @@ ROOT.gStyle.SetOptFit(0111)
 
 from SiPM import *
 from VovsEff import *
+
+
 
 def getSlewRateFromPulseShape(g1, timingThreshold, npoints, gtemp, canvas=None):
     if ( g1.GetN() < npoints): return (-1, -1)
@@ -107,6 +109,11 @@ def findTimingThreshold(g2, ov):
 
 # =====================================
 
+
+# import file with VovEff and DCR
+with open('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/Currents/VovsEff.json', 'r') as f:                                                                                              data = json.load(f)       
+
+
 #mysipm = 'HPK'
 mysipm = 'FBK'
 
@@ -115,7 +122,7 @@ outfile = None
 sipmTypes = []
 
 if (mysipm == 'HPK'):
-    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_HPK_2E14_1E14/'        
+    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_HPK_2E14_1E14_test/'        
     if (os.path.exists(outdir)==False):
         os.mkdir(outdir)   
     outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_2E14_1E14_TBJune22.root','recreate')
@@ -123,12 +130,12 @@ if (mysipm == 'HPK'):
     ov_ref    = 1.5
 
 if (mysipm == 'FBK'):
-    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_2E14_1E14/'        
+    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_2E14_1E14_test/'        
     if (os.path.exists(outdir)==False):
         os.mkdir(outdir)   
     outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_2E14_1E14_TBJune22.root','recreate')
     sipmTypes = ['FBK_2E14_T-35C','FBK_2E14_T-40C','FBK_1E14_T-35C','FBK_1E14_T-40C']
-    ov_ref    = 1.9
+    ov_ref    = 1.8
 
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
@@ -145,10 +152,10 @@ fnames = {'HPK_2E14_T-40C' : '../plots/HPK_2E14_LYSO796_T-40C_summary.root',
           'FBK_1E14_T-40C' : '../plots/FBK_1E14_LYSO803_T-40C_summary.root',
           'FBK_1E14_T-35C' : '../plots/FBK_1E14_LYSO803_T-35C_summary.root'}
           
-LO = { 'HPK_2E14_T-40C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
-       'HPK_2E14_T-35C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
-       'HPK_1E14_T-40C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
-       'HPK_1E14_T-35C': 1265., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
+LO = { 'HPK_2E14_T-40C': 1250., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
+       'HPK_2E14_T-35C': 1250., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
+       'HPK_1E14_T-40C': 1250., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
+       'HPK_1E14_T-35C': 1250., #? boh assumo +15% rispetto a quelli tipici...????  1100*1.15
        'FBK_2E14_T-40C': 1050., # uso LO misurato su FBK non irr in lab ?
        'FBK_2E14_T-35C': 1050.,
        'FBK_1E14_T-40C': 1050.,
@@ -158,10 +165,10 @@ sigma_stoch_ref = {'HPK_2E14_T-40C' : 37., # uso valore misurato a OV = 1.50V su
                    'HPK_2E14_T-35C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
                    'HPK_1E14_T-40C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
                    'HPK_1E14_T-35C' : 37., # uso valore misurato a OV = 1.50V su HPK+528 non irr?
-                   'FBK_2E14_T-40C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
-                   'FBK_2E14_T-35C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
-                   'FBK_1E14_T-40C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
-                   'FBK_1E14_T-35C' : 48., # uso valore misurato a OV = 1.90V su FBK non irr?
+                   'FBK_2E14_T-40C' : 48., # uso valore misurato a OV = 1.80V su FBK non irr?
+                   'FBK_2E14_T-35C' : 48., # uso valore misurato a OV = 1.80V su FBK non irr?
+                   'FBK_1E14_T-40C' : 48., # uso valore misurato a OV = 1.80V su FBK non irr?
+                   'FBK_1E14_T-35C' : 48., # uso valore misurato a OV = 1.80V su FBK non irr?
                    }
 
 
@@ -279,7 +286,9 @@ for sipm in sipmTypes:
         g_bestTh_vs_Vov[sipm][bar] = ROOT.TGraphErrors()
                    
         for ov in Vovs[sipm]:
-            ovEff = VovsEff[sipm][ov][0]
+            print sipm, sipm, ov,  str(ov)
+            ovEff = getVovEffDCR(data, sipm, ('%.02f'%ov))[0]
+            #ovEff = getVovEffDCR(data, sipm, ('%.02f'%ov))[0]
             if ( ovEff < g[sipm][bar].GetX()[0] or ovEff > g[sipm][bar].GetX()[g[sipm][bar].GetN()-1]): continue
             # get measured time resolution
             sigma_meas = g[sipm][bar].Eval(ovEff)
@@ -388,9 +397,10 @@ for sipm in sipmTypes:
                 g_DCR_vs_bar[sipm][ov].SetPoint( g_DCR_vs_bar[sipm][ov].GetN(), bar, sigma_dcr )
                 g_DCR_vs_bar[sipm][ov].SetPointError( g_DCR_vs_bar[sipm][ov].GetN()-1, 0,  err_sigma_dcr)
                 
-                dcr = VovsEff[sipm][ov][1]
-                if ('2E14' in sipm and 'HPK' in sipm): dcr = dcr/0.92 #8% gain reduction
-                if ('1E14' in sipm and 'HPK' in sipm): dcr = dcr/0.96 #4% gain reduction ???
+                #dcr = VovsEff[sipm][ov][1]
+                #if ('2E14' in sipm and 'HPK' in sipm): dcr = dcr/0.92 #8% gain reduction
+                #if ('1E14' in sipm and 'HPK' in sipm): dcr = dcr/0.96 #4% gain reduction ???
+                dcr = getVovEffDCR(data,sipm,('%.02f'%ov))[1]
 
                 #print sipm, bar, ov, ovEff, dcr, Npe[sipm][ov], math.sqrt(dcr)/Npe[sipm][ov]/(math.sqrt(30.)/3000.)
                 g_DCR_vs_Npe[sipm][bar].SetPoint( g_DCR_vs_Npe[sipm][bar].GetN(), math.sqrt(dcr)/Npe[sipm][ov]/(math.sqrt(30.)/3000.), sigma_dcr )
@@ -418,10 +428,10 @@ for sipm in sipmTypes:
     g_SR_vs_Vov_average[sipm] = ROOT.TGraphErrors()
     
     for ov in Vovs[sipm]:
-        ovEff = VovsEff[sipm][ov][0] 
-        dcr   = VovsEff[sipm][ov][1]
-        if ('2E14' in sipm and 'HPK' in sipm): dcr = dcr/0.92 #8% gain reduction
-        if ('1E14' in sipm and 'HPK' in sipm): dcr = dcr/0.96 #4% gain reduction ???
+        ovEff = getVovEffDCR(data,sipm,('%.02f'%ov))[0] 
+        dcr   = getVovEffDCR(data,sipm,('%.02f'%ov))[1]
+        #if ('2E14' in sipm and 'HPK' in sipm): dcr = dcr/0.92 #8% gain reduction
+        #if ('1E14' in sipm and 'HPK' in sipm): dcr = dcr/0.96 #4% gain reduction ???
 
         if (ov in  g_SR_vs_bar[sipm].keys()): 
             fitpol0 = ROOT.TF1('fitpol0','pol0',-100,100)
@@ -456,7 +466,7 @@ for bar in range(0,16):
     g_DCR_vs_DCR[bar] = ROOT.TGraphErrors()
     for sipm in sipmTypes:
         if (bar not in g_DCR_vs_Vov[sipm].keys()): continue
-        ovEff = 1.50 # 2E14
+        ovEff = ov_ref # 2E14
         dcr = g_DCR_vs_Vov[sipm][bar].Eval(ovEff)
         err_dcr = 0
         for i in range(0, g_DCR_vs_Vov[sipm][bar].GetN()):
@@ -569,7 +579,7 @@ print 'Plotting time resolution vs slew rate...'
 for sipm in sipmTypes:
     for ov in Vovs[sipm]:
         if (ov not in g_Tot_vs_SR[sipm].keys()): continue
-        ovEff = VovsEff[sipm][ov][0] 
+        ovEff = getVovEffDCR(data,sipm, ('%.02f'%ov))[0] 
         c =  ROOT.TCanvas('c_timeResolution_vs_SR_%s_Vov%.02f'%(sipm,ovEff),'c_timeResolution_vs_SR_%s_Vov%.02f'%(sipm,ovEff),600,600)
         c.SetGridy()
         c.cd()
@@ -809,7 +819,7 @@ hdummy9 = {}
 for j,sipm in enumerate(sipmTypes):
     for ov in Vovs[sipm]:
         if (ov not in g_SR_vs_bar[sipm].keys()): continue
-        ovEff = VovsEff[sipm][ov][0] 
+        ovEff = getVovEffDCR(data,sipm, ('%.02f'%ov))[0] 
         c5[ov] = ROOT.TCanvas('c_slewRate_vs_bar_%s_Vov%.2f'%(sipm,ovEff),'c_slewRate_vs_bar_%s_Vov%.2f'%(sipm,ovEff),600,600)
         c5[ov].SetGridy()
         c5[ov].cd()

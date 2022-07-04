@@ -7,6 +7,11 @@ import array
 import sys
 import time
 import argparse
+import json
+
+
+from VovsEff import *
+
 
 parser = argparse.ArgumentParser(description='Module characterization summary plots')
 #parser.add_argument("-r",  "--runs",          required=True, type=str, help="comma-separated list of runs to be processed")
@@ -40,21 +45,28 @@ ROOT.gStyle.SetPadTopMargin(0.07)
 ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
+
+
 tofhir2b = False
 
+# import file with VovEff and DCR
+with open('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/Currents/VovsEff.json', 'r') as f:
+   data = json.load(f)   
+
+
 source = 'TB'
-tResMin = 0
-tResMax = 120
-tResMaxTh = 200
-vovMax = 7.5
+#tResMin = 0
+#tResMax = 120
+#tResMaxTh = 200
+#vovMax = 7.5
 #tResMin = 0
 #tResMax = 180
 #tResMaxTh = 240
 #vovMax = 5 
-#tResMin = 0
-#tResMax = 200
-#tResMaxTh = 250
-#vovMax = 3.0
+tResMin = 0
+tResMax = 200
+tResMaxTh = 250
+vovMax = 3.0
 
 # create files list
 label_list = (args.inputLabels.split(','))
@@ -144,8 +156,10 @@ bars = []
 thresholds = []
 Vovs = [] 
 for label in label_list:
-    inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-    if (tofhir2b):
+    inputFile = None
+    if (tofhir2b == False):
+        inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+    if (tofhir2b == True):
         inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
     listOfKeys = [key.GetName().replace('h1_deltaT_energyRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_energyRatioCorr')]
     for k in listOfKeys:
@@ -209,41 +223,23 @@ elif ('522' in args.outFolder):
 
 elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-40#circC'
-    VovsEff = { 1.10 : 1.02,
-                1.20 : 1.10,
-                1.30 : 1.17,
-                1.50 : 1.31,
-                1.70 : 1.43,
-                1.90 : 1.53,
-                2.10 : 1.60,
-                2.50 : 1.71}
-    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+    for ov in Vovs : 
+        VovsEff[ov] = getVovEffDCR(data, 'HPK_2E14_T-40C', ('%.02f'%ov))[0] 
+        goodBars[ov] = [0,3,7,10,11,13,14,15]
 
 
 elif ('HPK_2E14_LYSO796_T-35C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-35#circC'
-    VovsEff = { 0.90 : 0.83,
-                1.10 : 0.99,
-                1.25 : 1.09,
-                1.40 : 1.19,
-                1.60 : 1.31,
-                1.80 : 1.40,
-                2.00 : 1.48,
-                2.40 : 1.59}
-    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+    for ov in Vovs : 
+       VovsEff[ov] = getVovEffDCR(data, 'HPK_2E14_T-35C', ('%.02f'%ov))[0] 
+       goodBars[ov] = [0,3,7,10,11,13,14,15]
 
 
 elif ('HPK_1E14_LYSO802_T-40C' in args.outFolder):
     plots_label = 'HPK 1E14 + LYSO802 (prod9)  T=-40#circC'
-    VovsEff = { 1.10 : 1.06,
-                1.25 : 1.19,
-                1.40 : 1.32,
-                1.60 : 1.49,
-                1.80 : 1.65,
-                2.00 : 1.80,
-                2.40 : 2.06,
-                2.80 : 2.26}
-    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+    for ov in Vovs : 
+       VovsEff[ov]  = getVovEffDCR(data, 'HPK_1E14_T-40C', ('%.02f'%ov))[0]        
+       goodBars[ov] = [0,3,7,10,11,13,14,15]
 
 
 elif ('HPK_1E14_LYSO802_T-35C' in args.outFolder):
@@ -256,21 +252,16 @@ elif ('HPK_1E14_LYSO802_T-35C' in args.outFolder):
                 2.00 : 1.74,
                 2.40 : 1.99,
                 3.10 : 2.28}
-    for ov in Vovs : goodBars[ov] = [0,3,7,10,11,13,14,15]
+    for ov in Vovs : 
+       VovsEff[ov]  = getVovEffDCR(data, 'HPK_1E14_T-35C', ('%.02f'%ov))[0]        
+       goodBars[ov] = [0,3,7,10,11,13,14,15]
 
 
 #CONF 8
 elif ('FBK_1E14_LYSO803_T-35C' in args.outFolder):
     plots_label = 'FBK 1E14 + LYSO803 (prod9)  T=-35#circC'
-    VovsEff = { 1.10 : 1.07,
-                1.25 : 1.21,
-                1.40 : 1.34,
-                1.60 : 1.52,
-                1.80 : 1.70,
-                2.00 : 1.86,
-                2.40 : 2.18,
-                2.80 : 2.45,
-                3.60 : 2.89}
+    for ov in Vovs : 
+       VovsEff[ov]  = getVovEffDCR(data, 'FBK_1E14_T-35C', ('%.02f'%ov))[0]        
     goodBars[1.10] = [7]
     goodBars[1.25] = [7]
     goodBars[1.40] = [0,3,7,10,13,15]
@@ -284,15 +275,8 @@ elif ('FBK_1E14_LYSO803_T-35C' in args.outFolder):
 #CONF 8.01
 elif ('FBK_1E14_LYSO803_T-40C' in args.outFolder):
     plots_label = 'FBK 1E14 + LYSO803 (prod9)  T=-40#circC'
-    VovsEff = { 1.10 : 1.07,
-                1.25 : 1.21,
-                1.40 : 1.35,
-                1.60 : 1.53,
-                1.80 : 1.71,
-                2.00 : 1.88,
-                2.40 : 2.21,
-                2.80 : 2.49,
-                3.60 : 2.93}
+    for ov in Vovs : 
+       VovsEff[ov]  = getVovEffDCR(data, 'FBK_1E14_T-40C', ('%.02f'%ov))[0]        
     goodBars[1.10] = [7]
     goodBars[1.25] = [7]
     goodBars[1.40] = [0,3,7,10,13,15]
@@ -307,14 +291,8 @@ elif ('FBK_1E14_LYSO803_T-40C' in args.outFolder):
 #CONF 9.00
 elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
     plots_label = 'FBK 2E14 + LYSO797 (prod10)   T=-35#circC'
-    VovsEff = { 1.20 : 1.10,
-                1.40 : 1.26,
-                1.60 : 1.41,
-                1.80 : 1.55,
-                2.00 : 1.67,
-                2.40 : 1.87,
-                2.80 : 2.02,
-                3.00 : 2.08}
+    for ov in Vovs : 
+       VovsEff[ov]  = getVovEffDCR(data, 'FBK_2E14_T-35C', ('%.02f'%ov))[0]        
     goodBars[1.20] = [7,11,15]
     goodBars[1.40] = [0,3,7,10,11,13,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
@@ -328,14 +306,8 @@ elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
 #CONF 9.01
 elif ('FBK_2E14_LYSO797_T-40C' in args.outFolder):
     plots_label = 'FBK 2E14 + LYSO797 (prod10)   T=-40#circC'
-    VovsEff = { 1.20 : 1.12,
-                1.40 : 1.29,
-                1.60 : 1.44,
-                1.80 : 1.58,
-                2.00 : 1.71,
-                2.40 : 1.92,
-                2.80 : 2.08,
-                3.00 : 2.14}
+    for ov in Vovs : 
+       VovsEff[ov]  = getVovEffDCR(data, 'FBK_2E14_T-40C', ('%.02f'%ov))[0]        
     goodBars[1.20] = [7,11,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
@@ -405,8 +377,10 @@ for vov in Vovs:
 # --- Read the histograms from moduleCharacterization_step2 file
 for label in label_list:
     print label
-    inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-    if (tofhir2b):
+    inputFile == None
+    if (tofhir2b == False):   
+        inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+    if (tofhir2b == True):
         inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
 
     print '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label
