@@ -112,6 +112,55 @@ void GetEnergyBins(TH1F *h, std::vector<float> *r, std::map<int, float> & b){
 }
 
 
+// ---- Draw  DeltaT plots                                                                                                                                                   
+void drawDeltaT(TCanvas *& c, TH1F *histo, TF1 *& fitFunc, std::string xaxis_label, std::string latex_label, std::string drawSame ){
+
+  c->cd();
+
+  // -- first histo
+  histo -> SetTitle(Form("; %s #Deltat [ps];entries", xaxis_label.c_str()));
+  histo -> Draw(drawSame.c_str());
+
+  float* vals = new float[6];
+  FindSmallestInterval(vals,histo,0.68);
+  float min = vals[4];
+  float max = vals[5];
+  float delta = max-min;
+  float sigma = 0.5*delta;
+  float effSigma = sigma;
+
+  float fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
+  float fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
+
+  fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
+  fitFunc -> SetRange(fitXMin, fitXMax);
+  histo -> Fit(fitFunc,"QNRSL");
+  fitFunc -> SetRange(fitFunc->GetParameter(1)-1.0*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+1.0*fitFunc->GetParameter(2));
+  histo -> Fit(fitFunc,"QNRSL");
+  fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
+  histo -> Fit(fitFunc,"QRSL+");
+
+  fitFunc -> SetLineColor( histo -> GetLineColor() + 1 );
+  fitFunc -> SetLineWidth(3);
+  fitFunc -> Draw("same");
+
+  histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
+  histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
+  //histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-10.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+10.*fitFunc->GetParameter(2));
+
+  TLatex* latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{%s}^{eff} = %.0f ps}{#sigma_{%s}^{gaus} = %.0f ps}",latex_label.c_str(),effSigma, latex_label.c_str(),fabs(fitFunc->GetParameter(2))));
+  if (drawSame == "same")
+    latex = new TLatex(0.20,0.85,Form("#splitline{#sigma_{%s}^{eff} = %.0f ps}{#sigma_{%s}^{gaus} = %.0f ps}",latex_label.c_str(),effSigma, latex_label.c_str(),fabs(fitFunc->GetParameter(2))));
+  latex -> SetNDC();
+  latex -> SetTextFont(42);
+  latex -> SetTextSize(0.04);
+  latex -> SetTextColor( histo -> GetLineColor() );
+  latex -> Draw("same");
+
+}
+
+
+
 
 // ============  ********* MAIN  ************ =============== //
 int main(int argc, char** argv)
@@ -1234,153 +1283,40 @@ int main(int argc, char** argv)
 	      c = new TCanvas(Form("c_deltaT_energyRatioCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_energyRatioCorr_%s",labelLR_energyBin.c_str()));
 	      
 	      histo = h1_deltaT_energyRatioCorr[index2];
-	      
-	      histo -> SetTitle(Form(";energy-corrected #Deltat [ps];entries"));
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kBlue);
 	      histo -> SetMarkerColor(kBlue);
-	      histo -> Draw("");
-	      
-	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      float min = vals[4];
-	      float max = vals[5];
-	      float delta = max-min;
-	      float sigma = 0.5*delta;
-	      float effSigma = sigma;
-	      
-	      
-	      float fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      float fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
 	      
 	      TF1* fitFunc = new TF1(Form("fitFunc_energyCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      // non mi prende il range di fit se non faccio SetRange a mano...
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      
-	      fitFunc -> SetLineColor(kBlue+1);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");         
+	      drawDeltaT(c, histo, fitFunc, "energy-corrected", "en.Corr","");
 	      
 	      outFile -> cd();
 	      histo -> Write();
 	      
-              if (!source.compare("Laser")) histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-10.*fitFunc->GetParameter(2),
-										fitFunc->GetParameter(1)+10.*fitFunc->GetParameter(2));
-	      
-	      histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
-	      histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
-	      
-	      
-	      latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{corr.}^{eff} = %.0f ps}{#sigma_{corr.}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-	      latex -> SetNDC();
-	      latex -> SetTextFont(42);
-	      latex -> SetTextSize(0.04);
-	      latex -> SetTextColor(kBlue);
-	      latex -> Draw("same");
 	      
 	      // -- totRatio corr deltaT
 	      c2 = new TCanvas(Form("c_deltaT_totRatioCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_totRatioCorr_%s",labelLR_energyBin.c_str()));
 	      
 	      histo = h1_deltaT_totRatioCorr[index2];
-              histo -> SetTitle(Form(";ToT-corrected #Deltat [ps];entries"));
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kBlue);
 	      histo -> SetMarkerColor(kBlue);
-              histo -> Draw("");
-	      	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      min = vals[4];
-	      max = vals[5];
-	      delta = max-min;
-	      sigma = 0.5*delta;
-	      effSigma = sigma;
-	      	      
-	      fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
-	      
+
 	      fitFunc = new TF1(Form("fitFunc_totCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL");
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.0*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.0*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL");
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+");
-	      
-	      fitFunc -> SetLineColor(kBlue+1);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");         
+	      drawDeltaT(c2, histo, fitFunc, "ToT-corrected", "totCorr", "");
 	      
 	      outFile -> cd();
 	      histo -> Write();
 
-	      if (!source.compare("Laser")) histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-10.*fitFunc->GetParameter(2),
-										fitFunc->GetParameter(1)+10.*fitFunc->GetParameter(2));
-	      
-	      histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
-	      histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
-
-
-              latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{corr.}^{eff} = %.0f ps}{#sigma_{corr.}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-              latex -> SetNDC();
-              latex -> SetTextFont(42);
-              latex -> SetTextSize(0.04);
-              latex -> SetTextColor(kBlue);
-              latex -> Draw("same");
-              
-
-	  
 	      // -- raw delta T
               histo = h1_deltaT[index2];
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kRed);
 	      histo -> SetMarkerColor(kRed);
 
-	      c->cd();
-	      histo -> Draw("same");
-
-	      c2->cd();
-	      histo -> Draw("same");
-	      
-	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      min = vals[4];
-	      max = vals[5];
-	      delta = max-min;
-	      sigma = 0.5*delta;
-	      effSigma = sigma;
-	      
-	      fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
-	      
 	      fitFunc = new TF1(Form("fitFunc_%s",labelLR_energyBin.c_str()),"gaus",-10000,10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      
-	      fitFunc -> SetLineColor(kRed+1);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");
-	      
-	      latex = new TLatex(0.20,0.85,Form("#splitline{#sigma_{raw}^{eff} = %.0f ps}{#sigma_{raw}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-	      latex -> SetNDC();
-	      latex -> SetTextFont(42);
-	      latex -> SetTextSize(0.04);
-	      latex -> SetTextColor(kRed);
-              c->cd();
-	      latex -> Draw("same");
-              c2->cd();
-	      latex -> Draw("same");
+              drawDeltaT(c, histo, fitFunc, "", "raw", "same");
+              drawDeltaT(c2, histo, fitFunc, "", "raw", "same");
 
 	      outFile -> cd();
 	      histo -> Write();
@@ -1392,8 +1328,6 @@ int main(int argc, char** argv)
 	      c2 -> Print(Form("%s/CTR_totRatioCorr/c_deltaT_energyRatioCorr__%s.pdf",plotDir.c_str(),labelLR_energyBin.c_str()));
 	      c2 -> Print(Form("%s/CTR_totRatioCorr/c_deltaT_energyRatioCorr__%s.png",plotDir.c_str(),labelLR_energyBin.c_str()));
 	      delete c2;
-
-	      delete latex;
 
 	      // -- draw deltaT vs t1fine
 	      if(!p1_deltaT_energyRatioCorr_vs_t1fineMean[index2]) continue;
@@ -1563,108 +1497,32 @@ int main(int argc, char** argv)
 	      std::cout << labelLR_energyBin.c_str()<<std::endl;
 	      
 
-	      c = new TCanvas(Form("c_deltaT_energyRatioPhaseCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_energyRatioPhaseCorr_%s",labelLR_energyBin.c_str()));
 	      
 	      // -- energy and phase corr deltaT
+	      c = new TCanvas(Form("c_deltaT_energyRatioPhaseCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_energyRatioPhaseCorr_%s",labelLR_energyBin.c_str()));
 	      histo = h1_deltaT_energyRatioPhaseCorr[index2];
-	      
-	      histo -> SetTitle(Form(";phase-corrected #Deltat [ps];entries"));
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kGreen+1);
 	      histo -> SetMarkerColor(kGreen+1);
 	      
-	      histo -> Draw("");
-	      
-	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      float min = vals[4];
-	      float max = vals[5];
-	      float delta = max-min;
-	      float sigma = 0.5*delta;
-	      float effSigma = sigma;
-	      
-	      
-	      float fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      float fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
-	      
-	      TF1* fitFunc = new TF1(Form("fitFunc_phaseCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      
-	      fitFunc -> SetLineColor(kGreen+2);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");         
-	      
-	      
+	      TF1* fitFunc = new TF1(Form("fitFunc_energyPhaseCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+	      drawDeltaT(c, histo, fitFunc, "phase-corrected", "ph.Corr","");
+	      	      
 	      outFile -> cd();
 	      histo -> Write();
-	      	      	      
-	      if (!source.compare("Laser")) histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-10.*fitFunc->GetParameter(2),
-										fitFunc->GetParameter(1)+10.*fitFunc->GetParameter(2));
-	      
-	      histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
-	      histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
-	      
-	      
-	      latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{corrPh.}^{eff} = %.0f ps}{#sigma_{corrPh.}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-	      latex -> SetNDC();
-	      latex -> SetTextFont(42);
-	      latex -> SetTextSize(0.04);
-	      latex -> SetTextColor(kGreen+2);
-	      latex -> Draw("same");
-	      
+	      	      
 	      // -- energy corr deltaT
 	      histo = h1_deltaT_energyRatioCorr[index2];
-	      
-	      histo -> SetTitle(Form(";energy-corrected #Deltat [ps];entries"));
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kBlue);
 	      histo -> SetMarkerColor(kBlue);
-	      
-	      histo -> Draw("same");
-	      
-	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      min = vals[4];
-	      max = vals[5];
-	      delta = max-min;
-	      sigma = 0.5*delta;
-	      effSigma = sigma;
-	      
-	      
-	      fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
-	      
-	      fitFunc = new TF1(Form("fitFunc_energyCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      
-	      fitFunc -> SetLineColor(kBlue+1);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");         
-	      
-	      latex = new TLatex(0.20,0.85,Form("#splitline{#sigma_{corrEn.}^{eff} = %.0f ps}{#sigma_{corrEn.}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-	      latex -> SetNDC();
-	      latex -> SetTextFont(42);
-	      latex -> SetTextSize(0.04);
-	      latex -> SetTextColor(kBlue);
-	      latex -> Draw("same");
 	      	      
+	      fitFunc = new TF1(Form("fitFunc_energyCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+	      drawDeltaT(c, histo, fitFunc, "energy-corrected", "en.Corr", "same");
 	      
 	      c -> Print(Form("%s/CTR_energyRatioPhaseCorr/c_deltaT_energyRatioPhaseCorr__%s.pdf",plotDir.c_str(),labelLR_energyBin.c_str()));
 	      c -> Print(Form("%s/CTR_energyRatioPhaseCorr/c_deltaT_energyRatioPhaseCorr__%s.png",plotDir.c_str(),labelLR_energyBin.c_str()));
 	      delete c;
-	      delete latex;
 
 
               // -- tot and phase corr deltaT
@@ -1673,103 +1531,29 @@ int main(int argc, char** argv)
 	      c = new TCanvas(Form("c_deltaT_totRatioPhaseCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_totRatioPhaseCorr_%s",labelLR_energyBin.c_str()));
 	      
               histo = h1_deltaT_totRatioPhaseCorr[index2];
-	      
-	      histo -> SetTitle(Form(";phase-corrected #Deltat [ps];entries"));
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kGreen+1);
 	      histo -> SetMarkerColor(kGreen+1);
-	      
-	      histo -> Draw("");
-	      
-	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      min = vals[4];
-	      max = vals[5];
-	      delta = max-min;
-	      sigma = 0.5*delta;
-	      effSigma = sigma;
 	      	      
-	      fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
-	      
-	      fitFunc = new TF1(Form("fitFunc_phaseCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      
-	      fitFunc -> SetLineColor(kGreen+2);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");         
-	      
+	      fitFunc = new TF1(Form("fitFunc_totPhaseCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+	      drawDeltaT(c, histo, fitFunc, "phase-corrected", "ph.Corr", "");      	      
 	      
 	      outFile -> cd();
 	      histo -> Write();
-	      
-              if (!source.compare("Laser")) histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-10.*fitFunc->GetParameter(2),
-										fitFunc->GetParameter(1)+10.*fitFunc->GetParameter(2));
-	      
-	      histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
-	      histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
-	      
-	      
-	      latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{corrPh.}^{eff} = %.0f ps}{#sigma_{corrPh.}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-              latex -> SetNDC();
-	      latex -> SetTextFont(42);
-	      latex -> SetTextSize(0.04);
-	      latex -> SetTextColor(kGreen+2);
-	      latex -> Draw("same");
-	      
+	      	      
               // -- tot corr deltaT
 	      histo = h1_deltaT_totRatioCorr[index2];
-	      
-	      histo -> SetTitle(Form(";tot-corrected #Deltat [ps];entries"));
 	      histo -> SetLineWidth(2);
 	      histo -> SetLineColor(kBlue);
 	      histo -> SetMarkerColor(kBlue);
-	      
-	      histo -> Draw("same");
-	      
-	      
-	      FindSmallestInterval(vals,histo,0.68);
-	      min = vals[4];
-	      max = vals[5];
-	      delta = max-min;
-	      sigma = 0.5*delta;
-	      effSigma = sigma;
-	      
-	      
-	      fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-	      fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
-	      
-	      fitFunc = new TF1(Form("fitFunc_totCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-	      fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-	      fitFunc -> SetRange(fitXMin, fitXMax);
-	      histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-	      fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-	      
-	      fitFunc -> SetLineColor(kBlue+1);
-	      fitFunc -> SetLineWidth(3);
-	      fitFunc -> Draw("same");         
 	      	      
-	      latex = new TLatex(0.20,0.85,Form("#splitline{#sigma_{corrToT.}^{eff} = %.0f ps}{#sigma_{corrToT.}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-              latex -> SetNDC();
-	      latex -> SetTextFont(42);
-	      latex -> SetTextSize(0.04);
-	      latex -> SetTextColor(kBlue);
-	      latex -> Draw("same");
+	      fitFunc = new TF1(Form("fitFunc_totCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+	      drawDeltaT(c, histo, fitFunc, "ToT-corrected", "totCorr", "same"); 
 	      	      
 	      
 	      c -> Print(Form("%s/CTR_totRatioPhaseCorr/c_deltaT_totRatioPhaseCorr__%s.pdf",plotDir.c_str(),labelLR_energyBin.c_str()));
 	      c -> Print(Form("%s/CTR_totRatioPhaseCorr/c_deltaT_totRatioPhaseCorr__%s.png",plotDir.c_str(),labelLR_energyBin.c_str()));
 	      delete c;
-	      delete latex;
 
 	      // -- draw deltaT vs position
 	      if (useTrackInfo) {
@@ -1942,112 +1726,66 @@ int main(int argc, char** argv)
 		std::cout << labelLR_energyBin.c_str()<<std::endl;
 
 
-		c = new TCanvas(Form("c_deltaT_energyRatioPhasePosCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_energyRatioPhasePosCorr_%s",labelLR_energyBin.c_str()));
 
-		// -- energy and phase corr deltaT
+
+		// -- energy, phase, pos corr deltaT
+		c = new TCanvas(Form("c_deltaT_energyRatioPhasePosCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_energyRatioPhasePosCorr_%s",labelLR_energyBin.c_str()));		
 		histo = h1_deltaT_energyRatioPhasePosCorr[index2];
-
-		histo -> SetTitle(Form(";corrected #Deltat [ps];entries"));
 		histo -> SetLineWidth(2);
-		histo -> SetLineColor(kGreen+1);
-		histo -> SetMarkerColor(kGreen+1);
-		histo -> Draw("");
-
-		FindSmallestInterval(vals,histo,0.68);
-		float min = vals[4];
-		float max = vals[5];
-		float delta = max-min;
-		float sigma = 0.5*delta;
-		float effSigma = sigma;
-
-		float fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-		float fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
+		histo -> SetLineColor(kMagenta);
+		histo -> SetMarkerColor(kMagenta);
 		
-		TF1* fitFunc = new TF1(Form("fitFunc_posCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-		fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-		fitFunc -> SetRange(fitXMin, fitXMax);
-		histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-		fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-		histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-		fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-		histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-
-		fitFunc -> SetLineColor(kMagenta);
-		fitFunc -> SetLineWidth(3);
-		fitFunc -> Draw("same");
+		TF1* fitFunc = new TF1(Form("fitFunc_energyPhasePosCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+		drawDeltaT(c, histo, fitFunc, "corrected", "pos.Corr","");
 
 		outFile -> cd();
 		histo -> Write();
 
-		histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
-		histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
+		// -- energy, phase corr deltaT    
+		histo = h1_deltaT_energyRatioPhaseCorr[index2];
+		histo -> SetLineWidth(2);
+		histo -> SetLineColor(kGreen+1);
+		histo -> SetMarkerColor(kGreen+1);
+		
+		fitFunc = new TF1(Form("fitFunc_energyPhaseCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+		drawDeltaT(c, histo, fitFunc, "corrected", "ph.Corr","same");
 
-		latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{corr}^{eff} = %.0f ps}{#sigma_{corr}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-		latex -> SetNDC();
-		latex -> SetTextFont(42);
-		latex -> SetTextSize(0.04);
-		latex -> SetTextColor(kMagenta);
-		latex -> Draw("same");
+		outFile -> cd();
+		histo -> Write();
 
 		c -> Print(Form("%s/CTR_energyRatioPhasePosCorr/c_deltaT_energyRatioPhasePosCorr__%s.pdf",plotDir.c_str(),labelLR_energyBin.c_str()));
 		c -> Print(Form("%s/CTR_energyRatioPhasePosCorr/c_deltaT_energyRatioPhasePosCorr__%s.png",plotDir.c_str(),labelLR_energyBin.c_str()));
 		delete c;
-		delete fitFunc;
-		delete latex;
 
 
-
-		// -- tot and phase corr deltaT
+		// -- tot, phase, pos corr deltaT
 		c = new TCanvas(Form("c_deltaT_totRatioPhasePosCorr_%s",labelLR_energyBin.c_str()),Form("c_deltaT_totRatioPhasePosCorr_%s",labelLR_energyBin.c_str()));
 		histo = h1_deltaT_totRatioPhasePosCorr[index2];
-
-		histo -> SetTitle(Form(";corrected #Deltat [ps];entries"));
 		histo -> SetLineWidth(2);
-		histo -> SetLineColor(kGreen+1);
-		histo -> SetMarkerColor(kGreen+1);
-		histo -> Draw("");
-
-		FindSmallestInterval(vals,histo,0.68);
-		min = vals[4];
-		max = vals[5];
-		delta = max-min;
-		sigma = 0.5*delta;
-		effSigma = sigma;
-
-		fitXMin = histo->GetBinCenter(histo->GetMaximumBin()) - 200.;
-		fitXMax = histo->GetBinCenter(histo->GetMaximumBin()) + 200.;
+		histo -> SetLineColor(kMagenta);
+		histo -> SetMarkerColor(kMagenta);
 		
 		fitFunc = new TF1(Form("fitFunc_totRatioPhasePosCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
-		fitFunc -> SetParameters(1,histo->GetMean(),histo->GetRMS());
-		fitFunc -> SetRange(fitXMin, fitXMax);
-		histo -> Fit(fitFunc,"QNRSL","", fitXMin, fitXMax);
-		fitFunc -> SetRange(fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-		histo -> Fit(fitFunc,"QNRSL","",fitFunc->GetParameter(1)-fitFunc->GetParameter(2),fitFunc->GetParameter(1)+fitFunc->GetParameter(2));
-		fitFunc -> SetRange(fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-		histo -> Fit(fitFunc,"QRSL+","",fitFunc->GetParameter(1)-2.5*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+2.5*fitFunc->GetParameter(2));
-
-		fitFunc -> SetLineColor(kMagenta);
-		fitFunc -> SetLineWidth(3);
-		fitFunc -> Draw("same");
+		drawDeltaT(c, histo, fitFunc, "corrected", "pos.Corr",""); 
 
 		outFile -> cd();
 		histo -> Write();
 
-		histo -> SetMaximum(histo->GetMaximum()+0.1*histo->GetMaximum());
-		histo -> GetXaxis() -> SetRangeUser(fitFunc->GetParameter(1)-7.*fitFunc->GetParameter(2),fitFunc->GetParameter(1)+7.*fitFunc->GetParameter(2));
+		// -- tot, phase corr deltaT    
+		histo = h1_deltaT_totRatioPhaseCorr[index2];
+		histo -> SetLineWidth(2);
+		histo -> SetLineColor(kGreen+1);
+		histo -> SetMarkerColor(kGreen+1);
+		
+		fitFunc = new TF1(Form("fitFunc_totPhaseCorr_%s",labelLR_energyBin.c_str()),"gaus",-10000, 10000);
+		drawDeltaT(c, histo, fitFunc, "corrected", "totCorr","same");
 
-		latex = new TLatex(0.55,0.85,Form("#splitline{#sigma_{corr}^{eff} = %.0f ps}{#sigma_{corr}^{gaus} = %.0f ps}",effSigma,fabs(fitFunc->GetParameter(2))));
-		latex -> SetNDC();
-		latex -> SetTextFont(42);
-		latex -> SetTextSize(0.04);
-		latex -> SetTextColor(kMagenta);
-		latex -> Draw("same");
+		outFile -> cd();
+		histo -> Write();
 
 		c -> Print(Form("%s/CTR_totRatioPhasePosCorr/c_deltaT_totRatioPhasePosCorr__%s.pdf",plotDir.c_str(),labelLR_energyBin.c_str()));
 		c -> Print(Form("%s/CTR_totRatioPhasePosCorr/c_deltaT_totRatioPhasePosCorr__%s.png",plotDir.c_str(),labelLR_energyBin.c_str()));
 		delete c;
-		delete fitFunc;
-		delete latex;
 
 	    }
 
