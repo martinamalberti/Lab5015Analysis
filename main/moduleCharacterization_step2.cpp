@@ -1178,21 +1178,21 @@ int main(int argc, char** argv)
 	 
 	  if (fabs(deltaT - energyRatioCorr)<10000 ) {
 	    h1_deltaT_energyRatioCorr[index2] -> Fill( deltaT  - energyRatioCorr );
-	    if (fabs(deltaT - energyRatioCorr - h1_deltaT[index2]->GetMean() )< 3*h1_deltaT[index2]->GetRMS() ){
+	    //if (fabs(deltaT - energyRatioCorr - h1_deltaT[index2]->GetMean() )< 3*h1_deltaT[index2]->GetRMS() ){
 	      p1_deltaT_energyRatioCorr_vs_t1fineMean[index2] -> Fill( t1fineMean, deltaT - energyRatioCorr );
 	      h2_deltaT_energyRatioCorr_vs_t1fineMean[index2] -> Fill( t1fineMean, deltaT - energyRatioCorr );
 	      p1_deltaT_energyRatioCorr_vs_totRatio[index2] -> Fill( anEvent->totR/anEvent->totL, deltaT - energyRatioCorr );
 	      h2_deltaT_energyRatioCorr_vs_totRatio[index2] -> Fill( anEvent->totR/anEvent->totL, deltaT - energyRatioCorr );
-	    }
+	      //}
 	  }
 	  
 	  if (fabs(deltaT - totRatioCorr)<10000 ) {
 	    h1_deltaT_totRatioCorr[index2] -> Fill( deltaT  - totRatioCorr );
 	    h2_deltaT_totRatioCorr_vs_totRatio[index2] -> Fill( anEvent->totR/anEvent->totL, deltaT  - totRatioCorr );
-	    if (fabs(deltaT - totRatioCorr - h1_deltaT[index2]->GetMean()) < 3.*h1_deltaT[index2]->GetRMS() ){ 
+	    //if (fabs(deltaT - totRatioCorr - h1_deltaT[index2]->GetMean()) < 3.*h1_deltaT[index2]->GetRMS() ){ 
 	      p1_deltaT_totRatioCorr_vs_t1fineMean[index2] -> Fill( t1fineMean, deltaT - totRatioCorr );
 	      h2_deltaT_totRatioCorr_vs_t1fineMean[index2] -> Fill( t1fineMean, deltaT - totRatioCorr );   
-	    }
+	      //}
 	  }
 	  
 	}
