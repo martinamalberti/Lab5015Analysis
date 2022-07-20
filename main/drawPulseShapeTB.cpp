@@ -154,9 +154,8 @@ int main(int argc, char** argv)
   
   //---------------
   // define outfile
-  //TFile* outFile = new TFile(Form("./plots/pulseShape_run%04d.root",run),"RECREATE");
-  //TFile* outFile = new TFile(Form("./plots/pulseShape_run%s_%d_%d.root",runs.c_str(), ch1, ch2),"RECREATE");
-  TFile* outFile = new TFile(Form("./plots/pulseShape_%s.root", outName.c_str()),"RECREATE");
+  //TFile* outFile = new TFile(Form("./plots/pulseShape_%s.root", outName.c_str()),"RECREATE");
+  TFile* outFile = new TFile(Form("./plots_tofhir2b/pulseShape_%s.root", outName.c_str()),"RECREATE");
   
   
   //------------------
@@ -733,8 +732,8 @@ int main(int argc, char** argv)
   //-----------
   // draw plots
   std::cout << "Plotting..."<<std::endl;
-  std::string plotDir(Form("/var/www/html/TOFHIR2X/MTDTB_CERN_June22/pulseShapes/%s",outName.c_str()));
-  //std::string plotDir(Form("/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Oct21/pulseShapes/%s",outName.c_str()));
+  //std::string plotDir(Form("/var/www/html/TOFHIR2X/MTDTB_CERN_June22/pulseShapes/%s",outName.c_str()));
+  std::string plotDir(Form("/var/www/html/TOFHIR2B/MTDTB_CERN_June22/pulseShapes/%s",outName.c_str()));
   system(Form("mkdir -p %s",plotDir.c_str()));
   
   TCanvas* c;

@@ -98,14 +98,16 @@ def findTimingThreshold(g2):
     for i in range(0, g2.GetN()):
         y = g2.GetY()[i]
         x = g2.GetX()[i]
+        # best th < 7 for low OV to avoid cases where MIP peak is cut out by the threshold                                                                                  
+        if ( ov <= 1.50 and x > 7): continue    
         if ( y < ymin):
             ymin = y
             xmin = x 
     return xmin
-
+    
 # =====================================
-outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_nonIrr/'
 #outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_HPK_FBK_nonIrr/'
+outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_nonIrr_Types/'
 #outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_HPK_nonIrr_TOFHIR2B/'
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
@@ -116,12 +118,9 @@ outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_nonIrr_TBJune22.ro
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TOFHIR2B_TBJune22.root','recreate')  
 
 
-#sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO522', 'FBK_nonIrr_LYSO524']
-#sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800','FBK_nonIrr_LYSO522']
-sipmTypes = ['FBK_nonIrr_LYSO800','FBK_nonIrr_LYSO522', 'FBK_nonIrr_LYSO524']
-
+#sipmTypes = ['HPK_nonIrr_LYSO528','FBK_nonIrr_LYSO800']
+sipmTypes = ['FBK_nonIrr_LYSO522','FBK_nonIrr_LYSO800', 'FBK_nonIrr_LYSO524']
 #sipmTypes = ['HPK_nonIrr_LYSO528_2X','HPK_nonIrr_LYSO528_2B']
-#sipmTypes = ['FBK_nonIrr_LYSO522','HPK_nonIrr_LYSO528_2X']
 
 
 fnames = {'HPK_nonIrr_LYSO528' : '../plots/HPK_nonIrr_LYSO528_T10C_summary.root',
@@ -153,7 +152,7 @@ LO = { 'HPK_nonIrr_LYSO528' : 1300.,
 
 # decay time
 tau = { 'HPK_nonIrr_LYSO528' : 41.6,   # MiB measurements
-        'FBK_nonIrr_LYSO800' : 38.7,   # MiB measurements
+        'FBK_nonIrr_LYSO800' : 38.6,   # MiB measurements
         'FBK_nonIrr_LYSO522' : 41.6,   # MiB measurements
         'FBK_nonIrr_LYSO524' : 40.4,   # MiB measurements
         'HPK_nonIrr_LYSO528_2X' : 41.6,   # MiB measurements
@@ -281,6 +280,8 @@ for sipm in sipmTypes:
             timingThreshold = findTimingThreshold(f.Get('g_deltaT_energyRatioCorr_vs_th_bar%02d_Vov%.2f_enBin01'%(bar,ov)))
             gtempL = ROOT.TGraphErrors()
             gtempR = ROOT.TGraphErrors()
+            if ( 'FBK' in sipm and ov <= 2.00 ): np = 2
+            else: np = 3
             srL,err_srL = getSlewRateFromPulseShape(g_psL, timingThreshold, np, gtempL)
             srR,err_srR = getSlewRateFromPulseShape(g_psR, timingThreshold, np, gtempR)
             if (srL>0 and srR>0):
@@ -333,6 +334,8 @@ for sipm in sipmTypes:
             hdummy.Draw()
             gtempL = ROOT.TGraphErrors()
             gtempR = ROOT.TGraphErrors()
+            if ( 'FBK' in sipm and ov <= 2.00 ): np = 2
+            else: np = 3
             if (g_psL!=None): srL,err_srL = getSlewRateFromPulseShape(g_psL, timingThreshold, np, gtempL, c)
             if (g_psR!=None): srR,err_srR = getSlewRateFromPulseShape(g_psR, timingThreshold, np, gtempR, c) 
             line = ROOT.TLine(min(g_psL.GetX())-1., timingThreshold*0.313, 30., timingThreshold*0.313)
@@ -406,9 +409,10 @@ for sipm in sipmTypes:
 
     fitpol0_stoch = ROOT.TF1('fitpol0_stoch','pol0',-100,100)  
     g_Stoch_vs_bar[sipm][ov_ref].Fit(fitpol0_stoch,'QNR')
-    print sipm, Npe[sipm][ov_ref]/tau[sipm], fitpol0_stoch.GetParameter(0)
+    #print sipm, Npe[sipm][ov_ref]/tau[sipm], fitpol0_stoch.GetParameter(0)
+    err_npetau = Npe[sipm][ov_ref]/tau[sipm] *math.sqrt( pow(0.05,2) + pow(0.03,2) )
     g_stoch_vs_NpeTau_average.SetPoint(g_stoch_vs_NpeTau_average.GetN(), Npe[sipm][ov_ref]/tau[sipm], fitpol0_stoch.GetParameter(0))
-    g_stoch_vs_NpeTau_average.SetPointError(g_stoch_vs_NpeTau_average.GetN()-1, 0, fitpol0_stoch.GetParError(0))
+    g_stoch_vs_NpeTau_average.SetPointError(g_stoch_vs_NpeTau_average.GetN()-1, err_npetau, fitpol0_stoch.GetParError(0))
     
     g_SR_vs_Vov_average[sipm] = ROOT.TGraphErrors()
     for ov in Vovs[sipm]:                                       
@@ -493,6 +497,7 @@ for sipm in sipmTypes:
         c1[sipm][bar].SetGridy()
         c1[sipm][bar].cd()
         hdummy1[sipm][bar] = ROOT.TH2F('hdummy1_%s_%d'%(sipm,bar),'',100,0,8,100,0,100)
+        #hdummy1[sipm][bar] = ROOT.TH2F('hdummy1_%s_%d'%(sipm,bar),'',100,0,8,100,0,110)
         hdummy1[sipm][bar].GetXaxis().SetTitle('V_{OV} [V]')
         hdummy1[sipm][bar].GetYaxis().SetTitle('#sigma_{t} [ps]')
         hdummy1[sipm][bar].Draw()
@@ -681,7 +686,7 @@ c2 =  ROOT.TCanvas('c_slewRate_vs_Vov_average','c_slewRate_vs_Vov_average',600,6
 c2.SetGridx()
 c2.SetGridy()
 c2.cd()    
-#hdummy2 = ROOT.TH2F('hdummy2','',16, 0.5, 2.5,100,0,15)
+#hdummy2 = ROOT.TH2F('hdummy2','',16, 0.5, 2.7,100,0,15)
 hdummy2 = ROOT.TH2F('hdummy2','',100, 0.5, 7.5,100,0,35)
 hdummy2.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy2.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
@@ -702,6 +707,7 @@ hdummy2.Delete()
 
 
 # average stoch. term vs Npe/tau
+ROOT.gStyle.SetOptFit(111)
 c2 =  ROOT.TCanvas('c_stoch_vs_NpeTau_average','c_stoch_vs_NpeTau_average',600,600)
 c2.SetGridx()
 c2.SetGridy()
@@ -718,6 +724,7 @@ fitFunStoch.SetLineWidth(1)
 fitFunStoch.SetLineColor(2)
 fitFunStoch.SetParameters(30, -0.5)
 g_stoch_vs_NpeTau_average.Fit(fitFunStoch)
+print fitFunStoch.GetChisquare()/fitFunStoch.GetNDF()
 c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
 c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
 hdummy2.Delete()
