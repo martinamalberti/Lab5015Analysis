@@ -132,10 +132,10 @@ if (mysipm == 'HPK'):
     ov_ref    = 1.5
 
 if (mysipm == 'FBK'):
-    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_2E14_1E14/'        
+    outdir    = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_Vov_FBK_2E14_1E14_TEST/'        
     if (os.path.exists(outdir)==False):
         os.mkdir(outdir)   
-    outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_2E14_1E14_TBJune22.root','recreate')
+    outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_FBK_2E14_1E14_TBJune22_TEST.root','recreate')
     sipmTypes = ['FBK_2E14_T-35C','FBK_2E14_T-40C','FBK_1E14_T-35C','FBK_1E14_T-40C']
     ov_ref    = 1.8
 
@@ -549,7 +549,7 @@ for sipm in sipmTypes:
         #    xmax = 5.0
         if ('2E14' in sipm):
             xmin = 0.8
-            xmax = 2.2
+            xmax = 2.4
         hdummy1[sipm][bar] = ROOT.TH2F('hdummy1_%s_%d'%(sipm,bar),'',100,xmin,xmax,180,0,180)
         hdummy1[sipm][bar].GetXaxis().SetTitle('V_{OV}^{eff} [V]')
         hdummy1[sipm][bar].GetYaxis().SetTitle('#sigma_{t} [ps]')
@@ -698,12 +698,16 @@ hdummy2.Draw()
 g_DCR_vs_DCRNpe_average_all.SetMarkerSize(0.1)
 g_DCR_vs_DCRNpe_average_all.Draw('p*same')
 fitFun_tRes_dcr_model.Draw('same')
+outfile.cd() 
+g_DCR_vs_DCRNpe_average_all.Write('g_DCR_vs_DCRNpe_average_all')
 for sipm in sipmTypes:
     g_DCR_vs_DCRNpe_average[sipm].SetMarkerStyle(markers[sipm])
     g_DCR_vs_DCRNpe_average[sipm].SetMarkerColor(cols[sipm])
     g_DCR_vs_DCRNpe_average[sipm].SetLineWidth(1)
     g_DCR_vs_DCRNpe_average[sipm].SetLineColor(cols[sipm])
     g_DCR_vs_DCRNpe_average[sipm].Draw('psame')
+    outfile.cd() 
+    g_DCR_vs_DCRNpe_average[sipm].Write('g_DCR_vs_DCRNpe_average_%s'%sipm)
 c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
 c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
 hdummy2.Delete()
