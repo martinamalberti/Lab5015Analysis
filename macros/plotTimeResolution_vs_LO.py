@@ -165,6 +165,7 @@ for sipm in sipmTypes:
             g_tRes_vs_LO_R[sipm,ov].SetPoint(g_tRes_vs_LO_R[sipm,ov].GetN(), lo_R, tRes)
             g_tRes_vs_LO_R[sipm,ov].SetPointError(g_tRes_vs_LO_R[sipm,ov].GetN()-1, errLO*lo_R, gRes.GetErrorY(i))
 
+
         #draw
         c2 = ROOT.TCanvas('c_timeResolution_vs_LOlab_%s_Vov%.02f'%(sipm,ov),'c_timeResolution_vs_LOlab_%s_Vov%.02f'%(sipm,ov), 600, 600)
     
