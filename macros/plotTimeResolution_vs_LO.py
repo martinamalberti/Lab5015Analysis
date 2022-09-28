@@ -67,7 +67,8 @@ fNamesLO_L = { 'FBK+LYSO522' : './LOmeasurements/Npe_LYSO522_SiPM_1-140_GLUE.roo
 
 fNamesLO_R = { 'FBK+LYSO522' : './LOmeasurements/Npe_LYSO522_SiPM_1-141_GLUE.root',
                'FBK+LYSO800' : './LOmeasurements/Npe_LYSO800_SiPM_2-166.root',
-               'FBK+LYSO524' : './LOmeasurements/Npe_LYSO524_SiPM_3-132_postTB.root',
+               #'FBK+LYSO524' : './LOmeasurements/Npe_LYSO524_SiPM_3-132_postTB.root',
+               'FBK+LYSO524' : './LOmeasurements/Npe_LYSO524_SiPM_3-132.root',
                'HPK+LYSO528' : './LOmeasurements/Npe_LYSO528_SiPM_2-41_newAnalysis.root'}
 
 
@@ -103,6 +104,7 @@ for sipm in sipmTypes:
     gLO_L  = fLO_L[sipm].Get('g_Npe_511_vs_bar_Vov3.5')
     gLO_R  = fLO_R[sipm].Get('g_Npe_511_vs_bar_Vov3.5')
     gLO  = ROOT.TGraphErrors()
+    gLOratio  = ROOT.TGraphErrors()
 
     for bar in range(0, 16):
         if (bar not in gLO_L.GetX() or bar not in gLO_R.GetX()): continue
@@ -115,6 +117,11 @@ for sipm in sipmTypes:
     fit0.SetLineWidth(1)
     gLO.Fit(fit0,'QRS')
 
+    for bar in range(0, 16):
+        if (bar not in gLO.GetX()): continue 
+        gLOratio.SetPoint(gLOratio.GetN(), bar, gLO.Eval(bar)/fit0.GetParameter(0))
+        gLOratio.SetPointError(gLOratio.GetN()-1, 0, 0)
+        
     c = ROOT.TCanvas('c_LOlab_%s'%(sipm),'c_LOlab_%s'%(sipm), 800, 600)                                                                        
     gLO.SetMarkerStyle(24)
     gLO.SetMarkerColor(ROOT.kBlack)
@@ -141,7 +148,44 @@ for sipm in sipmTypes:
     leg.Draw('same')
     c.SaveAs('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_LOlab/'+c.GetName()+'.png')
     c.SaveAs('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_LOlab/'+c.GetName()+'.pdf')
-     
+    
+    
+    cc  = ROOT.TCanvas('c_LOlab_ratio_%s'%(sipm),'c_LOlab_ratio_%s'%(sipm), 800, 600)
+    pad1 = ROOT.TPad('pad1', 'pad1', 0.0,  0.3, 1.0, 1.0)
+    pad1.SetBottomMargin(0.0)
+    pad1.Draw()
+    pad1.cd()
+    hh.GetXaxis().SetLabelSize(0.04*1./0.7)
+    hh.GetYaxis().SetLabelSize(0.04*1./0.7)
+    hh.GetXaxis().SetTitleSize(0.04*1./0.7)
+    hh.GetYaxis().SetTitleSize(0.04*1./0.7)
+    hh.Draw()
+    gLO_L.Draw('psame')
+    gLO_R.Draw('psame')
+    gLO.Draw('plsame')
+    leg.Draw('same')
+    cc.cd()
+    pad2 = ROOT.TPad('pad2', 'pad2', 0.0,  0.05, 1.0, 0.29)
+    pad2.SetGridy()
+    pad2.SetBottomMargin(0.25)
+    pad2.Draw()
+    pad2.cd()
+    hh2 = ROOT.TH2F('hh2','', 16, -0.5, 15.5, 100,0.90,1.10)
+    hh2.GetXaxis().SetTitleOffset(0.5)
+    hh2.GetYaxis().SetTitleOffset(0.4)
+    hh2.GetXaxis().SetTitle('bar')
+    hh2.GetYaxis().SetTitle('LO/<LO>')
+    hh2.GetXaxis().SetLabelSize(0.04*1./0.24)
+    hh2.GetYaxis().SetLabelSize(0.04*1./0.24)
+    hh2.GetXaxis().SetTitleSize(0.04*1./0.24)
+    hh2.GetYaxis().SetTitleSize(0.04*1./0.24)
+    hh2.GetYaxis().SetNdivisions(505)
+    hh2.Draw()
+    gLOratio.Draw('psame')  
+    line = ROOT.TLine(-0.5, 1, 15.5, 1)
+    line.Draw('same')
+    cc.SaveAs('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_LOlab/'+cc.GetName()+'.png')
+    cc.SaveAs('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/timeResolution_vs_LOlab/'+cc.GetName()+'.pdf')
     
     for j, ov in enumerate(Vovs[sipm]):
         gRes = fRes[sipm].Get('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%ov)
