@@ -197,6 +197,7 @@ int main(int argc, char** argv)
   system(Form("mkdir -p %s/energy/",plotDir.c_str()));
   system(Form("mkdir -p %s/energyRatio/",plotDir.c_str()));
   system(Form("mkdir -p %s/t1fine/",plotDir.c_str()));
+  system(Form("mkdir -p %s/qT1/",plotDir.c_str()));
   system(Form("mkdir -p %s/energyRatioCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/energyRatioCorr_totRatioCorr/",plotDir.c_str()));
   system(Form("mkdir -p %s/totRatioCorr/",plotDir.c_str()));
@@ -368,6 +369,7 @@ int main(int argc, char** argv)
 
   std::map<int,TF1*>  f_langaus; // f_langaus[index]
   std::map<int,TF1*>  f_gaus; // f_gaus[index]
+  std::map<int,TF1*>  f_gaus_tot; // f_gaus[index]
   std::map<int,TF1*>  f_landau; // f_gaus[index]
   std::map<float,int>  Vov_LandauMin; //Vov_LandauMin[Vov]
   Vov_LandauMin[1.0] = 0;
@@ -400,7 +402,7 @@ int main(int argc, char** argv)
   std::string TB = "TB";
   std::string keepAll = "keepAll";
   std::vector<int> barList = opts.GetOpt<std::vector<int> >("Plots.barList");// list of bars to be analyzed read from cfg
-  
+  int selectTot = opts.GetOpt<int>("Cuts.selectTot");  
 
   for(auto stepLabel : stepLabels)
     {
@@ -460,10 +462,12 @@ int main(int argc, char** argv)
 	  latex -> SetTextFont(42);
 	  latex -> SetTextSize(0.04);
 	  latex -> SetTextColor(kRed);
-          
+
+	  ranges[LRLabel][index] = new std::vector<float>;
 	  
 	  // -- qfine and tot only per L, R
-	  if (LRLabel == "R" || LRLabel == "L")
+	  //if (LRLabel == "R" || LRLabel == "L")
+	  if (LRLabel == "R" || LRLabel == "L" || LRLabel == "L-R")
 	    {
 	      // -- draw ToT
 	      c = new TCanvas(Form("c_tot_%s",label.c_str()),Form("c_tot_%s",label.c_str()));
@@ -475,10 +479,34 @@ int main(int argc, char** argv)
 		  histo -> SetTitle(";ToT [ns];entries");
 		  histo -> SetLineColor(kRed);
 		  histo -> Draw();
+
+		  float max = histo->GetBinCenter(histo->GetMaximumBin());
+		  f_gaus_tot[index] = new TF1(Form("fit_tot_bar%02d%s_Vov%.2f_vth1_%02.0f",iBar,LRLabel.c_str(),Vov,vth1), "gaus", max-5, max+5);
+		  f_gaus_tot[index]->SetParameters(histo->GetMaximumBin(), max, 5);
+		  histo->Fit(f_gaus_tot[index], "QRS");
+		  f_gaus_tot[index]->SetLineColor(1);
+		  f_gaus_tot[index]->Draw("same");
+
 		  // TLine* line_totAcc1 = new TLine(cut_totAcc[chID][Vov],histo->GetMinimum(),cut_totAcc[chID][Vov],histo->GetMaximum());
 		  // line_totAcc1 -> SetLineColor(kBlack);
 		  // line_totAcc1 -> Draw("same");
-		  latex -> Draw("same");      
+		  latex -> Draw("same");
+		  
+		  if (!source.compare(TB) && selectTot){
+		    ranges[LRLabel][index] -> push_back(f_gaus_tot[index]->GetParameter(1)-3*f_gaus_tot[index]->GetParameter(2));
+		    ranges[LRLabel][index] -> push_back(f_gaus_tot[index]->GetParameter(1)+3*f_gaus_tot[index]->GetParameter(2));
+		    
+		    for(auto range: (*ranges[LRLabel][index])){
+		      TLine* line = new TLine(range,0.,range, histo->GetMaximum());
+		      line -> SetLineWidth(2);
+		      line -> SetLineStyle(7);
+		      line -> Draw("same");
+		    }
+		    
+		    GetEnergyBins(histo, ranges[LRLabel][index], energyBin[LRLabel][index]);	
+		  }
+
+      
 		  histo -> Write();
 		  c -> Print(Form("%s/tot/c_tot__%s.png",plotDir.c_str(),label.c_str()));
 		  c -> Print(Form("%s/tot/c_tot__%s.pdf",plotDir.c_str(),label.c_str()));
@@ -505,7 +533,7 @@ int main(int argc, char** argv)
 	      return(0);
 	    }
 	  
-	  ranges[LRLabel][index] = new std::vector<float>;
+	  //	  ranges[LRLabel][index] = new std::vector<float>;
 	  
 	  // --- Na22 or Co60 spectrum
 	  if(!source.compare(Na22)  || !source.compare(Na22SingleBar) ||  !source.compare(Co60) )
@@ -612,7 +640,7 @@ int main(int argc, char** argv)
 	  
 	  
 	  // -- if MIP peak, we don't use the spectrum analyzers - just langaus fit to the energy peak.
-	  if(!source.compare(TB)){ 
+	  if(!source.compare(TB) && !selectTot){ 
 	    /*
 	    //TF1* f_langaus = new TF1("f_langaus", langaufun, 300.,1000.,4);
 	    f_langaus[index] = new TF1(Form("fit_energy_bar%02d_Vov%.2f_vth1_%02.0f",iBar,Vov,vth1),langaufun,Vov_LandauMin[Vov],1000.,4);
@@ -685,14 +713,16 @@ int main(int argc, char** argv)
 	    //ranges[LRLabel][index] -> push_back( std::min(f_landau[index]->GetParameter(1)*2.0, 940.)); // tight selection around the MIP peak
 	    ranges[LRLabel][index] -> push_back( 940 ); // use the entire mip spectrum
 	    
+	    
 	    for(auto range: (*ranges[LRLabel][index])){
 	      TLine* line = new TLine(range,0.,range, histo->GetMaximum());
 	      line -> SetLineWidth(2);
 	      line -> SetLineStyle(7);
 	      line -> Draw("same");
 	    }
-	    
+
 	    GetEnergyBins(histo, ranges[LRLabel][index], energyBin[LRLabel][index]);
+
 	  }// end MIP (TB)	
 	  
 	  
@@ -748,7 +778,13 @@ int main(int argc, char** argv)
 	  
 	  if(!ranges["L-R"][index1] ) continue;
 	  
-	  int energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  int energyBinAverage = -1;
+	  if (!source.compare(TB) && selectTot) {
+	    energyBinAverage =  FindBin(0.5*(anEvent->totL+anEvent->totR),ranges["L-R"][index1])+1;
+	  }
+	  else { 
+	    energyBinAverage =  FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  }
 	  
 	  if( energyBinAverage < 1 ) continue;
 	  
@@ -984,8 +1020,14 @@ int main(int argc, char** argv)
 	  
 	  if( !accept[index1][entry] ) continue;
 	  
-	  int energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
-	  
+	  int energyBinAverage = -1 ;
+	  if (!source.compare(TB) && selectTot){
+	    energyBinAverage = FindBin(0.5*(anEvent->totL+anEvent->totR),ranges["L-R"][index1])+1;
+	  }
+	  else {
+	    energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  }
+
 	  double index2( (10000000*energyBinAverage+10000*int(anEvent->Vov*100.)) + (100*anEvent->vth1) + anEvent->barID );
 	  
 	  float energyRatioMean = fitFunc_energyRatio[index2]->GetParameter(1);
@@ -1001,10 +1043,20 @@ int main(int argc, char** argv)
 	    }
 	  
 	  float energyMean = 0.5*(anEvent->energyR + anEvent->energyL );			
-	  if( !source.compare(TB) && energyMean < ranges["L-R"][index1]->at(0) )
+	  float totMean = 0.5*(anEvent->totR + anEvent->totL );			
+	  //if( !source.compare(TB) && energyMean < ranges["L-R"][index1]->at(0) )
+	  if( !source.compare(TB) )
 	    {
-	      accept[index1][entry] = false;
-	      continue;
+	      if (!selectTot && energyMean < ranges["L-R"][index1]->at(0) ){
+		accept[index1][entry] = false;
+		continue;
+	      }
+
+	      if (selectTot && totMean < ranges["L-R"][index1]->at(0) ){
+		accept[index1][entry] = false;
+		continue;
+	      }
+
 	    }
 	  
 	  
@@ -1161,7 +1213,14 @@ int main(int argc, char** argv)
 	  
 	  if( !accept[index1][entry] ) continue;
 	  
-	  int energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  int energyBinAverage = -1 ;
+	  if (!source.compare(TB) && selectTot){
+	    energyBinAverage = FindBin(0.5*(anEvent->totL+anEvent->totR),ranges["L-R"][index1])+1;
+	  }
+	  else {
+	    energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  }
+
 	  double  index2( 10000000*energyBinAverage+index1 );     
 	  
 	  long long deltaT = anEvent->timeR - anEvent->timeL;
@@ -1407,7 +1466,15 @@ int main(int argc, char** argv)
 	  int index1( (10000*int(anEvent->Vov*100.)) + (100*anEvent->vth1) + anEvent->barID );
 	  if( !accept[index1][entry] ) continue;
 	  
-	  int energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+
+	  int energyBinAverage = -1 ;
+	  if (!source.compare(TB) && selectTot){
+	    energyBinAverage = FindBin(0.5*(anEvent->totL+anEvent->totR),ranges["L-R"][index1])+1;
+	  }
+	  else {
+	    energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  }
+
 	  double  index2( 10000000*energyBinAverage+index1 );     
 	  
 	  long long deltaT = anEvent->timeR - anEvent->timeL;
@@ -1711,7 +1778,14 @@ int main(int argc, char** argv)
 	  int index1( (10000*int(anEvent->Vov*100.)) + (100*anEvent->vth1) + anEvent->barID );
 	  if( !accept[index1][entry] ) continue;
 	  
-	  int energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  int energyBinAverage = -1 ;
+	  if (!source.compare(TB) && selectTot){
+	    energyBinAverage = FindBin(0.5*(anEvent->totL+anEvent->totR),ranges["L-R"][index1])+1;
+	  }
+	  else {
+	    energyBinAverage = FindBin(0.5*(anEvent->energyL+anEvent->energyR),ranges["L-R"][index1])+1;
+	  }
+
 	  double  index2( 10000000*energyBinAverage+index1 );     
 	  
 	  long long deltaT = anEvent->timeR - anEvent->timeL;

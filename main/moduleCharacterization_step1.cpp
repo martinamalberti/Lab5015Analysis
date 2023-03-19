@@ -87,8 +87,8 @@ int main(int argc, char** argv)
     
     for(int run = runMin; run <= runMax; ++run) {
       std::string fileName;
-      if( !usePedestals ) fileName = Form("%s/%s%04d_*e.root",inputDir.c_str(),fileBaseName.c_str(),run); // pc-mtd-mib01
-      //if( !usePedestals ) fileName = Form("%s/%04d/*_e.root",inputDir.c_str(),run); // pc-mtd-tb01
+      //if( !usePedestals ) fileName = Form("%s/%s%04d_*e.root",inputDir.c_str(),fileBaseName.c_str(),run); // pc-mtd-mib01
+      if( !usePedestals ) fileName = Form("%s/%04d/*_e.root",inputDir.c_str(),run); // pc-mtd-tb01
       else                fileName = Form("%s/%04d/*ped_e.root",inputDir.c_str(),run);
       std::cout << ">>> Adding file " << fileName << std::endl;
       tree -> Add(fileName.c_str());
@@ -212,6 +212,7 @@ int main(int argc, char** argv)
   std::map<int,TH1F*> h1_qfineR;  
   std::map<int,TH1F*> h1_totL;
   std::map<int,TH1F*> h1_totR;
+  std::map<int,TH1F*> h1_totLR;
   std::map<int,TH1F*> h1_energyL;
   std::map<int,TH1F*> h1_energyR;
   std::map<int,TH1F*> h1_energyLR;
@@ -288,10 +289,10 @@ int main(int argc, char** argv)
 
 
 	  for(int iBar = 0; iBar < int(channelMapping.size())/2; ++iBar) {                             
-	    //int chL_iext = channelMapping[iBar*2+0];// array0 for coincidence is hard coded... - to be fixed
-	    //int chR_iext = channelMapping[iBar*2+1];// array0 for coincidence is hard coded... - to be fixed
-	    int chL_iext = channelMapping[iBar*2+0]+64;// array1 for coincidence is hard coded... - to be fixed
-	    int chR_iext = channelMapping[iBar*2+1]+64;// array1 for coincidence is hard coded... - to be fixed
+	    int chL_iext = channelMapping[iBar*2+0];// array0 for coincidence is hard coded... - to be fixed
+	    int chR_iext = channelMapping[iBar*2+1];// array0 for coincidence is hard coded... - to be fixed
+	    //int chL_iext = channelMapping[iBar*2+0]+64;// array1 for coincidence is hard coded... - to be fixed
+	    //int chR_iext = channelMapping[iBar*2+1]+64;// array1 for coincidence is hard coded... - to be fixed
 	    float energyL_iext = (*energy)[channelIdx[chL_iext]];              
 	    float energyR_iext = (*energy)[channelIdx[chR_iext]]; 
 	    float totL_iext    = 0.001*(*tot)[channelIdx[chL_iext]];              
@@ -542,6 +543,7 @@ int main(int argc, char** argv)
 	  
 	  h1_totL[index] = new TH1F(Form("h1_tot_bar%02dL_Vov%.2f_th%02.0f",iBar,Vov,vth),"",400,-5.,35.);
 	  h1_totR[index] = new TH1F(Form("h1_tot_bar%02dR_Vov%.2f_th%02.0f",iBar,Vov,vth),"",400,-5.,35.);
+	  h1_totLR[index] = new TH1F(Form("h1_tot_bar%02dL-R_Vov%.2f_th%02.0f",iBar,Vov,vth),"",400,-5.,35.);
 	  
 	  h1_energyL[index] = new TH1F(Form("h1_energy_bar%02dL_Vov%.2f_th%02.0f",iBar,Vov,vth),"",map_energyBins[Vov],map_energyMins[Vov],map_energyMaxs[Vov]);
 	  h1_energyR[index] = new TH1F(Form("h1_energy_bar%02dR_Vov%.2f_th%02.0f",iBar,Vov,vth),"",map_energyBins[Vov],map_energyMins[Vov],map_energyMaxs[Vov]);
@@ -580,6 +582,7 @@ int main(int argc, char** argv)
 	  h1_totR[index] -> Fill( totR[iBar] );
 	  h1_energyR[index] -> Fill( energyR[iBar] );
 	  
+	  h1_totLR[index] -> Fill(0.5*(totL[iBar]+totR[iBar]));
 	  h1_energyLR[index] -> Fill(0.5*(energyL[iBar]+energyR[iBar]));
 	  
 	  anEvent.barID = iBar;
@@ -631,6 +634,7 @@ int main(int argc, char** argv)
 	h1_totR[index] -> Fill( totR[maxBar] );
 	h1_energyR[index] -> Fill( energyR[maxBar] );
 	  
+	h1_totLR[index] -> Fill(0.5*(totL[maxBar]+totR[maxBar]));
 	h1_energyLR[index] -> Fill(0.5*(energyL[maxBar]+energyR[maxBar]));
 	
 	anEvent.barID = maxBar;
