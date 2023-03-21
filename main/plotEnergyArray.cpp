@@ -65,7 +65,7 @@ int main(int argc, char** argv){
 
   // -- choose vth1
   //int mystep2 = 211102;
-  int myvth1  = 20;
+  int myvth1  = 2;
 
   // -- max energySum
   float maxEnergySum = 800;
@@ -73,11 +73,12 @@ int main(int argc, char** argv){
 
   TChain* tree = new TChain("data","data");
   //tree->Add(Form("/data/TOFHIR2/MTDTB_CERN_Jul21/reco/%d/*_ped_e.root", run));
-  tree->Add(Form("/data/tofhir2/h8/reco/%d/*_ped_e.root", run));
+  //tree->Add(Form("/data/tofhir2/h8/reco/%d/*_ped_e.root", run));
+  tree->Add(Form("./data/run%05d_e.root", run));
 
   //--- define branches
   float step1, step2;
-  int channelIdx[128];
+  int channelIdx[256];
   std::vector<float> *tot = 0;
   std::vector<float> *energy = 0;
   
@@ -309,7 +310,7 @@ int main(int argc, char** argv){
 	TLegend *leg = new TLegend();
 	leg->AddEntry(h_energyLR[Vov][iMod][iBar],"all","L");
 	leg->AddEntry(h_energyLR_selEnergySum[Vov][iMod][iBar],"E_{array} < 800","L");
-	leg->AddEntry(h_energyLR_selEnergySumNbars[Vov][iMod][iBar],"E_{array} < 800 && Nbars < 5","L");
+	leg->AddEntry(h_energyLR_selEnergySumNbars[Vov][iMod][iBar],"E_{array} < 800 && Nbars < 3","L");
 	leg->AddEntry(h_energyLR_selNbars[Vov][iMod][iBar],"Nbars < 5","L");
 	leg->AddEntry(h_energyLR_selEnergyFraction[Vov][iMod][iBar],"E_{bar}/E_{array} > 0.9","L");
 	leg->Draw("same");
