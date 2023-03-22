@@ -1,0 +1,4 @@
+/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_nonIrr_LYSO528_Vov1.00.cfg
+/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_nonIrr_LYSO528_Vov1.50.cfg
+/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_nonIrr_LYSO528_Vov2.00.cfg
+/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_nonIrr_LYSO528_Vov3.50.cfg

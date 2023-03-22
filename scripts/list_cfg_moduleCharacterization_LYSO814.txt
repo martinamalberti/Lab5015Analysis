@@ -1,0 +1,1 @@
+/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_nonIrr_LYSO814_Vov0.50.cfg
