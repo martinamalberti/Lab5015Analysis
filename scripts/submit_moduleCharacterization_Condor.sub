@@ -1,0 +1,6 @@
+executable            = moduleCharacterizationCondor.sh
+arguments             = $(cfg)
+output                = /afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/scripts/jobs/job_moduleCharact.$(ClusterId).$(ProcId).out
+error                 = /afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/scripts/jobs/job_moduleCharact.$(ClusterId).$(ProcId).err
+log                   = /afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/scripts/jobs/job_moduleCharact.$(ClusterId).$(ProcId).log
+queue cfg from list_cfg_moduleCharacterization_LYSO824.txt
