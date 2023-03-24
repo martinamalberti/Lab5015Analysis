@@ -41,8 +41,8 @@ gnames = { 'nominal' : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
            'lowCgrid': 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
 }
 
-plotAttrs = { 'nominal'  : [20, ROOT.kBlack,  'T2 - 25#mum SiPMs'],
-              'lowCgrid' : [20, ROOT.kRed  ,  'T2 - 25#mum SiPMs - low C_{grid}'],
+plotAttrs = { 'nominal'  : [20, ROOT.kBlack,  'LYSO813(prod1) + 25#mum SiPMs'],
+              'lowCgrid' : [20, ROOT.kRed  ,  'LYSO824(prod5) + 25#mum SiPMs, low C_{g}'],
 }
 
 
@@ -53,11 +53,11 @@ hPad.Draw()
 ROOT.gPad.SetGridx()
 ROOT.gPad.SetGridy()
 
-leg = ROOT.TLegend(0.40, 0.70, 0.89, 0.89)
+leg = ROOT.TLegend(0.35, 0.70, 0.89, 0.89)
 leg.SetBorderSize(0)
-leg.SetFillStyle(0)                                                                                                                                                                                    
-leg.SetTextFont(42)                                                                                                                                                                                    
-leg.SetTextSize(0.05) 
+leg.SetFillStyle(0)  
+leg.SetTextFont(42)
+leg.SetTextSize(0.04) 
 
 g = {}
 f = {}

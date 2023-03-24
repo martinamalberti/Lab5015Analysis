@@ -95,9 +95,11 @@ c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/ModuleCharacter
 c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/ModuleCharacterization/%s.pdf'%c.GetName())
 
 
-for vov in [1.0, 1.5, 3.5]:
+for vov in [0.8, 1.0, 1.5, 2.0, 3.5]:
     for cell in [25,20,15]:
         res1 = g[(cell,'TB')].Eval(vov)
         res2 = g[(cell,'Laser')].Eval(vov)
         if (res1>res2):
             print vov, cell, res1, res2, math.sqrt(res1*res1-res2*res2)
+        else:
+            print vov, cell, res1, res2

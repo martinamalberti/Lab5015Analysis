@@ -41,8 +41,8 @@ gnames = { 52 : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
            64 : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
 }
 
-plotAttrs = { 52 : [20, ROOT.kBlack,  'T2 - 25#mum SiPMs - 52#circ'],
-              64 : [20, ROOT.kRed  ,  'T2 - 25#mum SiPMs - 64#circ'],
+plotAttrs = { 52 : [20, ROOT.kBlack,  'T2 - LYSO813 - 25#mum SiPMs - 52#circ'],
+              64 : [20, ROOT.kRed  ,  'T2 - LYSO813 - 25#mum SiPMs - 64#circ'],
 }
 
 
@@ -53,24 +53,39 @@ hPad.Draw()
 ROOT.gPad.SetGridx()
 ROOT.gPad.SetGridy()
 
-leg = ROOT.TLegend(0.50, 0.70, 0.89, 0.89)
+leg = ROOT.TLegend(0.30, 0.70, 0.89, 0.89)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)                                                                                                                                                                                    
 leg.SetTextFont(42)                                                                                                                                                                                    
 leg.SetTextSize(0.05) 
 
 g = {}
+gg = {}
 f = {}
 
 for angle in [52,64]:
     f[angle] = ROOT.TFile.Open(fnames[angle])
     g[angle] = f[angle].Get(gnames[angle])
+    gg[angle] = ROOT.TGraph()
+    for i in range(0, g[angle].GetN()):
+        y = g[angle].GetPointY(i)
+        x = g[angle].GetPointX(i)
+        print angle, x, y
+        if (angle == 64): 
+            gg[angle].SetPoint(i, x, math.sqrt(y*y - 15*15))
+        else: 
+            gg[angle].SetPoint(i, x, math.sqrt(y*y - 10*10))
+
     g[angle].SetMarkerSize(1)
     g[angle].SetMarkerStyle(plotAttrs[angle][0])
     g[angle].SetMarkerColor(plotAttrs[angle][1])
     g[angle].SetLineColor(plotAttrs[angle][1])
     leg.AddEntry(g[angle], '%s'%plotAttrs[angle][2],'PL')
     g[angle].Draw('plsame')
+    gg[angle].SetLineStyle(2)
+    gg[angle].SetLineColor(plotAttrs[angle][1])
+    gg[angle].Draw('lsame')
+    
 leg.Draw()
 
 c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/ModuleCharacterization/%s.png'%c.GetName())
