@@ -89,10 +89,26 @@ int main(int argc, char** argv)
       std::string fileName;
       //if( !usePedestals ) fileName = Form("%s/%s%04d_*e.root",inputDir.c_str(),fileBaseName.c_str(),run); // pc-mtd-mib01
       //if( !usePedestals ) fileName = Form("%s/%04d/*_e.root",inputDir.c_str(),run); // pc-mtd-tb0
-      if( !usePedestals ) fileName = Form("%s/%s%05d_*e.root",inputDir.c_str(),fileBaseName.c_str(),run); // cmslpc
+      if( !usePedestals ) fileName = Form("%s/%s%05d_e.root",inputDir.c_str(),fileBaseName.c_str(),run); // fnal 23 TB
       else                fileName = Form("%s/%04d/*ped_e.root",inputDir.c_str(),run);
-      std::cout << ">>> Adding file " << fileName << std::endl;
-      tree -> Add(fileName.c_str());
+      //std::cout << ">>> Adding file " << fileName << std::endl;
+      //tree -> Add(fileName.c_str());
+
+      // -- check if tree contains track info                                                                                                                                                               
+      bool treeHasTrackInfo = true;
+      TFile *f = TFile::Open(fileName.c_str());
+      TTree *tmpTree = f->Get<TTree>("data");
+      if ( (tmpTree->GetBranch("x_dut")) == NULL )  {
+	treeHasTrackInfo = false;
+	std::cout << "File " << fileName << "  has no track info --> skipping run " << run << std::endl;
+      }
+      delete tmpTree;
+
+      if (treeHasTrackInfo) {
+	std::cout << ">>> Adding file " << fileName << std::endl;
+	tree -> Add(fileName.c_str());
+      }
+
       
       struct stat t_stat;
       //stat(Form("/data/TOFHIR2/raw/run%04d.rawf",run), &t_stat);
