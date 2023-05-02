@@ -150,9 +150,14 @@ int main(int argc, char** argv)
   tree -> SetBranchStatus("t1fine",    1); tree -> SetBranchAddress("t1fine",   &t1fine);
   
   if ( !opts.GetOpt<std::string>("Input.sourceName").compare("TB") &&  useTrackInfo ){
-    tree -> SetBranchStatus("nhits_WC", 1); tree -> SetBranchAddress("nhits_WC",  &nhits);
-    tree -> SetBranchStatus("x_WC", 1);     tree -> SetBranchAddress("x_WC",          &x);
-    tree -> SetBranchStatus("y_WC", 1);     tree -> SetBranchAddress("y_WC",          &y);
+    //tree -> SetBranchStatus("nhits_WC", 1); tree -> SetBranchAddress("nhits_WC",  &nhits);
+    //tree -> SetBranchStatus("x_WC", 1);     tree -> SetBranchAddress("x_WC",          &x);
+    //tree -> SetBranchStatus("y_WC", 1);     tree -> SetBranchAddress("y_WC",          &y);
+
+    tree -> SetBranchStatus("nplanes", 1);   tree -> SetBranchAddress("nplanes",  &nhits);
+    tree -> SetBranchStatus("x_dut", 1);     tree -> SetBranchAddress("x_dut",        &x);
+    tree -> SetBranchStatus("y_dut", 1);     tree -> SetBranchAddress("y_dut",        &y);
+
   }
   
 
@@ -419,7 +424,14 @@ int main(int argc, char** argv)
 	TrackProcess(cpu, mem, vsz, rss);
       }
     
-    if (useTrackInfo && nhits > 0 &&  (x < -100 || y < -100 ) ) continue;
+
+    
+    //if (useTrackInfo && nhits > 0 &&  (x < -100 || y < -100 ) ) continue;
+    if (useTrackInfo && (nhits <=0 ||  nhits>12 || x < -100 || y < -100 ) ) {
+      //std::cout << "*******" << nhits << "  " << x << "  " <<  y << std::endl;
+      //std::cout << "******* skipping event" << std::endl;
+      continue;
+    }
 
     float Vov = step1;
     float vth1 = float(int(step2/10000)-1);
@@ -531,7 +543,8 @@ int main(int argc, char** argv)
     
     for(unsigned int iBar = 0; iBar < channelMapping.size()/2; ++iBar)                                                                                                                                  
       {
-        if (totL[iBar]>-10 && totR[iBar]>-10 && totL[iBar]<100 && totR[iBar]<100){  
+        if (totL[iBar]>-10 && totR[iBar]>-10 && totL[iBar]<100 && totR[iBar]<100)
+	{  
     
 	int index( (10000*int(Vov*100.)) + (100*vth) + iBar );
 	
@@ -559,17 +572,13 @@ int main(int argc, char** argv)
 	if( !opts.GetOpt<std::string>("Input.sourceName").compare("Co60") ||
 	    !opts.GetOpt<std::string>("Input.sourceName").compare("Co60SumPeak") ||
 	    !opts.GetOpt<std::string>("Input.sourceName").compare("TB")
-	    )
-	  {
+	    ){
+	  
 	  if( totL[iBar] <= -10. || totR[iBar] <= -10. ) continue;
 	  if( totL[iBar] >= 50. ||  totR[iBar] >= 50.) continue;
 	  if( ( thrZero.GetThresholdZero(chL[iBar],vthMode) + vth) > 63. ) continue;
-          if( ( thrZero.GetThresholdZero(chR[iBar],vthMode) + vth) > 63. ) continue;
-
-	  //if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (energySumArray > 900 || nActiveBarsArray > 5)) continue; // to remove showering events
-	  //if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nBarsVeto[iBar] > 0)) continue; // to remove showering events/ cross talk
-	  //if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nActiveBarsArray > 5)) continue; // to remove showering events
-	  //if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nActiveBarsArray > 3)) continue; // to remove showering events
+	  if( ( thrZero.GetThresholdZero(chR[iBar],vthMode) + vth) > 63. ) continue;
+	  
 	  int maxActiveBars = 3;
 	  if (!opts.GetOpt<std::string>("Input.sourceName").compare("TB") && (vetoOtherBars && nActiveBarsArray > maxActiveBars)) continue; // to remove showering events
 	  
@@ -607,10 +616,10 @@ int main(int argc, char** argv)
 	  }
 
 	  outTrees[index] -> Fill();
-	  }	  
+	}	  
 	}
-	}// -- end loop over bars
-    
+      }// -- end loop over bars
+  
     // --- for Na22 or Laser analysis use only the bar with max energy to remove cross-talk between adjacent bars
     if( !opts.GetOpt<std::string>("Input.sourceName").compare("Na22") |
 	!opts.GetOpt<std::string>("Input.sourceName").compare("Na22SingleBar") ||

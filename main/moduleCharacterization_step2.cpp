@@ -233,6 +233,9 @@ int main(int argc, char** argv)
   
   int useTrackInfo = opts.GetOpt<int>("Input.useTrackInfo");
   
+  float Xmin = opts.GetOpt<float>("Cuts.Xmin");
+  float Xmax = opts.GetOpt<float>("Cuts.Xmax");
+
   // -- read minimum energy for each bar from file
   std::string minEnergiesFileName = opts.GetOpt<std::string>("Cuts.minEnergiesFileName");
   std::map < std::pair<int, float>, float> minE; 
@@ -757,6 +760,9 @@ int main(int argc, char** argv)
 	  
 	  if( energyBinAverage < 1 ) continue;
 	  
+
+	  if (useTrackInfo && (anEvent->x < Xmin || anEvent->x > Xmax) ) continue;
+
 	  accept[index1][entry] = true;
 	  
 	  double index2( (10000000*energyBinAverage+10000*int(anEvent->Vov*100.)) + (100*anEvent->vth1) + anEvent->barID );
@@ -1441,7 +1447,7 @@ int main(int argc, char** argv)
 	      std::string labelLR_energyBin(Form("bar%02dL-R_Vov%.2f_th%02d_energyBin%02d",anEvent->barID,anEvent->Vov,anEvent->vth1,energyBinAverage));
 	      h1_deltaT_energyRatioPhaseCorr[index2] = new TH1F(Form("h1_deltaT_energyRatioPhaseCorr_%s",labelLR_energyBin.c_str()),"",2000,-12000.,12000.);
 	      h1_deltaT_energyRatioCorr_totRatioCorr[index2] = new TH1F(Form("h1_deltaT_energyRatioCorr_totRatioCorr_%s",labelLR_energyBin.c_str()),"",2000,-12000.,12000.);
-	      p1_deltaT_energyRatioCorr_vs_posX[index2] = new TProfile(Form("p1_deltaT_energyRatioCorr_vs_posX_%s",labelLR_energyBin.c_str()),"",100,-50,50);
+	      p1_deltaT_energyRatioCorr_vs_posX[index2] = new TProfile(Form("p1_deltaT_energyRatioCorr_vs_posX_%s",labelLR_energyBin.c_str()),"",120,-30,30);
 	    }
 	  
 	  
@@ -1473,7 +1479,7 @@ int main(int argc, char** argv)
 	      std::string labelLR_energyBin(Form("bar%02dL-R_Vov%.2f_th%02d_energyBin%02d",anEvent->barID,anEvent->Vov,anEvent->vth1,energyBinAverage));
 	      
 	      h1_deltaT_totRatioPhaseCorr[index2] = new TH1F(Form("h1_deltaT_totRatioPhaseCorr_%s",labelLR_energyBin.c_str()),"",2000,-12000.,12000.);
-	      p1_deltaT_totRatioCorr_vs_posX[index2] = new TProfile(Form("p1_deltaT_totRatioCorr_vs_posX_%s",labelLR_energyBin.c_str()),"",100,-50,50);
+	      p1_deltaT_totRatioCorr_vs_posX[index2] = new TProfile(Form("p1_deltaT_totRatioCorr_vs_posX_%s",labelLR_energyBin.c_str()),"",120,-30,30);
 	      
 	      p1_deltaT_totRatioPhaseCorr_vs_totRatio[index2] = new TProfile(Form("p1_deltaT_totRatioPhaseCorr_vs_totRatio_%s",labelLR_energyBin.c_str()),"",50,fitFunc_totRatio[index2]->GetParameter(1)-3.*fitFunc_totRatio[index2]->GetParameter(2), fitFunc_totRatio[index2]->GetParameter(1)+3.*fitFunc_totRatio[index2]->GetParameter(2));
 	      h2_deltaT_totRatioPhaseCorr_vs_totRatio[index2] = new TH2F(Form("h2_deltaT_totPhaseRatioCorr_vs_totRatio_%s",labelLR_energyBin.c_str()),"",50,fitFunc_totRatio[index2]->GetParameter(1)-3.*fitFunc_totRatio[index2]->GetParameter(2), fitFunc_totRatio[index2]->GetParameter(1)+3.*fitFunc_totRatio[index2]->GetParameter(2), 2000, -12000., 12000. );
@@ -1642,6 +1648,7 @@ int main(int argc, char** argv)
 		
 		prof = p1_deltaT_energyRatioCorr_vs_posX[index2];
 		prof -> SetTitle(Form("; x [mm] ;#Deltat [ps]"));
+		prof -> GetXaxis() -> SetRangeUser(prof->GetMean(1)-3*prof->GetRMS(1), prof->GetMean(1)+3*prof->GetRMS(1));
 		prof -> GetYaxis() -> SetRangeUser(prof->GetMean(2)-3*prof->GetRMS(2), prof->GetMean(2)+3*prof->GetRMS(2));
 		prof -> Draw("");
 		
@@ -1653,7 +1660,8 @@ int main(int argc, char** argv)
 		latex -> Draw("same");
 		
 		fitFunc1_posCorr[index2] = new TF1(Form("fitFunc1_posCorr_%s",labelLR_energyBin.c_str()),"pol1",-50,50);
-		fitFunc1_posCorr[index2] -> SetRange( prof -> GetMean()-3*prof->GetRMS(), prof -> GetMean()+3*prof->GetRMS());
+		//fitFunc1_posCorr[index2] -> SetRange( prof -> GetMean()-3*prof->GetRMS(), prof -> GetMean()+3*prof->GetRMS());
+		fitFunc1_posCorr[index2] -> SetRange( prof -> GetMean()-1.*prof->GetRMS(), prof -> GetMean()+1.*prof->GetRMS());
 		prof -> Fit(fitFunc1_posCorr[index2],"QRS+");
 		fitFunc1_posCorr[index2] -> SetLineColor(kRed);
 		fitFunc1_posCorr[index2] -> SetLineWidth(2);
@@ -1669,6 +1677,7 @@ int main(int argc, char** argv)
 		
 		prof = p1_deltaT_totRatioCorr_vs_posX[index2];
 		prof -> SetTitle(Form("; x [mm] ;#Deltat [ps]"));
+		prof -> GetXaxis() -> SetRangeUser(prof->GetMean(1)-3*prof->GetRMS(1), prof->GetMean(1)+3*prof->GetRMS(1));
 		prof -> GetYaxis() -> SetRangeUser(prof->GetMean(2)-3*prof->GetRMS(2), prof->GetMean(2)+3*prof->GetRMS(2));
 		prof -> Draw("");
 		
@@ -1680,7 +1689,8 @@ int main(int argc, char** argv)
 		latex -> Draw("same");
 		
 		fitFunc2_posCorr[index2] = new TF1(Form("fitFunc2_posCorr_%s",labelLR_energyBin.c_str()),"pol1",-50,50);
-		fitFunc2_posCorr[index2] -> SetRange( prof -> GetMean()-3*prof->GetRMS(), prof -> GetMean()+3*prof->GetRMS());
+		//fitFunc2_posCorr[index2] -> SetRange( prof -> GetMean()-3*prof->GetRMS(), prof -> GetMean()+3*prof->GetRMS());
+		fitFunc2_posCorr[index2] -> SetRange( prof -> GetMean()-1.*prof->GetRMS(), prof -> GetMean()+1.*prof->GetRMS());
 		prof -> Fit(fitFunc2_posCorr[index2],"QRS+");
 		fitFunc2_posCorr[index2] -> SetLineColor(kRed);
 		fitFunc2_posCorr[index2] -> SetLineWidth(2);
