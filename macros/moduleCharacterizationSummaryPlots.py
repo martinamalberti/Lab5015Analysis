@@ -78,24 +78,25 @@ def getTimeResolution(h1_deltaT):
 
 
 # INPUT
-inputdir = '/data1/cmsdaq/Lab5015Analysis_new/TB_CERN_June22/Lab5015Analysis/plots/'
+inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/' 
+#inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/'
 #source = 'Laser'
 source = 'TB'
 
-
 # OUTPUT
-outdir  = '/var/www/html/TOFHIR2X/MTDTB_CERN_May23/ModuleCharacterization/'
+outdir  = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/ModuleCharacterization/' 
 outdir=outdir+args.outFolder
-outFileName = outdir+'/summaryPlots_'+args.outFolder+'.root'
+outFileName = inputdir+'/summaryPlots_'+args.outFolder+'.root'
+print 'Saving root file ', outFileName
 print 'Saving plots in ', outdir
 outfile = ROOT.TFile(outFileName, 'RECREATE' )
 
 
 # ranges for plots
 tResMin = 0
-tResMax = 120
+tResMax = 140
 tResMaxTh = 200
-vovMax = 5.5
+vovMax = 2.0
 
 
 # create files list
@@ -127,11 +128,11 @@ if (source == 'TB'):
 
 
 # --- colors
-cols = { 0.50 : 45,  
-         0.60 : 45,  
-         0.80 : 46,  
+'''
+cols = { 0.50 : 21,  
+         0.80 : 31,  
          0.90 : 47,  
-         1.00 : 48,  
+         1.00 : 41,  
          1.10 : 49,  
          1.20 : 49,  
          1.25 : 50,  
@@ -164,7 +165,16 @@ cols = { 0.50 : 45,
          5.00  : 12,
          7.00  : 15}
 
-
+'''
+cols = { 0.50 : 51,
+         0.60 : 51+8,
+         0.80 : 51+16,
+         1.00 : 51+24,
+         1.25 : 51+32,
+         1.50 : 51+40,
+         2.00 : 51+44,
+         3.50 : 51+48
+}
 
 # --- prepare output dir
 if (os.path.isdir(outdir) == False): 
@@ -206,44 +216,78 @@ VovsEff = {}
 plots_label = ''
 
 if ('528' in args.outFolder):
-    plots_label = 'HPK + LYSO528 (prod5, type2)'
+    plots_label = 'HPK (15#mum) + LYSO528 (prod5, type2)'
     for vov in Vovs:
         VovsEff[vov] = vov 
-    goodBars[3.50] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[1.50] = [2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[3.50] = [2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[2.00] = [2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[1.50] = [2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[1.00] = [2,3,4,5,7,8,9,10,11,12,13] 
 
 elif ('813' in args.outFolder):
-    plots_label = 'HPK (25 #mum, type2) + LYSO813 (prod1, type2)'
+    plots_label = 'HPK (25 #mum) + LYSO813 (prod1, type2)'
     for vov in Vovs:
         VovsEff[vov] = vov 
-    goodBars[3.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[2.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[1.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[1.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.80] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.50] = [0,2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[3.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[2.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[1.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[1.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[0.50] = [0,3,4,5,7,8,9,11,12,13]
 
-elif ('818' in args.outFolder):
-    plots_label = 'HPK (25 #mum, type1) + LYSO818 (prod1, type1)'
+elif ('814' in args.outFolder):
+    plots_label = 'HPK (20 #mum) + LYSO814 (prod1, type2)'
     for vov in Vovs:
         VovsEff[vov] = vov 
-    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
-    goodBars[2.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[1.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[1.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.80] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.50] = [0,2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[3.50] = [0,2,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[1.00] = [0,2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[0.80] = [0,3,4,5,7,8,9,10,11,12,13]
+    goodBars[0.50] = [0,3,4,5,7,8,9,10,11,12,13]
+
+elif ('824' in args.outFolder):
+    plots_label = 'HPK (25 #mum, low Cgrid) + LYSO824 (prod5, type2)'
+    for vov in Vovs:
+        VovsEff[vov] = vov 
+    goodBars[3.50] = [0,1,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[1.50] = [0,1,3,4,5,7,8,9,10,11,12,13] 
+    goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13]
+    goodBars[0.50] = [0,3,4,5,7,8,9,11,12,13]
 
 elif ('HPK_2E14_LYSO815_T-40C' in args.outFolder):
     plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-40#circC'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[2.00] = [0,3,4,5,7,8,9,1011,12,13,15]
+    #for vov in Vovs:
+    #    VovsEff[vov] = vov
+    VovsEff[2.00] = 1.13
+    VovsEff[1.50] = 1.03
+    VovsEff[1.25] = 0.95 #guess
+    VovsEff[1.00] = 0.80
+    VovsEff[0.80] = 0.70
+    VovsEff[0.60] = 0.60
+    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
     goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,12,13]
+
+elif ('HPK_2E14_LYSO815_T-35C' in args.outFolder):
+    plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-35#circC'
+    #for vov in Vovs:
+    #    VovsEff[vov] = vov
+    VovsEff[2.00] = 1.13
+    VovsEff[1.50] = 1.03
+    VovsEff[1.25] = 0.90 #guess
+    VovsEff[1.00] = 0.80
+    VovsEff[0.80] = 0.70
+    VovsEff[0.60] = 0.60
+    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,12,13]
+
 else:
     for vov in Vovs:
         VovsEff[vov] = vov
@@ -287,6 +331,11 @@ g_deltaT_totRatioCorr_bestTh_vs_bar = {} # g [vov, energyBin]
 g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov = {} # g [bar, energyBin] 
 g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar = {} # g [vov, energyBin] 
 
+g_deltaT_totRatioCorr_bestTh_vs_vov_average = {} # g [energyBin]
+g_deltaT_energyRatioCorr_bestTh_vs_vov_average = {} # g [energyBin]
+g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average = {} # g [energyBin]
+
+
 for bar in bars:
    for l in ['L','R','L-R']:
       for vov in Vovs:
@@ -326,6 +375,11 @@ for vov in Vovs:
         g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin] = ROOT.TGraphErrors()
         g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin] = ROOT.TGraphErrors()
         g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin] = ROOT.TGraphErrors()
+
+for enBin in enBins: 
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin] = ROOT.TGraphErrors()
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin] = ROOT.TGraphErrors()
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin] = ROOT.TGraphErrors()
 
 
 # --- Read the histograms from moduleCharacterization_step2 file
@@ -463,6 +517,7 @@ for label in label_list:
                h1_deltaT_energyCorr_totCorr.Draw()                
                ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
+
                # graphs vs threshold
                g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].SetPoint(g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].GetN(), thr, tRes_energyCorr[enBin][0]/kscale )
                g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].SetPointError(g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].GetN()-1, 0, tRes_energyCorr[enBin][1]/kscale)
@@ -520,6 +575,25 @@ for label in label_list:
                g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].SetPointError(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].GetN()-1, 0, (bestRes_energyCorr_totCorr[bar, vov, enBin][1])/kscale)            
                
 
+# fill graphs with average tRes vs OV
+for enBin in enBins:
+   for vov in Vovs:
+      fitpol0 = ROOT.TF1('fitpol0','pol0',-1,16) 
+      g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitpol0,'QSN')
+      ave, err = [fitpol0.GetParameter(0),fitpol0.GetParError(0)]
+      g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetPoint(g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].GetN(), VovsEff[vov], ave)
+      g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetPointError(g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].GetN()-1, 0, err)
+
+      g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitpol0,'QSN')
+      ave, err = [fitpol0.GetParameter(0),fitpol0.GetParError(0)]
+      g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetPoint(g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].GetN(), VovsEff[vov], ave)
+      g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetPointError(g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].GetN()-1, 0, err)
+
+      g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitpol0,'QSN')
+      ave, err = [fitpol0.GetParameter(0),fitpol0.GetParError(0)]
+      g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetPoint(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].GetN(), VovsEff[vov], ave)
+      g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetPointError(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].GetN()-1, 0, err)
+      
 
 # -- Draw
 latex = ROOT.TLatex(0.18,0.94,'%s'%(plots_label))
@@ -661,7 +735,7 @@ for bar in bars:
 
         # -- time resolution vs Vov
         ctres2 = ROOT.TCanvas('c_tRes_energyRatioCorr_vs_Vov_bar%.02d_enBin%02d'%(bar,enBin))
-        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0., vovMax, 10, tResMin,tResMax)
+        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.0, vovMax, 10, tResMin,tResMax)
         hPadT2.SetTitle(";V_{OV}^{eff} [V];#sigma_{t} [ps]")
         hPadT2.Draw()
         ctres2.SetGridy()
@@ -694,7 +768,7 @@ for bar in bars:
 
         # -- time resolution vs Vov at the best Th
         ctres2 = ROOT.TCanvas('c_tRes_energyRatioCorr_bestTh_vs_Vov_bar%.02d_enBin%02d'%(bar,enBin))
-        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0., vovMax,10, tResMin,tResMax)
+        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.0, vovMax,10, tResMin,tResMax)
         hPadT2.SetTitle(";V_{OV}^{eff} [V];#sigma_{t} [ps]")
         hPadT2.Draw()
         ctres2.SetGridy()
@@ -719,6 +793,34 @@ for bar in bars:
         ctres2.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres2.GetName()+'.pdf')
         hPadT2.Delete()   
 
+# average time resolution vs OV
+for enBin in enBins:
+   ctres2 = ROOT.TCanvas('c_tRes_totRatioCorr_bestTh_vs_Vov_enBin%02d_average'%(enBin))
+   hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.0, vovMax,10, tResMin,tResMax)
+   hPadT2.SetTitle(";V_{OV}^{eff} [V];#sigma_{t} [ps]")
+   hPadT2.Draw()
+   ctres2.SetGridy()
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerStyle(20)
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerColor(1)
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetLineColor(1)
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].Draw('plsame')
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerStyle(24)
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerColor(1)
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetLineColor(1)
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].Draw('plsame')
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerStyle(34)
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerColor(1)
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetLineColor(1)
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].Draw('plsame')
+   latex.Draw('same')
+   outfile.cd() 
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].Write('g_deltaT_energyRatioCorr_bestTh_vs_vov_enBin%02d_average'%(enBin))
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].Write('g_deltaT_totRatioCorr_bestTh_vs_vov_enBin%02d_average'%(enBin))
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].Write('g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_enBin%02d_average'%(enBin))
+   ctres2.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres2.GetName()+'.png')
+   ctres2.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres2.GetName()+'.pdf')
+   hPadT2.Delete()   
+   
 # -- plots vs bar
 
 # -- tot vs bar 
@@ -755,7 +857,6 @@ for i, vov in enumerate(Vovs):
    leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
    leg.SetBorderSize(0)
    leg.SetFillStyle(0)
-   #for i, vov in enumerate(Vovs):
    for l in ['L','R', 'L-R']:
       g_energy_vs_bar[l, vov, thRef, refPeak].Sort()
       g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerStyle(20)
@@ -783,7 +884,7 @@ for i, vov in enumerate(Vovs):
       leg = ROOT.TLegend(0.70, 0.18, 0.90, 0.45)
       leg.SetBorderSize(0)
       leg.SetFillStyle(0)
-      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerStyle(24)
+      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerStyle(20)
       g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerColor(cols[vov])
       g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetLineColor(cols[vov])
       g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].Draw('psame')

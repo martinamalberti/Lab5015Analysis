@@ -1,0 +1,7 @@
+executable            = step2.sh
+arguments             = $(cfg)
+output                = /afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/scripts/jobs/job_step2.$(ClusterId).$(ProcId).out
+error                 = /afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/scripts/jobs/job_step2.$(ClusterId).$(ProcId).err
+log                   = /afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/scripts/jobs/job_step2.$(ClusterId).$(ProcId).log
++MaxRuntime = 1800
+queue cfg from list_cfg_moduleCharacterization_LYSO815.txt
