@@ -128,6 +128,7 @@ if (source == 'TB'):
 
 # --- colors
 cols = { 0.50 : 45,  
+         0.60 : 45,  
          0.80 : 46,  
          0.90 : 47,  
          1.00 : 48,  
@@ -233,6 +234,16 @@ elif ('818' in args.outFolder):
     goodBars[0.80] = [0,1,2,3,4,5,7,8,9,10,11,12,13]
     goodBars[0.50] = [0,2,3,4,5,7,8,9,10,11,12,13]
 
+elif ('HPK_2E14_LYSO815_T-40C' in args.outFolder):
+    plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-40#circC'
+    for vov in Vovs:
+        VovsEff[vov] = vov 
+    goodBars[2.00] = [0,3,4,5,7,8,9,1011,12,13,15]
+    goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,8,9,10,11,12,13,15]
 else:
     for vov in Vovs:
         VovsEff[vov] = vov
