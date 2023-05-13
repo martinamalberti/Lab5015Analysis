@@ -275,12 +275,12 @@ elif ('HPK_2E14_LYSO815_T-35C' in args.outFolder):
     plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-35#circC'
     #for vov in Vovs:
     #    VovsEff[vov] = vov
-    VovsEff[2.00] = 1.13
+    VovsEff[2.00] = 1.12
     VovsEff[1.50] = 1.03
-    VovsEff[1.25] = 0.90 #guess
+    VovsEff[1.25] = 0.90 
     VovsEff[1.00] = 0.80
-    VovsEff[0.80] = 0.70
-    VovsEff[0.60] = 0.60
+    VovsEff[0.80] = 0.67
+    VovsEff[0.60] = 0.52
     goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
