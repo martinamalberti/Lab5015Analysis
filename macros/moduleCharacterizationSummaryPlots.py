@@ -10,11 +10,10 @@ import argparse
 import json
 
 
-#from VovsEff import *
+from VovsEff import *
 
 
 parser = argparse.ArgumentParser(description='Module characterization summary plots')
-#parser.add_argument("-r",  "--runs",          required=True, type=str, help="comma-separated list of runs to be processed")
 parser.add_argument("-i",  "--inputLabels",   required=True, type=str, help="comma-separated list of input labels")
 parser.add_argument("-m",  "--resMode",       required=True, type=int, help="resolution mode: 2 - tDiff, 1 - tAve")
 parser.add_argument("-o",  "--outFolder",     required=True, type=str, help="out folder")
@@ -70,7 +69,6 @@ def getTimeResolution(h1_deltaT):
    #if (fitFunc.GetParameter(2) < 20): continue
    #if (fitFunc.GetParError(2) > 200): continue
    tRes = [ fitFunc.GetParameter(2),fitFunc.GetParError(2)]
-   #print h1_deltaT.GetName(), fitFunc.GetParameter(2)
    return tRes
 
 
@@ -79,7 +77,6 @@ def getTimeResolution(h1_deltaT):
 
 # INPUT
 inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/' 
-#inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/'
 #source = 'Laser'
 source = 'TB'
 
@@ -90,6 +87,10 @@ outFileName = inputdir+'/summaryPlots_'+args.outFolder+'.root'
 print 'Saving root file ', outFileName
 print 'Saving plots in ', outdir
 outfile = ROOT.TFile(outFileName, 'RECREATE' )
+
+# Import file with VovEff and DCR
+with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
+   data = json.load(f)   
 
 
 # ranges for plots
@@ -128,44 +129,6 @@ if (source == 'TB'):
 
 
 # --- colors
-'''
-cols = { 0.50 : 21,  
-         0.80 : 31,  
-         0.90 : 47,  
-         1.00 : 41,  
-         1.10 : 49,  
-         1.20 : 49,  
-         1.25 : 50,  
-         1.27 : 50,  
-         1.30 : 50,  
-         1.40 : 46, 
-         1.50 : 51, 
-         1.53 : 51, 
-         1.60 : 51+4, 
-         1.70 : 51+8,
-         1.75 : 51+8,
-         1.80 : 51+12,
-         1.90 : 51+16,
-         2.00 : 51 + 20, 
-         2.08 : 51 + 24, 
-         2.10 : 51 + 24, 
-         2.30 : 51 + 28,
-         2.40 : 51 + 30,
-         2.50  : 51 + 32,
-         2.60  : 51 + 34,
-         2.70  : 51 + 35,
-         2.80  : 51 + 36,
-         3.00  : 51 + 40,
-         3.10  : 51 + 42,
-         3.20  : 51 + 44,
-         3.50  : 51 + 48,
-         3.60  : 51 + 48,
-         3.70  : 51 + 48,
-         4.00  : 1,
-         5.00  : 12,
-         7.00  : 15}
-
-'''
 cols = { 0.50 : 51,
          0.60 : 51+8,
          0.80 : 51+16,
@@ -256,14 +219,8 @@ elif ('824' in args.outFolder):
 
 elif ('HPK_2E14_LYSO815_T-40C' in args.outFolder):
     plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-40#circC'
-    #for vov in Vovs:
-    #    VovsEff[vov] = vov
-    VovsEff[2.00] = 1.13
-    VovsEff[1.50] = 1.03
-    VovsEff[1.25] = 0.95 #guess
-    VovsEff[1.00] = 0.80
-    VovsEff[0.80] = 0.70
-    VovsEff[0.60] = 0.60
+    for vov in Vovs:
+       VovsEff[vov] = getVovEffDCR(data, 'LYSO815','HPK_2E14_T-40C', ('%.02f'%vov))[0]
     goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
@@ -273,14 +230,8 @@ elif ('HPK_2E14_LYSO815_T-40C' in args.outFolder):
 
 elif ('HPK_2E14_LYSO815_T-35C' in args.outFolder):
     plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-35#circC'
-    #for vov in Vovs:
-    #    VovsEff[vov] = vov
-    VovsEff[2.00] = 1.12
-    VovsEff[1.50] = 1.03
-    VovsEff[1.25] = 0.90 
-    VovsEff[1.00] = 0.80
-    VovsEff[0.80] = 0.67
-    VovsEff[0.60] = 0.52
+    for vov in Vovs:
+       VovsEff[vov] = getVovEffDCR(data, 'LYSO815','HPK_2E14_T-35C', ('%.02f'%vov))[0]
     goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
     goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
