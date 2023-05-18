@@ -110,6 +110,7 @@ class DataStruct(NamedTuple):
 data_structs = []
 
 
+'''
 #HPK_25 um 
 data_structs.append(
         DataStruct(
@@ -125,7 +126,6 @@ data_structs.append(
         )
 )
 
-'''
 #HPK_20 um 
 data_structs.append(
         DataStruct(
@@ -174,6 +174,20 @@ data_structs.append(
 '''
 
 
+#HPK_25 um 
+data_structs.append(
+        DataStruct(
+            sipm = 'HPK_nonIrr_LYSO813',
+            sipmType = 'HPK-PIT-C25-ES2',
+            fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO813.root',
+            fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_nonIrr_LYSO813',
+            label = 'HPK(25#mum)+LYSO813',
+            LO = 2418,
+            tau = 41.4,
+            marker = 20,
+            color = 1
+        )
+)
 
 
 
@@ -181,7 +195,8 @@ data_structs.append(
 # =====================================
 
 #outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_cellSizes_test/'
-outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_Cgrid/'
+#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_Cgrid/'
+outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_nonIrr/'
 
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
@@ -189,7 +204,7 @@ if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TBMar23_cellSizes_test.root','recreate')  
-outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TBMar23_Cgrid.root','recreate')  
+outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TBMay23.root','recreate')  
 
 
 np = 3
@@ -264,7 +279,7 @@ for ds in data_structs:
 
     fPS[ds.sipm] = {}
     for ov in Vovs[ds.sipm]:
-        fPS[ds.sipm][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f.root'%ov)
+        fPS[ds.sipm][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T5C.root'%ov)
 
         g_SR_vs_bar[ds.sipm][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[ds.sipm][ov] = ROOT.TGraphErrors()

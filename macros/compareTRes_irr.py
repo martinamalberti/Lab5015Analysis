@@ -34,20 +34,33 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 fnames = { (25, -40) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO815_T-40C.root',
            (25, -35) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO815_T-35C.root',
+           (25, -30) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO815_T-30C.root',
+           (20, -40) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO825_T-40C.root',
+           (20, -35) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO825_T-35C.root',
+           (20, -30) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO825_T-30C.root',
 }
 
 
 gnames = { (25, -40) : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
            (25, -35) : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
+           (25, -30) : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
+           (20, -40) : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
+           (20, -35) : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
+           (20, -30) : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
 }
 
-plotAttrs = { (25, -40) : [20, ROOT.kBlue,  'HPK 25#mum 2E14 T=-40C'],
-              (25, -35) : [20, ROOT.kRed ,  'HPK 25#mum 2E14 T=-35C' ],
+plotAttrs = { (25, -40) : [20, ROOT.kBlue,     'HPK 25#mum 2E14 T=-40C'],
+              (25, -35) : [20, ROOT.kOrange+1, 'HPK 25#mum 2E14 T=-35C' ],
+              (25, -30) : [20, ROOT.kRed ,     'HPK 25#mum 2E14 T=-30C' ],
+              (20, -40) : [24, ROOT.kBlue,     'HPK 20#mum 2E14 T=-40C'],
+              (20, -35) : [24, ROOT.kOrange+1, 'HPK 20#mum 2E14 T=-35C' ],
+              (20, -30) : [24, ROOT.kRed ,     'HPK 20#mum 2E14 T=-30C' ],
 }
 
 
-c = ROOT.TCanvas('c_comparison_HPK_2E14_LYSO815','c_comparison_HPK_2E14_LYSO815')
-hPad = ROOT.gPad.DrawFrame(0.,30.,2.,130.)
+#c = ROOT.TCanvas('c_comparison_HPK_2E14_LYSO815','c_comparison_HPK_2E14_LYSO815')
+c = ROOT.TCanvas('c_comparison_HPK_2E14_LYSO825','c_comparison_HPK_2E14_LYSO825')
+hPad = ROOT.gPad.DrawFrame(0.,40.,1.8,115.)
 hPad.SetTitle(";V_{OV};#sigma_{t}^{bar} [ps]")
 hPad.Draw()
 ROOT.gPad.SetGridx()
@@ -62,8 +75,8 @@ leg.SetTextSize(0.04)
 g = {}
 f = {}
 
-for temp in [-40, -35]:
-    for cell in [25]:
+for temp in [-40, -35, -30]:
+    for cell in [20]:
         f[(cell,temp)] = ROOT.TFile.Open(fnames[(cell,temp)])
         g[(cell,temp)] = f[(cell,temp)].Get(gnames[(cell,temp)])
         g[(cell,temp)].SetMarkerSize(1)
