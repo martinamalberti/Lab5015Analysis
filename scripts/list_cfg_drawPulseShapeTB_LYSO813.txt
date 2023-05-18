@@ -1,0 +1,4 @@
+/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/drawPulseShapeTB_HPK_nonIrr_LYSO813_Vov0.50_T5C.cfg
+/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/drawPulseShapeTB_HPK_nonIrr_LYSO813_Vov0.80_T5C.cfg
+/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/drawPulseShapeTB_HPK_nonIrr_LYSO813_Vov1.50_T5C.cfg
+/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/drawPulseShapeTB_HPK_nonIrr_LYSO813_Vov3.50_T5C.cfg

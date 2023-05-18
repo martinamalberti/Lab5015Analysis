@@ -253,7 +253,7 @@ for ds in data_structs:
         g_bestTh_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
                    
         for ov in Vovs[ds.moduleLabel]:
-            ovEff = getVovEffDCR(data, ds.lyso, (ds.sipm+'_T%dC'%ds.temperature), ('%.02f'%ov))[0]
+            ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0]
                     
             # get measured time resolution
             s_data = g_data[ds.moduleLabel][bar].Eval(ovEff)
@@ -367,7 +367,7 @@ for ds in data_structs:
                 g_DCR_vs_bar[ds.moduleLabel][ov].SetPoint( g_DCR_vs_bar[ds.moduleLabel][ov].GetN(), bar, s_dcr )
                 g_DCR_vs_bar[ds.moduleLabel][ov].SetPointError( g_DCR_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  err_s_dcr)
                 
-                dcr = getVovEffDCR(data, ds.lyso, (ds.sipm+'_T%dC'%ds.temperature),('%.02f'%ov))[1]
+                dcr = getVovEffDCR(data, ds.moduleLabel,('%.02f'%ov))[1]
                 g_DCR_vs_Npe[ds.moduleLabel][bar].SetPoint( g_DCR_vs_Npe[ds.moduleLabel][bar].GetN(), math.sqrt(dcr)/Npe[ds.moduleLabel][ov]/(math.sqrt(30.)/3000.), s_dcr )
                 g_DCR_vs_Npe[ds.moduleLabel][bar].SetPointError( g_DCR_vs_Npe[ds.moduleLabel][bar].GetN()-1, 0,  err_s_dcr)
 
@@ -406,8 +406,8 @@ for ds in data_structs:
     g_Tot_vs_Vov_average[ds.moduleLabel] = ROOT.TGraphErrors()
 
     for ov in Vovs[ds.moduleLabel]:
-        ovEff = getVovEffDCR(data, ds.lyso, (ds.sipm+'_T%dC'%ds.temperature), ('%.02f'%ov))[0] 
-        dcr   = getVovEffDCR(data, ds.lyso, (ds.sipm+'_T%dC'%ds.temperature), ('%.02f'%ov))[1] 
+        ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0] 
+        dcr   = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[1] 
         staticCurrent = dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19; 
         staticPower = staticCurrent * (37. + ovEff) * 1000.; #in mW
 
@@ -913,7 +913,7 @@ for bar in range(0,16):
 for ds in data_structs:
     for ov in Vovs[ds.moduleLabel]:
         if (ov not in g_SR_vs_bar[ds.moduleLabel].keys()): continue
-        ovEff = getVovEffDCR(data, ds.lyso, (ds.sipm+'_T%dC'%ds.temperature), ('%.02f'%ov))[0]        
+        ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0]        
         c = ROOT.TCanvas('c_slewRate_vs_bar_%s_Vov%.2f'%(ds.moduleLabel,ovEff),'c_slewRate_vs_bar_%s_Vov%.2f'%(ds.moduleLabel,ovEff),600,600)
         c.SetGridy()
         c.cd()
