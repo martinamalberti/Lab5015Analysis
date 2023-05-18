@@ -8,12 +8,13 @@ class DataStruct(NamedTuple):
     moduleLabel: str
     lyso: str
     sipm: str
+    thickness: str
     sipmType: str
     irradiation : str
     temperature: int
     fName: str
     fNamePS: str
-    label: str
+    plotLabel: str
     stoch_ref: float
     ov_ref: float
     LO: str
@@ -29,17 +30,17 @@ data_structs.append(
     DataStruct(
         moduleLabel = 'HPK_2E14_LYSO815_T-40C',
         lyso = 'LYSO815',
+        thickness = 3.00,
         sipm = 'HPK_2E14',
         sipmType = 'HPK-PIT-C25-ES2',
         irradiation = '2E14',
         temperature = -40,
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO815_T-40C.root',
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_2E14_LYSO815',
-        label = 'HPK(25#mum,2E14)+LYSO815 T=-40#circC',
+        plotLabel = 'HPK(25#mum,2E14) - Type2 - T=-40#circC',
         stoch_ref = 30., # tRes for non-irradiated at 1.0 V                                                                                               
         ov_ref    = 1.00,
-        LO = 2418, # LO at 3.5 V non-irradiated                                                                                                           
-        #tau = 41.4,                                                                                                                                      
+        LO = 2250, # LO at 3.5 V non-irradiated                                                                                                           
         marker = 20,
         color = 4
     )
@@ -51,6 +52,7 @@ data_structs.append(
     DataStruct(
         moduleLabel = 'HPK_2E14_LYSO815_T-35C',
         lyso = 'LYSO815',
+        thickness = 3.00,
         sipm = 'HPK_2E14',
         sipmType = 'HPK-PIT-C25-ES2',
         irradiation = '2E14',
@@ -58,11 +60,10 @@ data_structs.append(
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO815_T-35C.root',
         #fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_2E14_LYSO815',                                                  
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/4martina/pulseShapes/pulseShape_HPK_2E14_LYSO815',
-        label = 'HPK(25#mum,2E14)+LYSO815 T=-35#circC',
+        plotLabel = 'HPK(25#mum,2E14) - Type2 - T=-35#circC',
         stoch_ref = 30., # tRes for non-irradiated at 1.0 V                                                                                                             
         ov_ref    = 1.00,
-        LO = 2418, # LO at 3.5 V non-irradiated                                                                                                                         
-        #tau = 41.4,                                                                                                                                                    
+        LO = 2250, # LO at 3.5 V non-irradiated                                                                                                                         
         marker = 20,
         color = 92
     )
@@ -75,6 +76,7 @@ data_structs.append(
     DataStruct(
         moduleLabel = 'HPK_2E14_LYSO815_T-30C',
         lyso = 'LYSO815',
+        thickness = 3.00,
         sipm = 'HPK_2E14',
         sipmType = 'HPK-PIT-C25-ES2',
         irradiation = '2E14',
@@ -83,11 +85,10 @@ data_structs.append(
         #fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_2E14_LYSO815',                                                  
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/4martina/summaryPlots/summaryPlots_HPK_2E14_LYSO815_T-30C.root',
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/4martina/pulseShapes/pulseShape_HPK_2E14_LYSO815',
-        label = 'HPK(25#mum,2E14)+LYSO815 T=-30C',
+        plotLabel = 'HPK(25#mum,2E14) - Type2 - T=-30#circC',
         stoch_ref = 30., # tRes for non-irradiated at 1.0 V                                                                                                             
         ov_ref    = 1.00,
-        LO = 2418, # LO at 3.5 V non-irradiated                                                                                                                         
-        #tau = 41.4,                                                                                                                                                    
+        LO = 2250, # LO at 3.5 V non-irradiated                                                                                                                         
         marker = 20,
         color = 2
     )
@@ -99,17 +100,17 @@ data_structs.append(
     DataStruct(
         moduleLabel = 'HPK_2E14_LYSO825_T-40C',
         lyso = 'LYSO825',
+        thickness = 3.00,
         sipm = 'HPK_2E14',
         sipmType = 'HPK-PIT-C20-ES2',
         irradiation = '2E14',
         temperature = -40,
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO825_T-40C.root',
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_2E14_LYSO825',
-        label = 'HPK(20#mum,2E14)+LYSO825 T=-40#circC',
+        plotLabel = 'HPK(20#mum,2E14) - Type2 - T=-40#circC',
         stoch_ref = 35., # tRes for non-irradiated at 1.0 V                                                                                               
         ov_ref    = 1.00,
-        LO = 2165, # LO at 3.5 V non-irradiated                                                                                                           
-        #tau = 41.4,                                                                                                                                      
+        LO = 2050, # LO at 3.5 V non-irradiated                                                                                                           
         marker = 24,
         color = 4
     )
@@ -122,16 +123,16 @@ data_structs.append(
         moduleLabel = 'HPK_2E14_LYSO825_T-35C',
         lyso = 'LYSO825',
         sipm = 'HPK_2E14',
+        thickness = 3.00,
         sipmType = 'HPK-PIT-C20-ES2',
         irradiation = '2E14',
         temperature = -35,
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO825_T-35C.root',
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_2E14_LYSO825',
-        label = 'HPK(20#mum,2E14)+LYSO825 T=-35#circC',
+        plotLabel = 'HPK(20#mum,2E14) - Type2 - T=-35#circC',
         stoch_ref = 35., # tRes for non-irradiated at 1.0 V                                                                                               
         ov_ref    = 1.00,
-        LO = 2165, # LO at 3.5 V non-irradiated                                                                                                           
-        #tau = 41.4,                                                                                                                                      
+        LO = 2050, # LO at 3.5 V non-irradiated                                                                                                           
         marker = 24,
         color = 92
     )
@@ -143,17 +144,17 @@ data_structs.append(
     DataStruct(
         moduleLabel = 'HPK_2E14_LYSO825_T-30C',
         lyso = 'LYSO825',
+        thickness = 3.00,
         sipm = 'HPK_2E14',
         sipmType = 'HPK-PIT-C20-ES2',
         irradiation = '2E14',
         temperature = -30,
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_2E14_LYSO825_T-30C.root',
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_2E14_LYSO825',
-        label = 'HPK(20#mum,2E14)+LYSO825 T=-30#circC',
+        plotLabel = 'HPK(20#mum,2E14) - Type2 - T=-30#circC',
         stoch_ref = 35., # tRes for non-irradiated at 1.0 V                                                                                               
         ov_ref    = 1.00,
-        LO = 2165, # LO at 3.5 V non-irradiated                                                                                                           
-        #tau = 41.4,                                                                                                                                      
+        LO = 2050, # LO at 3.5 V non-irradiated                                                                                                           
         marker = 24,
         color = 2
     )
@@ -161,24 +162,116 @@ data_structs.append(
 
 '''
 
+
 #LYSO819 HPK_25 um T = -32                                                                                                                                    
 data_structs.append(
     DataStruct(
         moduleLabel = 'HPK_1E14_LYSO819_T-32C',
         lyso = 'LYSO819',
+        thickness = 3.75,
         sipm = 'HPK_1E14',
         sipmType = 'HPK-PIT-C25-ES2',
         irradiation = '1E14',
         temperature = -32,
         fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_1E14_LYSO819_T-32C.root',
         fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_1E14_LYSO819',
-        label = 'HPK(25#mum,1E14)+LYSO825 T=-32#circC',
-        stoch_ref = 30., # tRes for non-irradiated at 1.0 V                                                                                               
+        plotLabel = 'HPK(25#mum,1E14) - Type1 - T=-32#circC',
+        stoch_ref = 28., # tRes for non-irradiated at 1.0 V                                                                                               
         ov_ref    = 1.00,
-        LO = 2400, # LO at 3.5 V non-irradiated ???                                                                                                          
-        #tau = 41.4,                                                                                                                                      
-        marker = 20,
+        LO = 2410, # LO at 3.5 V non-irradiated ???                                                                                                          
+        marker = 30,
+        color = 92
+    )
+)
+
+#LYSO819 HPK_25 um T = -22                                                                                                                                    
+data_structs.append(
+    DataStruct(
+        moduleLabel = 'HPK_1E14_LYSO819_T-22C',
+        lyso = 'LYSO819',
+        thickness = 3.75,  
+        sipm = 'HPK_1E14',
+        sipmType = 'HPK-PIT-C25-ES2',
+        irradiation = '1E14',
+        temperature = -22,
+        fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_1E14_LYSO819_T-22C.root',
+        fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_1E14_LYSO819',
+        plotLabel = 'HPK(25#mum,1E14) - Type1 - T=-22#circC',
+        stoch_ref = 28., # tRes for non-irradiated at 1.0 V                                                                                               
+        ov_ref    = 1.00,
+        LO = 2410, # LO at 3.5 V non-irradiated ???                                                                                                          
+        marker = 30,
         color = 4
     )
 )
+
+'''
+#LYSO819 HPK_25 um T = -27
+data_structs.append(
+    DataStruct(
+        moduleLabel = 'HPK_1E14_LYSO819_T-27C',
+        lyso = 'LYSO819',
+        thickness = 3.75,
+        sipm = 'HPK_1E14',
+        sipmType = 'HPK-PIT-C25-ES2',
+        irradiation = '1E14',
+        temperature = -27,
+        fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_1E14_LYSO819_T-27C.root',
+        fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_1E14_LYSO819',
+        plotLabel = 'HPK(25#mum,1E14) - Type1 - T=-32#circC',
+        stoch_ref = 28., # tRes for non-irradiated at 1.0 V                                                                                               
+        ov_ref    = 1.00,
+        LO = 2410, # LO at 3.5 V non-irradiated ???                                                                                                          
+        marker = 30,
+        color = 8
+    )
+)
+
+
+
+#LYSO819 HPK_25 um T = -37
+data_structs.append(
+    DataStruct(
+        moduleLabel = 'HPK_1E14_LYSO819_T-37C',
+        lyso = 'LYSO819',
+        thickness = 3.75,
+        sipm = 'HPK_1E14',
+        sipmType = 'HPK-PIT-C25-ES2',
+        irradiation = '1E14',
+        temperature = -37,
+        fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_1E14_LYSO819_T-37C.root',
+        fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_1E14_LYSO819',
+        plotLabel = 'HPK(25#mum,1E14) - Type1 - T=-37#circC',
+        stoch_ref = 28., # tRes for non-irradiated at 1.0 V                                                                                               
+        ov_ref    = 1.00,
+        LO = 2410, # LO at 3.5 V non-irradiated ???                                                                                                          
+        marker = 30,
+        color = 4
+    )
+)
+
+
+
+#LYSO829 HPK_25 um T = -19  1E13 T1
+data_structs.append(
+    DataStruct(
+        moduleLabel = 'HPK_1E13_LYSO829_T-19C',
+        lyso = 'LYSO829',
+        thickness = 3.75,
+        sipm = 'HPK_1E13',
+        sipmType = 'HPK-PIT-C25-ES2',
+        irradiation = '1E13',
+        temperature = -19,
+        fName = '/eos/home-s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/plots/summaryPlots_HPK_1E13_LYSO829_angle52_T-19C.root',
+        fNamePS = '/eos/home-s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/plots/pulseShape_HPK_1E13_LYSO829',
+        plotLabel = 'HPK(25#mum,1E13) - Type1 - T=-19#circC',
+        stoch_ref = 28., # tRes for non-irradiated at 1.0 V                                                                                               
+        ov_ref    = 1.00,
+        LO = 2410, # LO at 3.5 V non-irradiated ???                                                                                                          
+        marker = 30,
+        color = 4
+    )
+)
+
+'''
 

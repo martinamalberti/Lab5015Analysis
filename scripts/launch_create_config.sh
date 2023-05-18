@@ -78,32 +78,32 @@
 #### LYSO825 #####    HPK 20 um  irr 2E14
 # ------ ANGLE 52 --------
 #----- config 25.00:     LYSO 825 HPK 2E14  20um       T2      T-40
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 0.6        -r 5528
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 0.8        -r 5529
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 1.0        -r 5530
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 1.25       -r 5531,5532
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 1.5        -r 5533,5535
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 2.0        -r 5534
-python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 2.5        -r 5536,5537
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 0.6        -r 5528
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 0.8        -r 5529
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 1.0        -r 5530
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 1.25       -r 5531,5532
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 1.5        -r 5533,5535
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 2.0        -r 5534
+#python create_config.py     -t -40     -ml HPK_2E14_LYSO825    -c config_25.00    -ov 2.5        -r 5536,5537
 
 #----- config 25.01:     LYSO 825 HPK 2E14  20um       T2      T-35
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 0.6        -r 5538       
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 0.8        -r 5539       
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 1.0        -r 5540       
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 1.25       -r 5541       
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 1.5        -r 5542       
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 2.0        -r 5543       
-python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 2.5        -r 5544,5545  
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 0.6        -r 5538       
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 0.8        -r 5539       
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 1.0        -r 5540       
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 1.25       -r 5541       
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 1.5        -r 5542       
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 2.0        -r 5543       
+#python create_config.py     -t -35     -ml HPK_2E14_LYSO825    -c config_25.01    -ov 2.5        -r 5544,5545  
 
 
 #----- config 25.02:     LYSO 825 HPK 2E14  20um       T2      T-30
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 0.6        -r 5546
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 0.8        -r 5547,5548
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 1.0        -r 5549
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 1.25       -r 5550
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 1.5        -r 5551,5552
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 2.0        -r 5553
-python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 2.5        -r 5554
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 0.6        -r 5546
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 0.8        -r 5547,5548
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 1.0        -r 5549
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 1.25       -r 5550
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 1.5        -r 5551,5552
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 2.0        -r 5553
+#python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02    -ov 2.5        -r 5554
 
 # ------ ANGLE 64 --------  
 #----- config 25.03:     LYSO 825 HPK 2E14  20um       T2      T-35  
@@ -130,12 +130,42 @@ python create_config.py     -t -30     -ml HPK_2E14_LYSO825    -c config_25.02  
 #python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 1.25        -r 5570         -e delayT0b00000011
 #python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 1.25        -r 5571         -e delayT0b00000001
 
+# OV scan
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 0.6        -r  5573
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 0.8        -r  5574,5575
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 1.0        -r  5576,5577
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 1.25        -r  5578
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 1.5        -r  5579,5580
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 2.0        -r  5581
+#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.00    -ov 2.5        -r  5582
 
-#----- config 27.01:     LYSO 819 HPK 1E14  25um       T1      T-32 
-#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 2.5            -r 5572
-#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 0.6            -r 5573
-#python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 0.8            -r 5574,5575
-# python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 1.0            -r 5576
-# python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 1.25           -r 
-# python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 1.5            -r 
-# python create_config.py     -t -32     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 2.0            -r 
+
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 0.6         -r 5619
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 0.8         -r 5620 
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 1.0         -r 5621 
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 1.25        -r 5622,5623
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 1.5         -r 5624
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 2.0         -r 5625,5626
+#python create_config.py     -t -22     -ml HPK_1E14_LYSO819    -c config_27.03    -ov 2.5         -r 5627
+
+
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 0.6         -r 5609
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 0.8         -r 5610
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 1.0         -r 5611,5612
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 1.25        -r 5613
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 1.5         -r 5614
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 2.0         -r 5615,5616,5617
+python create_config.py     -t -27     -ml HPK_1E14_LYSO819    -c config_27.02    -ov 2.5         -r 5618
+
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 0.6         -r 5593
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 0.8         -r 5594,5595
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 1.0         -r 5596
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 1.25        -r 5597
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 1.5         -r 5598
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 2.0         -r 5599
+python create_config.py     -t -37     -ml HPK_1E14_LYSO819    -c config_27.01    -ov 2.5         -r 5600,5601
+
+
+
+
+

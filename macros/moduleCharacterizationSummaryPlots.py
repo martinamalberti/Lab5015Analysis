@@ -77,6 +77,7 @@ def getTimeResolution(h1_deltaT):
 
 # INPUT
 inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/' 
+#inputdir = '/eos/home-s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/plots/' 
 #source = 'Laser'
 source = 'TB'
 
@@ -136,6 +137,7 @@ cols = { 0.50 : 51,
          1.25 : 51+32,
          1.50 : 51+40,
          2.00 : 51+44,
+         2.50 : 51+46,
          3.50 : 51+48
 }
 
@@ -251,7 +253,7 @@ elif ('HPK_2E14_LYSO815_T-30C' in args.outFolder):
     goodBars[0.60] = [0,3,4,5,7,12,13]
 
 elif ('HPK_2E14_LYSO825_T-40C' in args.outFolder):
-    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod1,type2) T=-40#circC'
+    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-40#circC'
     for vov in Vovs:
        VovsEff[vov] = getVovEffDCR(data, 'LYSO825','HPK_2E14_T-40C', ('%.02f'%vov))[0]
     goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
@@ -262,7 +264,7 @@ elif ('HPK_2E14_LYSO825_T-40C' in args.outFolder):
     goodBars[0.60] = [4,5,7]
 
 elif ('HPK_2E14_LYSO825_T-35C' in args.outFolder):
-    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod1,type2) T=-35#circC'
+    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-35#circC'
     for vov in Vovs:
        VovsEff[vov] = getVovEffDCR(data, 'LYSO825','HPK_2E14_T-35C', ('%.02f'%vov))[0]
     goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
@@ -273,7 +275,7 @@ elif ('HPK_2E14_LYSO825_T-35C' in args.outFolder):
     goodBars[0.60] = [4,5,7]
 
 elif ('HPK_2E14_LYSO825_T-30C' in args.outFolder):
-    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod1,type2) T=-30#circC'
+    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-30#circC'
     for vov in Vovs:
        VovsEff[vov] = getVovEffDCR(data, 'LYSO825','HPK_2E14_T-30C', ('%.02f'%vov))[0]
     goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
@@ -282,6 +284,56 @@ elif ('HPK_2E14_LYSO825_T-30C' in args.outFolder):
     goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
     goodBars[0.80] = [0,3,4,5,7,12,13]
     goodBars[0.60] = [4,5,7]
+
+elif ('HPK_1E14_LYSO819_T-37C' in args.outFolder):
+    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-37#circC'
+    for vov in Vovs:
+       VovsEff[vov] = getVovEffDCR(data, 'LYSO819','HPK_1E14_T-37C', ('%.02f'%vov))[0]
+    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,12,13]
+
+elif ('HPK_1E14_LYSO819_T-32C' in args.outFolder):
+    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-32#circC'
+    for vov in Vovs:
+       VovsEff[vov] = getVovEffDCR(data, 'LYSO819','HPK_1E14_T-32C', ('%.02f'%vov))[0]
+    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,12,13]
+
+elif ('HPK_1E14_LYSO819_T-27C' in args.outFolder):
+    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-27#circC'
+    for vov in Vovs:
+       VovsEff[vov] = getVovEffDCR(data, 'LYSO819','HPK_1E14_T-27C', ('%.02f'%vov))[0]
+    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15]
+    goodBars[2.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,12,13]
+
+elif ('HPK_1E14_LYSO819_T-27C' in args.outFolder):
+    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-22#circC'
+    for vov in Vovs:
+       VovsEff[vov] = getVovEffDCR(data, 'LYSO819','HPK_1E14_T-22C', ('%.02f'%vov))[0]
+    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15]
+    goodBars[2.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+    goodBars[0.60] = [0,3,4,5,7,12,13]
+
+
 else:
     for vov in Vovs:
         VovsEff[vov] = vov

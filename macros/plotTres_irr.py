@@ -25,7 +25,7 @@ ROOT.gStyle.SetTitleSize(0.06,'Y')
 ROOT.gStyle.SetTitleOffset(1.05,'X')
 ROOT.gStyle.SetTitleOffset(1.1,'Y')
 ROOT.gStyle.SetLegendFont(42)
-ROOT.gStyle.SetLegendTextSize(0.045)
+ROOT.gStyle.SetLegendTextSize(0.040)
 ROOT.gStyle.SetPadTopMargin(0.07)
 ROOT.gStyle.SetPadRightMargin(0.1)
 
@@ -114,16 +114,18 @@ with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.jso
 
 
 # =====================================
-#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_2E14_20um_25um/'
+#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/'
+#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/'
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_TBMay23.root','recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23.root','recreate')
 outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23.root','recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23.root','recreate')
 
 np = 3
 errSRsyst  = 0.10 # error on the slew rate
@@ -150,8 +152,6 @@ g_SR_vs_bar = {}
 g_Noise_vs_bar = {}
 g_Stoch_vs_bar = {}
 g_DCR_vs_bar = {}
-
-g_Tot_vs_SR   = {}
 
 g_data_vs_Npe = {}
 g_data_vs_DCR = {}
@@ -199,8 +199,6 @@ for ds in data_structs:
     g_DCR_vs_Vov[ds.moduleLabel] = {}
     g_Tot_vs_Vov[ds.moduleLabel] = {}
 
-    g_Tot_vs_SR[ds.moduleLabel] = {}
-
     g_Stoch_vs_Npe[ds.moduleLabel] = {}
     g_DCR_vs_Npe[ds.moduleLabel] = {}
 
@@ -223,7 +221,7 @@ for ds in data_structs:
     fPS[ds.moduleLabel] = {}
     for ov in Vovs[ds.moduleLabel]:
         print(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
-        if (ds.temperature == -35 and ds.lyso == 'LYSO815'):
+        if ( (ds.temperature == -35 and ds.lyso == 'LYSO815') or  ds.lyso == 'LYSO829'):
             fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_angle52_T%dC.root'%(ov,ds.temperature))
         else:
             fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
@@ -234,7 +232,6 @@ for ds in data_structs:
         g_Noise_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_Stoch_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_DCR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
-        g_Tot_vs_SR[ds.moduleLabel][ov] = ROOT.TGraphErrors()
 
         
     for bar in bars[ds.moduleLabel]:
@@ -265,7 +262,9 @@ for ds in data_structs:
             err_s_data = g_data[ds.moduleLabel][bar].GetErrorY(indref[0])            
 
             # Npe and Gain at this OVeff
-            Npe[ds.moduleLabel][ov]  = 4.2*ds.LO*PDE(ds.sipmType,ovEff,ds.irradiation)/PDE(ds.sipmType,3.50,'0') #LO is referred to 3.50 V OV
+            # LO is referred to 3.50 V OV 
+            # scale also with thickness module (4.2 is for 3 mm thick lyso rotated by 52 deg )
+            Npe[ds.moduleLabel][ov]  = 4.2*ds.LO*PDE(ds.sipmType,ovEff,ds.irradiation)/PDE(ds.sipmType,3.50,'0')*ds.thickness/3.00
             gain[ds.moduleLabel][ov] = Gain(ds.sipmType, ovEff, ds.irradiation)
         
             # get pulse shapes
@@ -494,11 +493,11 @@ for ds in data_structs:
 
 
 # Andrea's model
-fitFun_tRes_dcr_model = ROOT.TF1('fitFun_tRes_dcr_model','[1] * 2 * pow(x,[0]/0.5)', 0,10)  # factor 2 as Andrea normalize to 6000 pe # questa e' sbagliata! 
-fitFun_tRes_dcr_model.SetParameter(0,0.4)
-fitFun_tRes_dcr_model.SetParameter(1,40)
-fitFun_tRes_dcr_model.SetLineColor(1)
-g_DCR_vs_DCRNpe_average_all.Fit(fitFun_tRes_dcr_model)
+#fitFun_tRes_dcr_model = ROOT.TF1('fitFun_tRes_dcr_model','[1] * 2 * pow(x,[0]/0.5)', 0,10)  # factor 2 as Andrea normalize to 6000 pe # questa e' sbagliata! 
+#fitFun_tRes_dcr_model.SetParameter(0,0.4)
+#fitFun_tRes_dcr_model.SetParameter(1,40)
+#fitFun_tRes_dcr_model.SetLineColor(1)
+#g_DCR_vs_DCRNpe_average_all.Fit(fitFun_tRes_dcr_model)
 
 
 
@@ -566,287 +565,24 @@ for ds in data_structs:
             leg[ds.moduleLabel].AddEntry(g_Stoch_vs_Vov[ds.moduleLabel][bar], 'stoch', 'L')
             leg[ds.moduleLabel].AddEntry(g_DCR_vs_Vov[ds.moduleLabel][bar], 'DCR', 'L')
         leg[ds.moduleLabel].Draw('same')
-        latex = ROOT.TLatex(0.20,0.85,'%s'%(ds.moduleLabel.replace('_',' ').replace('T','T=')))
+        #latex = ROOT.TLatex(0.20,0.85,'%s'%(ds.moduleLabel.replace('_',' ').replace('T','T=')))
+        latex = ROOT.TLatex(0.20,0.85,'%s'%(ds.plotLabel))
         latex.SetNDC()
         latex.SetTextSize(0.045)
         latex.SetTextFont(42)
         latex.Draw('same')
-        #c1[ds.moduleLabel][bar].SaveAs(outdir+'/'+c1[ds.moduleLabel][bar].GetName()+'.png')
-        #c1[ds.moduleLabel][bar].SaveAs(outdir+'/'+c1[ds.moduleLabel][bar].GetName()+'.pdf')
         c.SaveAs(outdir+'/'+c.GetName()+'.png')
         c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
         hdummy.Delete()
 
 
-# vs npe
-print('Plotting tRes_DCR vs Npe...')
-for bar in range(0,16):      
-    c =  ROOT.TCanvas('c_timeResolutionDCR_vs_DCRNpe_bar%02d'%(bar),'c_timeResolutionDCR_vs_DCRNpe_bar%02d'%(bar),600,600)
-    c.SetGridx()
-    c.SetGridy()
-    c.cd()
-    xmax = 2
-    ymax = 100
-    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,xmax,100,0,ymax)
-    hdummy.GetXaxis().SetTitle('#sqrt{DCR/30GHz}/(Npe/3000)')
-    hdummy.GetYaxis().SetTitle('#sigma_{t}^{DCR} [ps]')
-    hdummy.Draw()
-    for ds in data_structs:
-        if (bar not in g_DCR_vs_Npe[ds.moduleLabel].keys()): continue
-        g_DCR_vs_Npe[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
-        g_DCR_vs_Npe[ds.moduleLabel][bar].SetMarkerColor(ds.color)
-        g_DCR_vs_Npe[ds.moduleLabel][bar].SetLineWidth(1)
-        g_DCR_vs_Npe[ds.moduleLabel][bar].SetLineColor(ds.color)
-        g_DCR_vs_Npe[ds.moduleLabel][bar].Draw('psame')
-    c.SaveAs(outdir+'/'+c.GetName()+'.png')
-    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-    hdummy.Delete()
-    #c.Delete()
+#-----------------------------
+# plots averaged over all bars
+print('Plotting averaged over all bars...')
 
-
-c =  ROOT.TCanvas('c_timeResolutionDCR_vs_DCRNpe_average','c_timeResolutionDCR_vs_DCRNpe_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,2.0,100,0,100)
-hdummy.GetXaxis().SetTitle('#sqrt{DCR/30GHz}/(Npe/3000)')
-hdummy.GetYaxis().SetTitle('#sigma_{t}^{DCR} [ps]')
-hdummy.Draw()
-g_DCR_vs_DCRNpe_average_all.SetMarkerSize(0.1)
-g_DCR_vs_DCRNpe_average_all.Draw('p*same')
-fitFun_tRes_dcr_model.Draw('same')
-outfile.cd() 
-g_DCR_vs_DCRNpe_average_all.Write('g_DCR_vs_DCRNpe_average_all')
+# average tRes vs Vov
 for ds in data_structs:
-    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetLineWidth(1)
-    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetLineColor(ds.color)
-    g_DCR_vs_DCRNpe_average[ds.moduleLabel].Draw('psame')
-    outfile.cd() 
-    g_DCR_vs_DCRNpe_average[ds.moduleLabel].Write('g_DCR_vs_DCRNpe_average_%s'%ds.moduleLabel)
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-#c.Delete()
-
-
-c =  ROOT.TCanvas('c_timeResolutionDCRNpe_vs_DCR_average','c_timeResolutionDCRNpe_vs_DCR_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,50,100,0,100)
-hdummy.GetXaxis().SetTitle('DCR[GHz]')
-hdummy.GetYaxis().SetTitle('(Npe/6000) #times #sigma_{t}^{DCR} [ps]')
-hdummy.Draw()
-fitFun_tRes_dcr = ROOT.TF1('fitFun_tRes_dcr','[1] * pow(x/30.,[0])', 0,10)  
-fitFun_tRes_dcr.SetParameter(0,0.5)
-fitFun_tRes_dcr.SetParameter(1,40)
-fitFun_tRes_dcr.SetLineColor(1)
-g_DCRNpe_vs_DCR_average_all.Fit(fitFun_tRes_dcr)
-g_DCRNpe_vs_DCR_average_all.SetMarkerSize(0.1)
-g_DCRNpe_vs_DCR_average_all.Draw('p*same')
-fitFun_tRes_dcr.Draw('same')
-outfile.cd() 
-g_DCRNpe_vs_DCR_average_all.Write('g_DCRNpe_vs_DCR_average_all')
-for ds in data_structs:
-    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetLineWidth(1)
-    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetLineColor(ds.color)
-    g_DCRNpe_vs_DCR_average[ds.moduleLabel].Draw('psame')
-    outfile.cd() 
-    g_DCRNpe_vs_DCR_average[ds.moduleLabel].Write('g_DCRNpe_vs_DCR_average_%s'%ds.moduleLabel)
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-
-
-# SR and best threshold vs Vov
-leg2 = ROOT.TLegend(0.20,0.70,0.45,0.89)
-leg2.SetBorderSize(0)
-leg2.SetFillStyle(0)
-i = 0
-for bar in range(0,16):
-    if (bar not in g_data[ds.moduleLabel].keys()): continue
-    if (g_data[ds.moduleLabel][bar].GetN()==0): continue     
-    c = ROOT.TCanvas('c_slewRate_vs_Vov_bar%02d'%(bar),'c_slewRate_vs_Vov_bar%02d'%(bar),600,600)
-    c.SetGridy()
-    c.cd()
-    xmin = 0.0
-    xmax = 2.0
-    ymax = 35
-    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,xmin,xmax,100,0,ymax)
-    hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
-    hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
-    hdummy.Draw()
-    for ds in data_structs:
-        if (bar not in g_SR_vs_Vov[ds.moduleLabel].keys()): continue
-        if (i==0):
-            leg2.AddEntry(g_SR_vs_Vov[ds.moduleLabel][bar], '%s'%ds.moduleLabel.replace('_',' ').replace('T','T='), 'PL')
-        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
-        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
-        g_SR_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)
-        g_SR_vs_Vov[ds.moduleLabel][bar].Draw('plsame')
-    leg2.Draw()
-    outfile.cd()
-    g_SR_vs_Vov[ds.moduleLabel][bar].Write('g_SR_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
-    c.SaveAs(outdir+'/'+c.GetName()+'.png')
-    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-    hdummy.Delete()
-    i=i+1
-
-    c = ROOT.TCanvas('c_slewRate_vs_GainNpe_bar%02d'%(bar),'c_slewRate_vs_GainNpe_bar%02d'%(bar),600,600)
-    c.SetGridy()
-    c.cd()
-    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,3E09,100,0,35)
-    hdummy.GetXaxis().SetTitle('gain x Npe')
-    hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
-    hdummy.Draw()
-    for ds in data_structs:
-        if (bar not in g_SR_vs_GainNpe[ds.moduleLabel].keys()): continue
-        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetMarkerStyle( ds.marker )
-        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetMarkerColor(ds.color)
-        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetLineColor(ds.color)
-        g_SR_vs_GainNpe[ds.moduleLabel][bar].Draw('psame')
-    leg2.Draw()
-    c.SaveAs(outdir+'/'+c.GetName()+'.png')
-    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-    hdummy.Delete()
-
-    c = ROOT.TCanvas('c_bestTh_vs_Vov_bar%02d'%(bar),'c_bestTh_vs_Vov_bar%02d'%(bar),600,600)
-    c.SetGridy()
-    c.cd()
-    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,xmin,xmax,100,0,20)
-    hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
-    hdummy.GetYaxis().SetTitle('best threshold [DAC]')
-    hdummy.Draw()
-    for ds in data_structs:
-        if (bar not in g_bestTh_vs_Vov[ds.moduleLabel].keys()): continue
-        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
-        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
-        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)
-        g_bestTh_vs_Vov[ds.moduleLabel][bar].Draw('plsame')
-    c.SaveAs(outdir+'/'+c.GetName()+'.png')
-    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-    hdummy.Delete()
-
-# average slew rate vs OV
-c =  ROOT.TCanvas('c_slewRate_vs_Vov_average','c_slewRate_vs_Vov_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy','',16, 0.0, 2.0 ,100, 0,35)
-hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
-hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
-hdummy.Draw()
-for ds in data_structs:
-    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_SR_vs_Vov_average[ds.moduleLabel].SetLineWidth(1)
-    g_SR_vs_Vov_average[ds.moduleLabel].SetLineColor(ds.color)
-    g_SR_vs_Vov_average[ds.moduleLabel].Draw('plsame')
-    outfile.cd()
-    g_SR_vs_Vov_average[ds.moduleLabel].Write('g_SR_vs_Vov_average_%s'%(ds.moduleLabel))
-leg2.Draw()
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-
-# average time resolution vs Npe
-c =  ROOT.TCanvas('c_timeResolution_vs_Npe_average','c_timeResolution_vs_Npe_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy','',1000, 1000, 6000, 100, 20, 140)
-hdummy.GetXaxis().SetTitle('Npe')
-hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
-hdummy.GetXaxis().SetNdivisions(505)
-hdummy.Draw()
-for ds in data_structs:
-    g_data_vs_Npe[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_data_vs_Npe[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_data_vs_Npe[ds.moduleLabel].SetLineWidth(1)
-    g_data_vs_Npe[ds.moduleLabel].SetLineColor(ds.color)
-    g_data_vs_Npe[ds.moduleLabel].Draw('plsame')
-    outfile.cd()
-    g_data_vs_Npe[ds.moduleLabel].Write('g_data_vs_Npe_average_%s'%(ds.moduleLabel))
-leg2.Draw()  
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-
-
-# average time resolution vs DCR
-c =  ROOT.TCanvas('c_timeResolution_vs_DCR_average','c_timeResolution_vs_DCR_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy','',1000, 0, 100, 20, 0, 140)
-hdummy.GetXaxis().SetTitle('DCR [GHz]')
-hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
-hdummy.Draw()
-for ds in data_structs:
-    g_data_vs_DCR[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_data_vs_DCR[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_data_vs_DCR[ds.moduleLabel].SetLineWidth(1)
-    g_data_vs_DCR[ds.moduleLabel].SetLineColor(ds.color)
-    g_data_vs_DCR[ds.moduleLabel].Draw('plsame')
-    outfile.cd()
-    g_data_vs_DCR[ds.moduleLabel].Write('g_data_vs_DCR_average_%s'%(ds.moduleLabel))
-leg2.Draw()  
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-
-
-# average time resolution vs static power
-c =  ROOT.TCanvas('c_timeResolution_vs_staticPower_average','c_timeResolution_vs_staticPower_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy','',1000, 0, 100, 100, 20, 140)
-hdummy.GetXaxis().SetTitle('static power [mW]')
-hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
-hdummy.Draw()
-for ds in data_structs:
-    g_data_vs_staticPower[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_data_vs_staticPower[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_data_vs_staticPower[ds.moduleLabel].SetLineWidth(1)
-    g_data_vs_staticPower[ds.moduleLabel].SetLineColor(ds.color)
-    g_data_vs_staticPower[ds.moduleLabel].Draw('plsame')
-    outfile.cd()
-    g_data_vs_staticPower[ds.moduleLabel].Write('g_data_vs_staticPower_average_%s'%(ds.moduleLabel))
-leg2.Draw()  
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-
-# average time resolution vs GainxNpe
-c =  ROOT.TCanvas('c_timeResolution_vs_GainNpe_average','c_timeResolution_vs_GainNpe_average',600,600)
-c.SetGridx()
-c.SetGridy()
-c.cd()    
-hdummy = ROOT.TH2F('hdummy','',1000, 0, 3E09, 100, 20, 140)
-hdummy.GetXaxis().SetTitle('Gain x Npe')
-hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
-hdummy.GetXaxis().SetNdivisions(505)
-hdummy.Draw()
-for ds in data_structs:
-    g_data_vs_GainNpe[ds.moduleLabel].SetMarkerStyle(ds.marker)
-    g_data_vs_GainNpe[ds.moduleLabel].SetMarkerColor(ds.color)
-    g_data_vs_GainNpe[ds.moduleLabel].SetLineWidth(1)
-    g_data_vs_GainNpe[ds.moduleLabel].SetLineColor(ds.color)
-    g_data_vs_GainNpe[ds.moduleLabel].Draw('plsame')
-leg2.Draw()  
-c.SaveAs(outdir+'/'+c.GetName()+'.png')
-c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
-hdummy.Delete()
-                                       
-
-# average tRes
-for ds in data_structs:
-    latex = ROOT.TLatex(0.18,0.94,'%s'%(ds.label))
+    latex = ROOT.TLatex(0.18,0.94,'%s'%(ds.plotLabel))
     latex.SetNDC()
     latex.SetTextSize(0.05)
     latex.SetTextFont(42)
@@ -893,12 +629,285 @@ for ds in data_structs:
     outfile.cd()
     g_Noise_vs_Vov_average[ds.moduleLabel].Write('g_Noise_vs_Vov_average_%s'%ds.moduleLabel)
     g_Stoch_vs_Vov_average[ds.moduleLabel].Write('g_Stoch_vs_Vov_average_%s'%ds.moduleLabel)
-    g_DCR_vs_Vov_average[ds.moduleLabel].Write('g_Stoch_vs_Vov_average_%s'%ds.moduleLabel)
+    g_DCR_vs_Vov_average[ds.moduleLabel].Write('g_DCR_vs_Vov_average_%s'%ds.moduleLabel)
     g_Tot_vs_Vov_average[ds.moduleLabel].Write('g_Tot_vs_Vov_average_%s'%ds.moduleLabel)
+    g_data_average[ds.moduleLabel].Write('g_data_vs_Vov_average_%s'%ds.moduleLabel)
     c.SaveAs(outdir+'/'+c.GetName()+'.png')
     c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
     hdummy.Delete()
 
+# average time resolution vs Npe
+leg2 = ROOT.TLegend(0.18,0.60,0.45,0.89)
+leg2.SetBorderSize(0)
+leg2.SetFillStyle(0)
+c =  ROOT.TCanvas('c_timeResolution_vs_Npe_average','c_timeResolution_vs_Npe_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy','',1000, 1000, 8000, 100, 20, 140)
+hdummy.GetXaxis().SetTitle('Npe')
+hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
+hdummy.GetXaxis().SetNdivisions(505)
+hdummy.Draw()
+for ds in data_structs:
+    g_data_vs_Npe[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_data_vs_Npe[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_data_vs_Npe[ds.moduleLabel].SetLineWidth(1)
+    g_data_vs_Npe[ds.moduleLabel].SetLineColor(ds.color)
+    g_data_vs_Npe[ds.moduleLabel].Draw('plsame')
+    #leg2.AddEntry(g_data_vs_Npe[ds.moduleLabel], '%s'%ds.moduleLabel.replace('_',' ').replace('T','T='), 'PL')
+    leg2.AddEntry(g_data_vs_Npe[ds.moduleLabel], '%s'%ds.plotLabel, 'PL')
+    outfile.cd()
+    g_data_vs_Npe[ds.moduleLabel].Write('g_data_vs_Npe_average_%s'%(ds.moduleLabel))
+leg2.Draw()  
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+
+# average time resolution vs DCR
+c =  ROOT.TCanvas('c_timeResolution_vs_DCR_average','c_timeResolution_vs_DCR_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy','',1000, 0, 80, 20, 0, 140)
+hdummy.GetXaxis().SetTitle('DCR [GHz]')
+hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
+hdummy.Draw()
+for ds in data_structs:
+    g_data_vs_DCR[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_data_vs_DCR[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_data_vs_DCR[ds.moduleLabel].SetLineWidth(1)
+    g_data_vs_DCR[ds.moduleLabel].SetLineColor(ds.color)
+    g_data_vs_DCR[ds.moduleLabel].Draw('plsame')
+    outfile.cd()
+    g_data_vs_DCR[ds.moduleLabel].Write('g_data_vs_DCR_average_%s'%(ds.moduleLabel))
+c.cd()
+leg2.Draw()  
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+
+# average time resolution vs static power
+c =  ROOT.TCanvas('c_timeResolution_vs_staticPower_average','c_timeResolution_vs_staticPower_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy','',1000, 0, 120, 100, 20, 140)
+hdummy.GetXaxis().SetTitle('static power [mW]')
+hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
+hdummy.Draw()
+for ds in data_structs:
+    g_data_vs_staticPower[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_data_vs_staticPower[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_data_vs_staticPower[ds.moduleLabel].SetLineWidth(1)
+    g_data_vs_staticPower[ds.moduleLabel].SetLineColor(ds.color)
+    g_data_vs_staticPower[ds.moduleLabel].Draw('plsame')
+    outfile.cd()
+    g_data_vs_staticPower[ds.moduleLabel].Write('g_data_vs_staticPower_average_%s'%(ds.moduleLabel))
+c.cd()
+leg2.Draw()  
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+# average time resolution vs GainxNpe
+c =  ROOT.TCanvas('c_timeResolution_vs_GainNpe_average','c_timeResolution_vs_GainNpe_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy','',1000, 0, 3E09, 100, 20, 140)
+hdummy.GetXaxis().SetTitle('Gain x Npe')
+hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
+hdummy.GetXaxis().SetNdivisions(505)
+hdummy.Draw()
+for ds in data_structs:
+    g_data_vs_GainNpe[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_data_vs_GainNpe[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_data_vs_GainNpe[ds.moduleLabel].SetLineWidth(1)
+    g_data_vs_GainNpe[ds.moduleLabel].SetLineColor(ds.color)
+    g_data_vs_GainNpe[ds.moduleLabel].Draw('plsame')
+c.cd()
+leg2.Draw()  
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+                                       
+
+# average tRes_DCR vs sqrt(DCR)/Npe
+c =  ROOT.TCanvas('c_timeResolutionDCR_vs_DCRNpe_average','c_timeResolutionDCR_vs_DCRNpe_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,2.0,100,0,100)
+hdummy.GetXaxis().SetTitle('#sqrt{DCR/30GHz}/(Npe/3000)')
+hdummy.GetYaxis().SetTitle('#sigma_{t}^{DCR} [ps]')
+hdummy.Draw()
+g_DCR_vs_DCRNpe_average_all.SetMarkerSize(0.1)
+g_DCR_vs_DCRNpe_average_all.Draw('p*same')
+#fitFun_tRes_dcr_model.Draw('same')
+outfile.cd() 
+g_DCR_vs_DCRNpe_average_all.Write('g_DCR_vs_DCRNpe_average_all')
+for ds in data_structs:
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetLineWidth(1)
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetLineColor(ds.color)
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].Draw('psame')
+    outfile.cd() 
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].Write('g_DCR_vs_DCRNpe_average_%s'%ds.moduleLabel)
+c.cd()
+leg2.Draw()
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+
+c =  ROOT.TCanvas('c_timeResolutionDCRNpe_vs_DCR_average','c_timeResolutionDCRNpe_vs_DCR_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,80,100,0,80)
+hdummy.GetXaxis().SetTitle('DCR[GHz]')
+hdummy.GetYaxis().SetTitle('(Npe/6000) #times #sigma_{t}^{DCR} [ps]')
+hdummy.Draw()
+fitFun_tRes_dcr = ROOT.TF1('fitFun_tRes_dcr','[1] * pow(x/30.,[0])', 0,10)  
+fitFun_tRes_dcr.SetParameter(0,0.5)
+fitFun_tRes_dcr.SetParameter(1,40)
+fitFun_tRes_dcr.SetLineColor(1)
+g_DCRNpe_vs_DCR_average_all.Fit(fitFun_tRes_dcr)
+g_DCRNpe_vs_DCR_average_all.SetMarkerSize(0.1)
+g_DCRNpe_vs_DCR_average_all.Draw('p*same')
+fitFun_tRes_dcr.Draw('same')
+outfile.cd() 
+g_DCRNpe_vs_DCR_average_all.Write('g_DCRNpe_vs_DCR_average_all')
+for ds in data_structs:
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetLineWidth(1)
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetLineColor(ds.color)
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].Draw('psame')
+    outfile.cd() 
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].Write('g_DCRNpe_vs_DCR_average_%s'%ds.moduleLabel)
+c.cd()
+leg2.Draw()
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+
+# average slew rate vs OV
+c =  ROOT.TCanvas('c_slewRate_vs_Vov_average','c_slewRate_vs_Vov_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+hdummy = ROOT.TH2F('hdummy','',16, 0.0, 2.0 ,100, 0,35)
+hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
+hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
+hdummy.Draw()
+for ds in data_structs:
+    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_SR_vs_Vov_average[ds.moduleLabel].SetLineWidth(1)
+    g_SR_vs_Vov_average[ds.moduleLabel].SetLineColor(ds.color)
+    g_SR_vs_Vov_average[ds.moduleLabel].Draw('plsame')
+    outfile.cd()
+    g_SR_vs_Vov_average[ds.moduleLabel].Write('g_SR_vs_Vov_average_%s'%(ds.moduleLabel))
+c.cd()
+leg2.Draw()
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+
+# SR and best threshold vs Vov
+for bar in range(0,16):
+    if (bar not in g_data[ds.moduleLabel].keys()): continue
+    if (g_data[ds.moduleLabel][bar].GetN()==0): continue     
+    c = ROOT.TCanvas('c_slewRate_vs_Vov_bar%02d'%(bar),'c_slewRate_vs_Vov_bar%02d'%(bar),600,600)
+    c.SetGridy()
+    c.cd()
+    xmin = 0.0
+    xmax = 2.0
+    ymax = 35
+    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,xmin,xmax,100,0,ymax)
+    hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
+    hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
+    hdummy.Draw()
+    for ds in data_structs:
+        if (bar not in g_SR_vs_Vov[ds.moduleLabel].keys()): continue
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_SR_vs_Vov[ds.moduleLabel][bar].Draw('plsame')
+    leg2.Draw()
+    outfile.cd()
+    g_SR_vs_Vov[ds.moduleLabel][bar].Write('g_SR_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
+    c.SaveAs(outdir+'/'+c.GetName()+'.png')
+    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+    hdummy.Delete()
+
+    c = ROOT.TCanvas('c_slewRate_vs_GainNpe_bar%02d'%(bar),'c_slewRate_vs_GainNpe_bar%02d'%(bar),600,600)
+    c.SetGridy()
+    c.cd()
+    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,3E09,100,0,35)
+    hdummy.GetXaxis().SetTitle('gain x Npe')
+    hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
+    hdummy.Draw()
+    for ds in data_structs:
+        if (bar not in g_SR_vs_GainNpe[ds.moduleLabel].keys()): continue
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetMarkerStyle( ds.marker )
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].Draw('psame')
+    leg2.Draw()
+    c.SaveAs(outdir+'/'+c.GetName()+'.png')
+    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+    hdummy.Delete()
+
+    c = ROOT.TCanvas('c_bestTh_vs_Vov_bar%02d'%(bar),'c_bestTh_vs_Vov_bar%02d'%(bar),600,600)
+    c.SetGridy()
+    c.cd()
+    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,xmin,xmax,100,0,20)
+    hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
+    hdummy.GetYaxis().SetTitle('best threshold [DAC]')
+    hdummy.Draw()
+    for ds in data_structs:
+        if (bar not in g_bestTh_vs_Vov[ds.moduleLabel].keys()): continue
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].Draw('plsame')
+    c.SaveAs(outdir+'/'+c.GetName()+'.png')
+    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+    hdummy.Delete()
+
+
+# tRes_DCR vs npe
+print('Plotting tRes_DCR vs Npe...')
+for bar in range(0,16):      
+    c =  ROOT.TCanvas('c_timeResolutionDCR_vs_DCRNpe_bar%02d'%(bar),'c_timeResolutionDCR_vs_DCRNpe_bar%02d'%(bar),600,600)
+    c.SetGridx()
+    c.SetGridy()
+    c.cd()
+    xmax = 2
+    ymax = 100
+    hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,xmax,100,0,ymax)
+    hdummy.GetXaxis().SetTitle('#sqrt{DCR/30GHz}/(Npe/3000)')
+    hdummy.GetYaxis().SetTitle('#sigma_{t}^{DCR} [ps]')
+    hdummy.Draw()
+    for ds in data_structs:
+        if (bar not in g_DCR_vs_Npe[ds.moduleLabel].keys()): continue
+        g_DCR_vs_Npe[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
+        g_DCR_vs_Npe[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_DCR_vs_Npe[ds.moduleLabel][bar].SetLineWidth(1)
+        g_DCR_vs_Npe[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_DCR_vs_Npe[ds.moduleLabel][bar].Draw('psame')
+    leg2.Draw()
+    c.SaveAs(outdir+'/'+c.GetName()+'.png')
+    c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+    hdummy.Delete()
 
 # SR and best threshold vs bar
 for ds in data_structs:
