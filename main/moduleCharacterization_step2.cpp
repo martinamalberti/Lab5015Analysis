@@ -674,6 +674,7 @@ int main(int argc, char** argv)
 	    f_landau[index] -> SetLineWidth(2);
 	    f_landau[index] -> Draw("same");
 	    
+
 	    if ( f_landau[index]->GetNDF() >0 && f_landau[index]->GetParameter(1) > minE[std::make_pair(iBar, Vov)] &&  
 		 (f_landau[index]->GetParameter(1) - 2.0 * std::abs(f_landau[index]->GetParameter(2))) >=  minE[std::make_pair(iBar, Vov)] &&
 		 (f_landau[index]->GetParameter(1) - 2.0 * std::abs(f_landau[index]->GetParameter(2))) < 950) {
@@ -683,13 +684,22 @@ int main(int argc, char** argv)
 	    }
 	    else
 	      ranges[LRLabel][index] -> push_back( minE[std::make_pair(iBar, Vov)] ); // 
-	    
+
+	    	    
 	    if ( LRLabel=="L-R" && int(vth1)==10) std::cout << iBar << "  " << Vov  << "  " << ranges[LRLabel][index] ->at(0) <<std::endl;
 	    
 	    
 	    //ranges[LRLabel][index] -> push_back( std::min(f_landau[index]->GetParameter(1)*2.0, 940.)); // tight selection around the MIP peak
 	    ranges[LRLabel][index] -> push_back( 940 ); // use the entire mip spectrum
 	    
+	    if ( opts.GetOpt<std::string>("Input.runs") == "5665" or opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ){
+	      ranges[LRLabel][index] -> clear();
+	      if ( opts.GetOpt<std::string>("Input.runs") == "5665" ) ranges[LRLabel][index] -> push_back(600);
+	      if ( opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ) ranges[LRLabel][index] -> push_back(250);
+	      ranges[LRLabel][index] -> push_back(1024);
+	    }
+
+
 	    for(auto range: (*ranges[LRLabel][index])){
 	      TLine* line = new TLine(range,0.,range, histo->GetMaximum());
 	      line -> SetLineWidth(2);

@@ -350,6 +350,13 @@ int main(int argc, char** argv)
       energyMins[index] = minE[std::make_pair(iBar,Vov)];
       energyMaxs[index] = 940;// take full mip spectrum
     }
+
+    if ( opts.GetOpt<std::string>("Input.runs") == "5665" or opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ){
+      if ( opts.GetOpt<std::string>("Input.runs") == "5665" ) energyMins[index] = 600;
+      if ( opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ) energyMins[index] = 250;
+      energyMaxs[index] = 1024;// take full mip spectrum
+    }
+
     std::cout << Vov << "  th = " << ith  << "   bar = "  << iBar <<  "   minEnergy = " << energyMins[index] <<  "  " <<  f_landau->GetParameter(1)  << "  " << minE[std::make_pair(iBar,Vov)] <<std::endl;
     histo->Write();      
   }

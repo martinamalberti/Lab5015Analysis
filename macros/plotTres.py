@@ -96,6 +96,7 @@ def findTimingThreshold(g2):
     
 # =====================================
 
+'''
 class DataStruct(NamedTuple):
     sipm: str
     sipmType: str
@@ -110,7 +111,6 @@ class DataStruct(NamedTuple):
 data_structs = []
 
 
-'''
 #HPK_25 um 
 data_structs.append(
         DataStruct(
@@ -174,23 +174,6 @@ data_structs.append(
 '''
 
 
-#HPK_25 um 
-data_structs.append(
-        DataStruct(
-            sipm = 'HPK_nonIrr_LYSO813',
-            sipmType = 'HPK-PIT-C25-ES2',
-            fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO813.root',
-            fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_nonIrr_LYSO813',
-            label = 'HPK(25#mum)+LYSO813',
-            LO = 2418,
-            tau = 41.4,
-            marker = 20,
-            color = 1
-        )
-)
-
-
-
 
 # =====================================
 
@@ -235,20 +218,20 @@ Vovs = {}
 
 for ds in data_structs:
     f = ROOT.TFile.Open(ds.fName)
-    print(ds.sipm, ds.fName)
+    print(ds.moduleLabel, ds.fName)
 
     listOfKeys = [key.GetName().replace('g_deltaT_totRatioCorr_bestTh_vs_vov_','') for key in ROOT.gDirectory.GetListOfKeys() if ( 'g_deltaT_totRatioCorr_bestTh_vs_vov_bar' in key.GetName())]
-    bars[ds.sipm] = []
+    bars[ds.moduleLabel] = []
     for k in listOfKeys:
-        bars[ds.sipm].append( int(k[3:5]) )
+        bars[ds.moduleLabel].append( int(k[3:5]) )
 
     listOfKeys2 = [key.GetName().replace('g_deltaT_totRatioCorr_bestTh_vs_bar_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('g_deltaT_totRatioCorr_bestTh_vs_bar_')]
-    Vovs[ds.sipm] = []
+    Vovs[ds.moduleLabel] = []
     for k in listOfKeys2:
-        Vovs[ds.sipm].append( float(k[3:7]) )
+        Vovs[ds.moduleLabel].append( float(k[3:7]) )
     
-    print(bars[ds.sipm])
-    print(Vovs[ds.sipm])
+    print(bars[ds.moduleLabel])
+    print(Vovs[ds.moduleLabel])
 
 fPS = {}
 Npe = {}
@@ -257,57 +240,57 @@ Npe = {}
 for ds in data_structs:
     f = ROOT.TFile.Open(ds.fName)
     
-    g_data_average[ds.sipm] = f.Get('g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average')
+    g_data_average[ds.moduleLabel] = f.Get('g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average')
 
-    Npe[ds.sipm] = {}
-    g_data[ds.sipm] = {}
-    g_Noise_vs_Vov[ds.sipm] = {}
-    g_Stoch_vs_Vov[ds.sipm] = {}
-    g_Tot_vs_Vov[ds.sipm] = {}
+    Npe[ds.moduleLabel] = {}
+    g_data[ds.moduleLabel] = {}
+    g_Noise_vs_Vov[ds.moduleLabel] = {}
+    g_Stoch_vs_Vov[ds.moduleLabel] = {}
+    g_Tot_vs_Vov[ds.moduleLabel] = {}
 
-    g_Stoch_vs_Npe[ds.sipm] = {}
+    g_Stoch_vs_Npe[ds.moduleLabel] = {}
 
-    g_SR_vs_Vov[ds.sipm] = {}
-    g_bestTh_vs_Vov[ds.sipm] = {}
+    g_SR_vs_Vov[ds.moduleLabel] = {}
+    g_bestTh_vs_Vov[ds.moduleLabel] = {}
 
-    g_SR_vs_bar[ds.sipm] = {}
-    g_bestTh_vs_bar[ds.sipm] = {}
-    g_Noise_vs_bar[ds.sipm] = {}
-    g_Stoch_vs_bar[ds.sipm] = {}
+    g_SR_vs_bar[ds.moduleLabel] = {}
+    g_bestTh_vs_bar[ds.moduleLabel] = {}
+    g_Noise_vs_bar[ds.moduleLabel] = {}
+    g_Stoch_vs_bar[ds.moduleLabel] = {}
 
-    g_SR_vs_GainNpe[ds.sipm] = {}
+    g_SR_vs_GainNpe[ds.moduleLabel] = {}
 
-    fPS[ds.sipm] = {}
-    for ov in Vovs[ds.sipm]:
-        fPS[ds.sipm][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T5C.root'%ov)
+    fPS[ds.moduleLabel] = {}
+    for ov in Vovs[ds.moduleLabel]:
+        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
 
-        g_SR_vs_bar[ds.sipm][ov] = ROOT.TGraphErrors()
-        g_bestTh_vs_bar[ds.sipm][ov] = ROOT.TGraphErrors()
-        g_Noise_vs_bar[ds.sipm][ov] = ROOT.TGraphErrors()
-        g_Stoch_vs_bar[ds.sipm][ov] = ROOT.TGraphErrors()
+        g_SR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
+        g_bestTh_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
+        g_Noise_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
+        g_Stoch_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
 
-    for bar in bars[ds.sipm]:
-        g_data[ds.sipm][bar] = f.Get('g_deltaT_totRatioCorr_bestTh_vs_vov_bar%02d_enBin01'%bar)
-        g_Noise_vs_Vov[ds.sipm][bar] = ROOT.TGraphErrors()
-        g_Stoch_vs_Vov[ds.sipm][bar] = ROOT.TGraphErrors()
-        g_Tot_vs_Vov[ds.sipm][bar] = ROOT.TGraphErrors()
+    for bar in bars[ds.moduleLabel]:
+        g_data[ds.moduleLabel][bar] = f.Get('g_deltaT_totRatioCorr_bestTh_vs_vov_bar%02d_enBin01'%bar)
+        g_Noise_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
+        g_Stoch_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
+        g_Tot_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
 
-        g_Stoch_vs_Npe[ds.sipm][bar] = ROOT.TGraphErrors()
+        g_Stoch_vs_Npe[ds.moduleLabel][bar] = ROOT.TGraphErrors()
 
-        g_SR_vs_Vov[ds.sipm][bar] = ROOT.TGraphErrors()
-        g_SR_vs_GainNpe[ds.sipm][bar] = ROOT.TGraphErrors()
-        g_bestTh_vs_Vov[ds.sipm][bar] = ROOT.TGraphErrors()
+        g_SR_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
+        g_SR_vs_GainNpe[ds.moduleLabel][bar] = ROOT.TGraphErrors()
+        g_bestTh_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
         
         sigma_stoch_ref = 0
         err_sigma_stoch_ref = 0
-        ov_ref = 3.50
+        ov_ref = ds.ov_ref
 
-        data = g_data[ds.sipm][bar].Eval(ov_ref)
-        indref = [i for i in range(0, g_data[ds.sipm][bar].GetN()) if g_data[ds.sipm][bar].GetPointX(i) == ov_ref]
+        data = g_data[ds.moduleLabel][bar].Eval(ov_ref)
+        indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) == ov_ref]
         if ( len(indref)<1): continue
-        data_err = g_data[ds.sipm][bar].GetErrorY(indref[0])
-        g_psL = fPS[ds.sipm][ov_ref].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov_ref))
-        g_psR = fPS[ds.sipm][ov_ref].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov_ref))
+        data_err = g_data[ds.moduleLabel][bar].GetErrorY(indref[0])
+        g_psL = fPS[ds.moduleLabel][ov_ref].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov_ref))
+        g_psR = fPS[ds.moduleLabel][ov_ref].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov_ref))
         if (g_psL==None): continue
         if (g_psR==None): continue
         g_psL.SetName('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov_ref))
@@ -337,26 +320,26 @@ for ds in data_structs:
             print('skipping bar%02d:  %.1f   %.1f'%(bar, data,sigma_noise(sr)))
             continue
                 
-        for i in range(0,g_data[ds.sipm][bar].GetN()):
-            sigma_meas = g_data[ds.sipm][bar].GetY()[i]
-            err_sigma_meas   = g_data[ds.sipm][bar].GetErrorY(i)
-            ov = g_data[ds.sipm][bar].GetX()[i]
-            if (ov not in Vovs[ds.sipm]): continue
-            Npe[ds.sipm][ov]  = ds.LO*4.2*PDE(ds.sipmType,ov)/PDE(ds.sipmType,3.50)
+        for i in range(0,g_data[ds.moduleLabel][bar].GetN()):
+            sigma_meas = g_data[ds.moduleLabel][bar].GetY()[i]
+            err_sigma_meas   = g_data[ds.moduleLabel][bar].GetErrorY(i)
+            ov = g_data[ds.moduleLabel][bar].GetX()[i]
+            if (ov not in Vovs[ds.moduleLabel]): continue
+            Npe[ds.moduleLabel][ov]  = ds.LO * 4.2 * PDE(ds.sipmType,ov)/PDE(ds.sipmType,3.50) * ds.thickness/3.00
             gain = Gain(ds.sipmType,ov) 
-            g_psL = fPS[ds.sipm][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
-            g_psR = fPS[ds.sipm][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
+            g_psL = fPS[ds.moduleLabel][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
+            g_psR = fPS[ds.moduleLabel][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
             if (g_psL==None): continue
             if (g_psR==None): continue
-            g_psL.SetName('g_pulseShapeL_bar%02d_Vov%.2f_%s'%(bar,ov,ds.sipm))
-            g_psR.SetName('g_pulseShapeR_bar%02d_Vov%.2f_%s'%(bar,ov,ds.sipm))
+            g_psL.SetName('g_pulseShapeL_bar%02d_Vov%.2f_%s'%(bar,ov,ds.moduleLabel))
+            g_psR.SetName('g_pulseShapeR_bar%02d_Vov%.2f_%s'%(bar,ov,ds.moduleLabel))
             timingThreshold = findTimingThreshold(f.Get('g_deltaT_totRatioCorr_vs_th_bar%02d_Vov%.2f_enBin01'%(bar,ov)))
             srL = -1
             srR = -1
             sr = -1
             err_srL = -1
             err_srR = -1
-            c = ROOT.TCanvas('c_%s_%s'%(g_psL.GetName().replace('g_pulseShapeL','pulseShape'),ds.sipm),'',600,600)  
+            c = ROOT.TCanvas('c_%s_%s'%(g_psL.GetName().replace('g_pulseShapeL','pulseShape'),ds.moduleLabel),'',600,600)  
             #hdummy = ROOT.TH2F('hdummy','', 100, min(g_psL.GetX())-1., 30., 100, 0., 15.)
             hdummy = ROOT.TH2F('hdummy','', 100, min(g_psL.GetX())-1., 5., 100, 0., 15.)
             hdummy.GetXaxis().SetTitle('time [ns]')
@@ -386,48 +369,48 @@ for ds in data_structs:
             if (srL<0 and srR<0): continue
             errSR = math.sqrt(errSR*errSR+errSRsyst*errSRsyst*sr*sr) 
             #print (ov, gain, Npe, srL, srR, sr, errSR)
-            g_SR_vs_Vov[ds.sipm][bar].SetPoint( g_SR_vs_Vov[ds.sipm][bar].GetN(), ov, sr )
-            g_SR_vs_Vov[ds.sipm][bar].SetPointError( g_SR_vs_Vov[ds.sipm][bar].GetN()-1, 0, errSR )
+            g_SR_vs_Vov[ds.moduleLabel][bar].SetPoint( g_SR_vs_Vov[ds.moduleLabel][bar].GetN(), ov, sr )
+            g_SR_vs_Vov[ds.moduleLabel][bar].SetPointError( g_SR_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, errSR )
             
-            g_SR_vs_GainNpe[ds.sipm][bar].SetPoint( g_SR_vs_GainNpe[ds.sipm][bar].GetN(), gain*Npe[ds.sipm][ov], sr )
-            g_SR_vs_GainNpe[ds.sipm][bar].SetPointError( g_SR_vs_GainNpe[ds.sipm][bar].GetN()-1, 0, errSR )
+            g_SR_vs_GainNpe[ds.moduleLabel][bar].SetPoint( g_SR_vs_GainNpe[ds.moduleLabel][bar].GetN(), gain*Npe[ds.moduleLabel][ov], sr )
+            g_SR_vs_GainNpe[ds.moduleLabel][bar].SetPointError( g_SR_vs_GainNpe[ds.moduleLabel][bar].GetN()-1, 0, errSR )
             
-            g_bestTh_vs_Vov[ds.sipm][bar].SetPoint( g_bestTh_vs_Vov[ds.sipm][bar].GetN(), ov, timingThreshold )
-            g_bestTh_vs_Vov[ds.sipm][bar].SetPointError( g_bestTh_vs_Vov[ds.sipm][bar].GetN()-1, 0, 0 )
+            g_bestTh_vs_Vov[ds.moduleLabel][bar].SetPoint( g_bestTh_vs_Vov[ds.moduleLabel][bar].GetN(), ov, timingThreshold )
+            g_bestTh_vs_Vov[ds.moduleLabel][bar].SetPointError( g_bestTh_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, 0 )
             
-            g_SR_vs_bar[ds.sipm][ov].SetPoint( g_SR_vs_bar[ds.sipm][ov].GetN(), bar, sr )
-            g_SR_vs_bar[ds.sipm][ov].SetPointError( g_SR_vs_bar[ds.sipm][ov].GetN()-1, 0, errSR )
+            g_SR_vs_bar[ds.moduleLabel][ov].SetPoint( g_SR_vs_bar[ds.moduleLabel][ov].GetN(), bar, sr )
+            g_SR_vs_bar[ds.moduleLabel][ov].SetPointError( g_SR_vs_bar[ds.moduleLabel][ov].GetN()-1, 0, errSR )
             
-            g_bestTh_vs_bar[ds.sipm][ov].SetPoint( g_bestTh_vs_bar[ds.sipm][ov].GetN(), bar, timingThreshold )
-            g_bestTh_vs_bar[ds.sipm][ov].SetPointError( g_bestTh_vs_bar[ds.sipm][ov].GetN()-1, 0, 0)
+            g_bestTh_vs_bar[ds.moduleLabel][ov].SetPoint( g_bestTh_vs_bar[ds.moduleLabel][ov].GetN(), bar, timingThreshold )
+            g_bestTh_vs_bar[ds.moduleLabel][ov].SetPointError( g_bestTh_vs_bar[ds.moduleLabel][ov].GetN()-1, 0, 0)
             
-            g_Noise_vs_bar[ds.sipm][ov].SetPoint( g_Noise_vs_bar[ds.sipm][ov].GetN(), bar, sigma_noise(sr) )
-            g_Noise_vs_bar[ds.sipm][ov].SetPointError( g_Noise_vs_bar[ds.sipm][ov].GetN()-1, 0,  0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr))) )
-            g_Noise_vs_Vov[ds.sipm][bar].SetPoint(g_Noise_vs_Vov[ds.sipm][bar].GetN(), ov, sigma_noise(sr))
-            g_Noise_vs_Vov[ds.sipm][bar].SetPointError(g_Noise_vs_Vov[ds.sipm][bar].GetN()-1, 0, 0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr))))
+            g_Noise_vs_bar[ds.moduleLabel][ov].SetPoint( g_Noise_vs_bar[ds.moduleLabel][ov].GetN(), bar, sigma_noise(sr) )
+            g_Noise_vs_bar[ds.moduleLabel][ov].SetPointError( g_Noise_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr))) )
+            g_Noise_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN(), ov, sigma_noise(sr))
+            g_Noise_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, 0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr))))
             # compute s_stoch as diff in quadrature between measured tRes and noise term
             if ( sigma_meas > sigma_noise(sr) ):
                 s = math.sqrt(sigma_meas*sigma_meas-sigma_noise(sr)*sigma_noise(sr))
-                es = 1./s * math.sqrt( pow(sigma_meas*g_data[ds.sipm][bar].GetErrorY(i),2) + pow( sigma_noise(sr)*g_Noise_vs_Vov[ds.sipm][bar].GetErrorY(g_Noise_vs_Vov[ds.sipm][bar].GetN()-1),2) )
-                g_Stoch_vs_Npe[ds.sipm][bar].SetPoint(g_Stoch_vs_Npe[ds.sipm][bar].GetN(), Npe[ds.sipm][ov], s)
-                g_Stoch_vs_Npe[ds.sipm][bar].SetPointError(g_Stoch_vs_Npe[ds.sipm][bar].GetN()-1, 0., es )
+                es = 1./s * math.sqrt( pow(sigma_meas*g_data[ds.moduleLabel][bar].GetErrorY(i),2) + pow( sigma_noise(sr)*g_Noise_vs_Vov[ds.moduleLabel][bar].GetErrorY(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1),2) )
+                g_Stoch_vs_Npe[ds.moduleLabel][bar].SetPoint(g_Stoch_vs_Npe[ds.moduleLabel][bar].GetN(), Npe[ds.moduleLabel][ov], s)
+                g_Stoch_vs_Npe[ds.moduleLabel][bar].SetPointError(g_Stoch_vs_Npe[ds.moduleLabel][bar].GetN()-1, 0., es )
             
 
             # compute stoch by scaling from 3.5 V OV
             stoch = stoch_ref/math.sqrt(  PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref)  )
             stoch_err = stoch_ref_err/math.sqrt( PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref) )
           
-            g_Stoch_vs_Vov[ds.sipm][bar].SetPoint(g_Stoch_vs_Vov[ds.sipm][bar].GetN(), ov, stoch)
-            g_Stoch_vs_Vov[ds.sipm][bar].SetPointError(g_Stoch_vs_Vov[ds.sipm][bar].GetN()-1, 0, stoch_err)
+            g_Stoch_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Stoch_vs_Vov[ds.moduleLabel][bar].GetN(), ov, stoch)
+            g_Stoch_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Stoch_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, stoch_err)
             
-            g_Stoch_vs_bar[ds.sipm][ov].SetPoint( g_Stoch_vs_bar[ds.sipm][ov].GetN(), bar, stoch )
-            g_Stoch_vs_bar[ds.sipm][ov].SetPointError( g_Stoch_vs_bar[ds.sipm][ov].GetN()-1, 0,  stoch_err)
+            g_Stoch_vs_bar[ds.moduleLabel][ov].SetPoint( g_Stoch_vs_bar[ds.moduleLabel][ov].GetN(), bar, stoch )
+            g_Stoch_vs_bar[ds.moduleLabel][ov].SetPointError( g_Stoch_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  stoch_err)
             
             # tot resolution summing noise + stochastic in quadrature
             tot = math.sqrt( stoch*stoch + sigma_noise(sr)*sigma_noise(sr) )
-            tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(sigma_noise(sr)*g_Noise_vs_Vov[ds.sipm][bar].GetErrorY(g_Noise_vs_Vov[ds.sipm][bar].GetN()-1),2))
-            g_Tot_vs_Vov[ds.sipm][bar].SetPoint(g_Tot_vs_Vov[ds.sipm][bar].GetN(), ov, tot)
-            g_Tot_vs_Vov[ds.sipm][bar].SetPointError(g_Tot_vs_Vov[ds.sipm][bar].GetN()-1, 0, tot_err)
+            tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(sigma_noise(sr)*g_Noise_vs_Vov[ds.moduleLabel][bar].GetErrorY(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1),2))
+            g_Tot_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Tot_vs_Vov[ds.moduleLabel][bar].GetN(), ov, tot)
+            g_Tot_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Tot_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, tot_err)
             #print sipm,' OV = %.2f  gain = %d  Npe = %d  bar = %02d  thr = %02d  SR = %.1f   noise = %.1f    stoch = %.1f   tot = %.1f'%(ov, gain, Npe, bar, timingThreshold, sr, sigma_noise(sr), stoch, tot)
 
 
@@ -437,103 +420,53 @@ g_Noise_vs_Vov_average = {}
 g_Stoch_vs_Vov_average = {}
 g_Tot_vs_Vov_average = {}
 
-g_stoch_vs_NpeTau_average = ROOT.TGraphErrors()                                                
+g_stoch_vs_Npe_average = ROOT.TGraphErrors()                                                
 
 for ds in data_structs:                             
     # stochastic term at the reference OV
     fitpol0_stoch = ROOT.TF1('fitpol0_stoch','pol0',-100,100)  
-    g_Stoch_vs_bar[ds.sipm][ov_ref].Fit(fitpol0_stoch,'QNR')
-    err_npetau = Npe[ds.sipm][ov_ref]/ds.tau*math.sqrt( pow(0.05,2) + pow(0.03,2) )
-    g_stoch_vs_NpeTau_average.SetPoint(g_stoch_vs_NpeTau_average.GetN(), Npe[ds.sipm][ov_ref]/ds.tau, fitpol0_stoch.GetParameter(0))
-    g_stoch_vs_NpeTau_average.SetPointError(g_stoch_vs_NpeTau_average.GetN()-1, err_npetau, fitpol0_stoch.GetParError(0))
+    g_Stoch_vs_bar[ds.moduleLabel][ov_ref].Fit(fitpol0_stoch,'QNR')
+    err_npe = 0.05*Npe[ds.moduleLabel][ov_ref]
+    g_stoch_vs_Npe_average.SetPoint(g_stoch_vs_Npe_average.GetN(), Npe[ds.moduleLabel][ov_ref], fitpol0_stoch.GetParameter(0))
+    g_stoch_vs_Npe_average.SetPointError(g_stoch_vs_Npe_average.GetN()-1, err_npe, fitpol0_stoch.GetParError(0))
     
     # average tRes, split contributions
-    g_SR_vs_Vov_average[ds.sipm] = ROOT.TGraphErrors()
-    g_Noise_vs_Vov_average[ds.sipm] = ROOT.TGraphErrors()
-    g_Stoch_vs_Vov_average[ds.sipm] = ROOT.TGraphErrors()
-    g_Tot_vs_Vov_average[ds.sipm] = ROOT.TGraphErrors()
+    g_SR_vs_Vov_average[ds.moduleLabel] = ROOT.TGraphErrors()
+    g_Noise_vs_Vov_average[ds.moduleLabel] = ROOT.TGraphErrors()
+    g_Stoch_vs_Vov_average[ds.moduleLabel] = ROOT.TGraphErrors()
+    g_Tot_vs_Vov_average[ds.moduleLabel] = ROOT.TGraphErrors()
     
     stoch_average = fitpol0_stoch.GetParameter(0)
     stoch_average_err = fitpol0_stoch.GetParError(0)
     
-    for ov in Vovs[ds.sipm]:                                       
-        if (ov in  g_SR_vs_bar[ds.sipm].keys()):
+    for ov in Vovs[ds.moduleLabel]:                                       
+        if (ov in  g_SR_vs_bar[ds.moduleLabel].keys()):
             fitpol0_sr = ROOT.TF1('fitpol0_sr','pol0',-100,100)
-            g_SR_vs_bar[ds.sipm][ov].Fit(fitpol0_sr,'QNR')
+            g_SR_vs_bar[ds.moduleLabel][ov].Fit(fitpol0_sr,'QNR')
             sr = fitpol0_sr.GetParameter(0)
-            g_SR_vs_Vov_average[ds.sipm].SetPoint(g_SR_vs_Vov_average[ds.sipm].GetN(), ov, sr)
-            g_SR_vs_Vov_average[ds.sipm].SetPointError(g_SR_vs_Vov_average[ds.sipm].GetN()-1, 0, fitpol0_sr.GetParError(0)) 
+            g_SR_vs_Vov_average[ds.moduleLabel].SetPoint(g_SR_vs_Vov_average[ds.moduleLabel].GetN(), ov, sr)
+            g_SR_vs_Vov_average[ds.moduleLabel].SetPointError(g_SR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, fitpol0_sr.GetParError(0)) 
 
             # noise using average SR
-            g_Noise_vs_Vov_average[ds.sipm].SetPoint(g_Noise_vs_Vov_average[ds.sipm].GetN(), ov, sigma_noise(sr))
+            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ov, sigma_noise(sr))
             sr_err = max(fitpol0_sr.GetParError(0), errSRsyst*sr)
             sr_up   = sr + sr_err 
             sr_down = sr - sr_err 
             noise_err  = 0.5 * ( sigma_noise(sr_down) - sigma_noise(sr_up) ) 
-            g_Noise_vs_Vov_average[ds.sipm].SetPointError(g_Noise_vs_Vov_average[ds.sipm].GetN()-1, 0, noise_err) 
+            g_Noise_vs_Vov_average[ds.moduleLabel].SetPointError(g_Noise_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, noise_err) 
     
             # compute stoch by scaling from 3.5 V OV
             stoch = stoch_average/math.sqrt(  PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref)  )
             stoch_err = stoch_average_err/math.sqrt( PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref) )
-            g_Stoch_vs_Vov_average[ds.sipm].SetPoint(g_Stoch_vs_Vov_average[ds.sipm].GetN(), ov, stoch)
-            g_Stoch_vs_Vov_average[ds.sipm].SetPointError(g_Stoch_vs_Vov_average[ds.sipm].GetN()-1, 0, stoch_err)
+            g_Stoch_vs_Vov_average[ds.moduleLabel].SetPoint(g_Stoch_vs_Vov_average[ds.moduleLabel].GetN(), ov, stoch)
+            g_Stoch_vs_Vov_average[ds.moduleLabel].SetPointError(g_Stoch_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, stoch_err)
 
             # tot resolution summing noise + stochastic in quadrature
             tot = math.sqrt( stoch*stoch + sigma_noise(sr)*sigma_noise(sr) )
             tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(noise_err*sigma_noise(sr),2))
-            g_Tot_vs_Vov_average[ds.sipm].SetPoint(g_Tot_vs_Vov_average[ds.sipm].GetN(), ov, tot)
-            g_Tot_vs_Vov_average[ds.sipm].SetPointError(g_Tot_vs_Vov_average[ds.sipm].GetN()-1, 0, tot_err)
+            g_Tot_vs_Vov_average[ds.moduleLabel].SetPoint(g_Tot_vs_Vov_average[ds.moduleLabel].GetN(), ov, tot)
+            g_Tot_vs_Vov_average[ds.moduleLabel].SetPointError(g_Tot_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, tot_err)
 
-
-# ratio of stochatic terms at 3.5 OV
-'''
-g_ratio_stoch1 = ROOT.TGraphErrors()
-g_ratio_stoch2 = ROOT.TGraphErrors()
-g_ratio_stoch3 = ROOT.TGraphErrors()
-for bar in range(0,16):
-    if (bar not in bars[sipms[1]]): continue
-    if (bar not in bars[sipms[0]]): continue
-    if (g_Stoch_vs_Vov[sipms[0]][bar].Eval(3.5)<=0): continue
-    ratio_stoch =  g_Stoch_vs_Vov[sipms[1]][bar].Eval(3.5)/g_Stoch_vs_Vov[sipms[0]][bar].Eval(3.5)
-    err1 = [  g_Stoch_vs_Vov[sipms[1]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipms[1]][bar].GetN()) if g_Stoch_vs_Vov[sipms[1]][bar].GetX()[i] == 3.50]
-    err0 = [  g_Stoch_vs_Vov[sipms[0]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipms[0]][bar].GetN()) if g_Stoch_vs_Vov[sipms[0]][bar].GetX()[i] == 3.50]
-    if (err1 == [] or err0 == []): continue
-    err_ratio_stoch = ratio_stoch * math.sqrt( pow(err1[0]/g_Stoch_vs_Vov[sipms[1]][bar].Eval(3.5),2) + pow(err0[0]/g_Stoch_vs_Vov[sipms[0]][bar].Eval(3.5),2) ) 
-    print sipms[1], sipms[0], ' ratio stochastic term at 3.5 V OV = ', ratio_stoch
-    g_ratio_stoch1.SetPoint(g_ratio_stoch1.GetN(), bar, ratio_stoch)
-    g_ratio_stoch1.SetPointError(g_ratio_stoch1.GetN()-1, 0, err_ratio_stoch)
-
-if (len(sipms)>2):
-
-    for bar in range(0,16):
-        if (bar not in bars[sipms[1]]): continue
-        if ( len(sipms)>2 and bar not in bars[sipms[2]]): continue
-        if ( len(sipms)>2 and g_Stoch_vs_Vov[sipms[2]][bar].Eval(3.5)<=0): continue
-        if (g_Stoch_vs_Vov[sipms[1]][bar].Eval(3.5)<=0): continue
-        ratio_stoch =  g_Stoch_vs_Vov[sipms[1]][bar].Eval(3.5)/g_Stoch_vs_Vov[sipms[2]][bar].Eval(3.5)
-        err1 = [  g_Stoch_vs_Vov[sipms[1]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipms[1]][bar].GetN()) if g_Stoch_vs_Vov[sipms[1]][bar].GetX()[i] == 3.50]
-        err0 = [  g_Stoch_vs_Vov[sipms[2]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipms[2]][bar].GetN()) if g_Stoch_vs_Vov[sipms[2]][bar].GetX()[i] == 3.50]
-        if (err1 == [] or err0 == []): continue
-        err_ratio_stoch = ratio_stoch * math.sqrt( pow(err1[0]/g_Stoch_vs_Vov[sipms[1]][bar].Eval(3.5),2) + pow(err0[0]/g_Stoch_vs_Vov[sipms[2]][bar].Eval(3.5),2) ) 
-        print sipms[1], sipms[2],' ratio stochastic term at 3.5 V OV = ', ratio_stoch
-        g_ratio_stoch2.SetPoint(g_ratio_stoch2.GetN(), bar, ratio_stoch)
-        g_ratio_stoch2.SetPointError(g_ratio_stoch2.GetN()-1, 0, err_ratio_stoch)
-
-
-    for bar in range(0,16):
-        if (bar not in bars[sipms[0]]): continue
-        if (bar not in bars[sipms[2]]): continue
-        if (g_Stoch_vs_Vov[sipms[2]][bar].Eval(3.5)<=0): continue
-        if (g_Stoch_vs_Vov[sipms[0]][bar].Eval(3.5)<=0): continue
-        ratio_stoch =  g_Stoch_vs_Vov[sipms[0]][bar].Eval(3.5)/g_Stoch_vs_Vov[sipms[2]][bar].Eval(3.5)
-        err1 = [  g_Stoch_vs_Vov[sipms[0]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipms[0]][bar].GetN()) if g_Stoch_vs_Vov[sipms[0]][bar].GetX()[i] == 3.50]
-        err0 = [  g_Stoch_vs_Vov[sipms[2]][bar].GetErrorY(i) for i in range(0, g_Stoch_vs_Vov[sipms[2]][bar].GetN()) if g_Stoch_vs_Vov[sipms[2]][bar].GetX()[i] == 3.50]
-        if (err1 == [] or err0 == []): continue
-        err_ratio_stoch = ratio_stoch * math.sqrt( pow(err1[0]/g_Stoch_vs_Vov[sipms[0]][bar].Eval(3.5),2) + pow(err0[0]/g_Stoch_vs_Vov[sipms[2]][bar].Eval(3.5),2) ) 
-        print sipms[0], sipms[2],' ratio stochastic term at 3.5 V OV = ', ratio_stoch
-        g_ratio_stoch3.SetPoint(g_ratio_stoch3.GetN(), bar, ratio_stoch)
-        g_ratio_stoch3.SetPointError(g_ratio_stoch3.GetN()-1, 0, err_ratio_stoch)
-'''
         
 # draw
 c1 = {}
@@ -548,92 +481,92 @@ leg = {}
 
 h = {}
 for ds in data_structs:
-    c1[ds.sipm] = {}
-    hdummy1[ds.sipm] = {}
-    c2[ds.sipm] = {}
-    hdummy2[ds.sipm] = {}
-    h[ds.sipm] = ROOT.TH1F('h_coeff_%s'%ds.sipm,'',100,-2.0,1.0)
-    leg[ds.sipm] = ROOT.TLegend(0.60,0.70,0.85,0.89) 
-    leg[ds.sipm].SetBorderSize(0)
-    leg[ds.sipm].SetFillStyle(0) 
-    for i,bar in enumerate(bars[ds.sipm]):
-        c1[ds.sipm][bar] =  ROOT.TCanvas('c_timeResolution_vs_Vov_%s_bar%02d'%(ds.sipm,bar),'c_timeResolution_vs_Vov_%s_bar%02d'%(ds.sipm,bar),600,600)
-        c1[ds.sipm][bar].SetGridy()
-        c1[ds.sipm][bar].cd()
-        hdummy1[ds.sipm][bar] = ROOT.TH2F('hdummy1_%s_%d'%(ds.sipm,bar),'',100,0,5,100,0,100)
-        hdummy1[ds.sipm][bar].GetXaxis().SetTitle('V_{OV} [V]')
-        hdummy1[ds.sipm][bar].GetYaxis().SetTitle('#sigma_{t} [ps]')
-        hdummy1[ds.sipm][bar].Draw()
-        g_data[ds.sipm][bar].SetMarkerStyle(20)
-        g_data[ds.sipm][bar].SetMarkerSize(1)
-        g_data[ds.sipm][bar].SetMarkerColor(1)
-        g_data[ds.sipm][bar].SetLineColor(1)
-        g_data[ds.sipm][bar].SetLineWidth(2)
-        g_data[ds.sipm][bar].Draw('plsame')
-        g_Noise_vs_Vov[ds.sipm][bar].SetLineWidth(2)
-        g_Noise_vs_Vov[ds.sipm][bar].SetLineColor(ROOT.kBlue)
-        g_Noise_vs_Vov[ds.sipm][bar].SetFillColor(ROOT.kBlue)
-        g_Noise_vs_Vov[ds.sipm][bar].SetFillColorAlpha(ROOT.kBlue,0.5)
-        g_Noise_vs_Vov[ds.sipm][bar].SetFillStyle(3004)
-        g_Noise_vs_Vov[ds.sipm][bar].Draw('E3lsame')
-        g_Stoch_vs_Vov[ds.sipm][bar].SetLineWidth(2)
-        g_Stoch_vs_Vov[ds.sipm][bar].SetLineColor(ROOT.kGreen+2)
-        g_Stoch_vs_Vov[ds.sipm][bar].SetFillColor(ROOT.kGreen+2)
-        g_Stoch_vs_Vov[ds.sipm][bar].SetFillStyle(3001)
-        g_Stoch_vs_Vov[ds.sipm][bar].SetFillColorAlpha(ROOT.kGreen+2,0.5)
-        g_Stoch_vs_Vov[ds.sipm][bar].Draw('E3lsame')
-        g_Tot_vs_Vov[ds.sipm][bar].SetLineWidth(2)
-        g_Tot_vs_Vov[ds.sipm][bar].SetLineColor(ROOT.kRed+1)
-        g_Tot_vs_Vov[ds.sipm][bar].SetFillColor(ROOT.kRed+1)
-        g_Tot_vs_Vov[ds.sipm][bar].SetFillColorAlpha(ROOT.kRed+1,0.5)
-        g_Tot_vs_Vov[ds.sipm][bar].SetFillStyle(3001)
-        g_Tot_vs_Vov[ds.sipm][bar].Draw('E3lsame')
+    c1[ds.moduleLabel] = {}
+    hdummy1[ds.moduleLabel] = {}
+    c2[ds.moduleLabel] = {}
+    hdummy2[ds.moduleLabel] = {}
+    h[ds.moduleLabel] = ROOT.TH1F('h_coeff_%s'%ds.moduleLabel,'',100,-2.0,1.0)
+    leg[ds.moduleLabel] = ROOT.TLegend(0.60,0.70,0.85,0.89) 
+    leg[ds.moduleLabel].SetBorderSize(0)
+    leg[ds.moduleLabel].SetFillStyle(0) 
+    for i,bar in enumerate(bars[ds.moduleLabel]):
+        c1[ds.moduleLabel][bar] =  ROOT.TCanvas('c_timeResolution_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar),'c_timeResolution_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar),600,600)
+        c1[ds.moduleLabel][bar].SetGridy()
+        c1[ds.moduleLabel][bar].cd()
+        hdummy1[ds.moduleLabel][bar] = ROOT.TH2F('hdummy1_%s_%d'%(ds.moduleLabel,bar),'',100,0,5,100,0,100)
+        hdummy1[ds.moduleLabel][bar].GetXaxis().SetTitle('V_{OV} [V]')
+        hdummy1[ds.moduleLabel][bar].GetYaxis().SetTitle('#sigma_{t} [ps]')
+        hdummy1[ds.moduleLabel][bar].Draw()
+        g_data[ds.moduleLabel][bar].SetMarkerStyle(20)
+        g_data[ds.moduleLabel][bar].SetMarkerSize(1)
+        g_data[ds.moduleLabel][bar].SetMarkerColor(1)
+        g_data[ds.moduleLabel][bar].SetLineColor(1)
+        g_data[ds.moduleLabel][bar].SetLineWidth(2)
+        g_data[ds.moduleLabel][bar].Draw('plsame')
+        g_Noise_vs_Vov[ds.moduleLabel][bar].SetLineWidth(2)
+        g_Noise_vs_Vov[ds.moduleLabel][bar].SetLineColor(ROOT.kBlue)
+        g_Noise_vs_Vov[ds.moduleLabel][bar].SetFillColor(ROOT.kBlue)
+        g_Noise_vs_Vov[ds.moduleLabel][bar].SetFillColorAlpha(ROOT.kBlue,0.5)
+        g_Noise_vs_Vov[ds.moduleLabel][bar].SetFillStyle(3004)
+        g_Noise_vs_Vov[ds.moduleLabel][bar].Draw('E3lsame')
+        g_Stoch_vs_Vov[ds.moduleLabel][bar].SetLineWidth(2)
+        g_Stoch_vs_Vov[ds.moduleLabel][bar].SetLineColor(ROOT.kGreen+2)
+        g_Stoch_vs_Vov[ds.moduleLabel][bar].SetFillColor(ROOT.kGreen+2)
+        g_Stoch_vs_Vov[ds.moduleLabel][bar].SetFillStyle(3001)
+        g_Stoch_vs_Vov[ds.moduleLabel][bar].SetFillColorAlpha(ROOT.kGreen+2,0.5)
+        g_Stoch_vs_Vov[ds.moduleLabel][bar].Draw('E3lsame')
+        g_Tot_vs_Vov[ds.moduleLabel][bar].SetLineWidth(2)
+        g_Tot_vs_Vov[ds.moduleLabel][bar].SetLineColor(ROOT.kRed+1)
+        g_Tot_vs_Vov[ds.moduleLabel][bar].SetFillColor(ROOT.kRed+1)
+        g_Tot_vs_Vov[ds.moduleLabel][bar].SetFillColorAlpha(ROOT.kRed+1,0.5)
+        g_Tot_vs_Vov[ds.moduleLabel][bar].SetFillStyle(3001)
+        g_Tot_vs_Vov[ds.moduleLabel][bar].Draw('E3lsame')
         #save on file
-        outfile.cd()
-        g_data[ds.sipm][bar].Write('g_Data_vs_Vov_%s_bar%02d'%(ds.sipm,bar))
-        g_Noise_vs_Vov[ds.sipm][bar].Write('g_Noise_vs_Vov_%s_bar%02d'%(ds.sipm,bar))
-        g_Stoch_vs_Vov[ds.sipm][bar].Write('g_Stoch_vs_Vov_%s_bar%02d'%(ds.sipm,bar))
-        g_Tot_vs_Vov[ds.sipm][bar].Write('g_Tot_vs_Vov_%s_bar%02d'%(ds.sipm,bar))
+        #outfile.cd()
+        #g_data[ds.moduleLabel][bar].Write('g_Data_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
+        #g_Noise_vs_Vov[ds.moduleLabel][bar].Write('g_Noise_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
+        #g_Stoch_vs_Vov[ds.moduleLabel][bar].Write('g_Stoch_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
+        #g_Tot_vs_Vov[ds.moduleLabel][bar].Write('g_Tot_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
         if (i==0):
-            leg[ds.sipm].AddEntry(g_data[ds.sipm][bar], 'data', 'PL')
-            leg[ds.sipm].AddEntry(g_Noise_vs_Vov[ds.sipm][bar], 'noise', 'L')
-            leg[ds.sipm].AddEntry(g_Stoch_vs_Vov[ds.sipm][bar], 'stoch', 'L')
-            leg[ds.sipm].AddEntry(g_Tot_vs_Vov[ds.sipm][bar], 'stoch #oplus noise', 'L')
-        leg[ds.sipm].Draw('same')
-        latex = ROOT.TLatex(0.20,0.86,'%s'%(ds.sipm.replace('_nonIrr_','+')))
+            leg[ds.moduleLabel].AddEntry(g_data[ds.moduleLabel][bar], 'data', 'PL')
+            leg[ds.moduleLabel].AddEntry(g_Noise_vs_Vov[ds.moduleLabel][bar], 'noise', 'L')
+            leg[ds.moduleLabel].AddEntry(g_Stoch_vs_Vov[ds.moduleLabel][bar], 'stoch', 'L')
+            leg[ds.moduleLabel].AddEntry(g_Tot_vs_Vov[ds.moduleLabel][bar], 'stoch #oplus noise', 'L')
+        leg[ds.moduleLabel].Draw('same')
+        latex = ROOT.TLatex(0.20,0.86,'%s'%(ds.plotLabel)
         latex.SetNDC()
         latex.SetTextSize(0.045)
         latex.SetTextFont(42)
         latex.Draw('same')
-        c1[ds.sipm][bar].SaveAs(outdir+'/'+c1[ds.sipm][bar].GetName()+'.png')
-        c1[ds.sipm][bar].SaveAs(outdir+'/'+c1[ds.sipm][bar].GetName()+'.pdf')
+        c1[ds.moduleLabel][bar].SaveAs(outdir+'/'+c1[ds.moduleLabel][bar].GetName()+'.png')
+        c1[ds.moduleLabel][bar].SaveAs(outdir+'/'+c1[ds.moduleLabel][bar].GetName()+'.pdf')
 
         # vs npe
-        c2[ds.sipm][bar] =  ROOT.TCanvas('c_timeResolution_vs_Npe_%s_bar%02d'%(ds.sipm,bar),'c_timeResolution_vs_Npe_%s_bar%02d'%(ds.sipm,bar),600,600)
-        c2[ds.sipm][bar].SetGridy()
-        c2[ds.sipm][bar].cd()
-        hdummy2[ds.sipm][bar] = ROOT.TH2F('hdummy2_%s_%d'%(ds.sipm,bar),'',10000,1000,10000,100,0,100)
-        hdummy2[ds.sipm][bar].GetXaxis().SetTitle('Npe')
-        hdummy2[ds.sipm][bar].GetYaxis().SetTitle('#sigma_{t} [ps]')
-        hdummy2[ds.sipm][bar].Draw()
-        g_Stoch_vs_Npe[ds.sipm][bar].SetMarkerStyle(20)
-        g_Stoch_vs_Npe[ds.sipm][bar].SetMarkerSize(0.8)
-        g_Stoch_vs_Npe[ds.sipm][bar].SetMarkerColor(ROOT.kGreen+2)
-        g_Stoch_vs_Npe[ds.sipm][bar].SetLineWidth(1)
-        g_Stoch_vs_Npe[ds.sipm][bar].SetLineColor(ROOT.kGreen+2)
-        g_Stoch_vs_Npe[ds.sipm][bar].Draw('psame')
-        fitFun = ROOT.TF1('fitFun_%s_%.2d'%(ds.sipm,bar),'[0]*pow(x,[1])',2000,9500)
+        c2[ds.moduleLabel][bar] =  ROOT.TCanvas('c_timeResolution_vs_Npe_%s_bar%02d'%(ds.moduleLabel,bar),'c_timeResolution_vs_Npe_%s_bar%02d'%(ds.moduleLabel,bar),600,600)
+        c2[ds.moduleLabel][bar].SetGridy()
+        c2[ds.moduleLabel][bar].cd()
+        hdummy2[ds.moduleLabel][bar] = ROOT.TH2F('hdummy2_%s_%d'%(ds.moduleLabel,bar),'',10000,1000,10000,100,0,100)
+        hdummy2[ds.moduleLabel][bar].GetXaxis().SetTitle('Npe')
+        hdummy2[ds.moduleLabel][bar].GetYaxis().SetTitle('#sigma_{t} [ps]')
+        hdummy2[ds.moduleLabel][bar].Draw()
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].SetMarkerStyle(20)
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].SetMarkerSize(0.8)
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].SetMarkerColor(ROOT.kGreen+2)
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].SetLineWidth(1)
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].SetLineColor(ROOT.kGreen+2)
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].Draw('psame')
+        fitFun = ROOT.TF1('fitFun_%s_%.2d'%(ds.moduleLabel,bar),'[0]*pow(x,[1])',2000,9500)
         fitFun.SetParameters(30,-0.5)
         fitFun.SetLineColor(ROOT.kGreen+3)
-        g_Stoch_vs_Npe[ds.sipm][bar].Fit(fitFun,'QRS+')
-        if (fitFun.GetNDF()>0): h[ds.sipm].Fill(fitFun.GetParameter(1))
-        c2[ds.sipm][bar].SaveAs(outdir+'/'+c2[ds.sipm][bar].GetName()+'.png')
-        c2[ds.sipm][bar].SaveAs(outdir+'/'+c2[ds.sipm][bar].GetName()+'.pdf')
+        g_Stoch_vs_Npe[ds.moduleLabel][bar].Fit(fitFun,'QRS+')
+        if (fitFun.GetNDF()>0): h[ds.moduleLabel].Fill(fitFun.GetParameter(1))
+        c2[ds.moduleLabel][bar].SaveAs(outdir+'/'+c2[ds.moduleLabel][bar].GetName()+'.png')
+        c2[ds.moduleLabel][bar].SaveAs(outdir+'/'+c2[ds.moduleLabel][bar].GetName()+'.pdf')
 
     ROOT.gStyle.SetOptStat(1111)
-    cc =  ROOT.TCanvas('c_coeff_%s'%(ds.sipm),'c_coeff_%s'%(ds.sipm),600,600)
-    h[ds.sipm].GetXaxis().SetTitle('#alpha')
-    h[ds.sipm].Draw('')
+    cc =  ROOT.TCanvas('c_coeff_%s'%(ds.moduleLabel),'c_coeff_%s'%(ds.moduleLabel),600,600)
+    h[ds.moduleLabel].GetXaxis().SetTitle('#alpha')
+    h[ds.moduleLabel].Draw('')
     cc.SaveAs(outdir+'/'+cc.GetName()+'.png')
     ROOT.gStyle.SetOptStat(0)
 
@@ -645,7 +578,7 @@ print('Plotting slew rate vs Vov...')
 leg2 = ROOT.TLegend(0.20,0.70,0.45,0.89)
 leg2.SetBorderSize(0)
 leg2.SetFillStyle(0)
-for i,bar in enumerate(bars[ds.sipm]):
+for i,bar in enumerate(bars[ds.moduleLabel]):
     c3[bar] = ROOT.TCanvas('c_slewRate_vs_Vov_bar%02d'%(bar),'c_slewRate_vs_Vov_bar%02d'%(bar),600,600)
     c3[bar].SetGridy()
     c3[bar].cd()
@@ -654,15 +587,15 @@ for i,bar in enumerate(bars[ds.sipm]):
     hdummy3[bar].GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
     hdummy3[bar].Draw()
     for j,ds in enumerate(data_structs):
-        if (bar not in g_SR_vs_Vov[ds.sipm].keys()):continue
+        if (bar not in g_SR_vs_Vov[ds.moduleLabel].keys()):continue
         if (bar == 8):
-            leg2.AddEntry(g_SR_vs_Vov[ds.sipm][bar], '%s'%(ds.label), 'PL')
-        g_SR_vs_Vov[ds.sipm][bar].SetMarkerStyle( ds.marker )
-        g_SR_vs_Vov[ds.sipm][bar].SetMarkerColor(ds.color)
-        g_SR_vs_Vov[ds.sipm][bar].SetLineColor(ds.color)
-        g_SR_vs_Vov[ds.sipm][bar].Draw('psame')
-        outfile.cd()
-        g_SR_vs_Vov[ds.sipm][bar].Write('g_SR_vs_Vov_%s_bar%02d'%(ds.sipm,bar))
+            leg2.AddEntry(g_SR_vs_Vov[ds.moduleLabel][bar], '%s'%(ds.plotLabel), 'PL')
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle( ds.marker )
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_SR_vs_Vov[ds.moduleLabel][bar].Draw('psame')
+        #outfile.cd()
+        #g_SR_vs_Vov[ds.moduleLabel][bar].Write('g_SR_vs_Vov_%s_bar%02d'%(ds.moduleLabel,bar))
     leg2.Draw()
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.png')
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.pdf')
@@ -677,11 +610,11 @@ for i,bar in enumerate(bars[ds.sipm]):
     hdummy3[bar].GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
     hdummy3[bar].Draw()
     for j,ds in enumerate(data_structs):
-        if (bar not in g_SR_vs_GainNpe[ds.sipm].keys()): continue
-        g_SR_vs_GainNpe[ds.sipm][bar].SetMarkerStyle( ds.marker )
-        g_SR_vs_GainNpe[ds.sipm][bar].SetMarkerColor(ds.color)
-        g_SR_vs_GainNpe[ds.sipm][bar].SetLineColor(ds.color)
-        g_SR_vs_GainNpe[ds.sipm][bar].Draw('psame')
+        if (bar not in g_SR_vs_GainNpe[ds.moduleLabel].keys()): continue
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetMarkerStyle( ds.marker )
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_SR_vs_GainNpe[ds.moduleLabel][bar].Draw('psame')
     leg2.Draw()
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.png')
     c3[bar].SaveAs(outdir+'/'+c3[bar].GetName()+'.pdf')
@@ -694,11 +627,11 @@ for i,bar in enumerate(bars[ds.sipm]):
     hdummy4[bar].GetYaxis().SetTitle('best threshold [DAC]')
     hdummy4[bar].Draw()
     for j,ds in enumerate(data_structs):
-        if (bar not in g_bestTh_vs_Vov[ds.sipm].keys()):continue
-        g_bestTh_vs_Vov[ds.sipm][bar].SetMarkerStyle( ds.marker )
-        g_bestTh_vs_Vov[ds.sipm][bar].SetMarkerColor(ds.color)
-        g_bestTh_vs_Vov[ds.sipm][bar].SetLineColor(ds.color)
-        g_bestTh_vs_Vov[ds.sipm][bar].Draw('plsame')
+        if (bar not in g_bestTh_vs_Vov[ds.moduleLabel].keys()):continue
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle( ds.marker )
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)
+        g_bestTh_vs_Vov[ds.moduleLabel][bar].Draw('plsame')
     leg2.Draw()
     c4[bar].SaveAs(outdir+'/'+c4[bar].GetName()+'.png')
     c4[bar].SaveAs(outdir+'/'+c4[bar].GetName()+'.pdf')
@@ -715,13 +648,13 @@ hdummy2.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy2.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
 hdummy2.Draw()
 for ds in data_structs:
-    g_SR_vs_Vov_average[ds.sipm].SetMarkerStyle(ds.marker)
-    g_SR_vs_Vov_average[ds.sipm].SetMarkerColor(ds.color)
-    g_SR_vs_Vov_average[ds.sipm].SetLineWidth(1)
-    g_SR_vs_Vov_average[ds.sipm].SetLineColor(ds.color)
-    g_SR_vs_Vov_average[ds.sipm].Draw('plsame')
+    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_SR_vs_Vov_average[ds.moduleLabel].SetLineWidth(1)
+    g_SR_vs_Vov_average[ds.moduleLabel].SetLineColor(ds.color)
+    g_SR_vs_Vov_average[ds.moduleLabel].Draw('plsame')
     outfile.cd()
-    g_SR_vs_Vov_average[ds.sipm].Write('g_SR_vs_Vov_average_%s'%ds.sipm)
+    g_SR_vs_Vov_average[ds.moduleLabel].Write('g_SR_vs_Vov_average_%s'%ds.moduleLabel)
 leg2.Draw()  
 c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
 c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
@@ -729,11 +662,11 @@ hdummy2.Delete()
 
 # average tRes
 for ds in data_structs:
-    latex = ROOT.TLatex(0.18,0.94,'%s'%(ds.label))
+    latex = ROOT.TLatex(0.18,0.94,'%s'%(ds.plotLabel))
     latex.SetNDC()
     latex.SetTextSize(0.05)
     latex.SetTextFont(42)
-    c2 =  ROOT.TCanvas('c_timeResolution_vs_Vov_average_%s'%ds.sipm,'c_timeResolution_vs_Vov_average_%s'%ds.sipm,600,600)
+    c2 =  ROOT.TCanvas('c_timeResolution_vs_Vov_average_%s'%ds.moduleLabel,'c_timeResolution_vs_Vov_average_%s'%ds.moduleLabel,600,600)
     c2.SetGridx()
     c2.SetGridy()
     c2.cd()    
@@ -741,36 +674,37 @@ for ds in data_structs:
     hdummy2.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
     hdummy2.GetYaxis().SetTitle('time resolution [ps]')
     hdummy2.Draw()
-    g_data_average[ds.sipm].SetMarkerStyle(20)
-    g_data_average[ds.sipm].SetMarkerSize(1)
-    g_data_average[ds.sipm].SetMarkerColor(1)
-    g_data_average[ds.sipm].SetLineColor(1)
-    g_data_average[ds.sipm].SetLineWidth(2)
-    g_data_average[ds.sipm].Draw('plsame')
-    g_Noise_vs_Vov_average[ds.sipm].SetLineWidth(2)
-    g_Noise_vs_Vov_average[ds.sipm].SetLineColor(ROOT.kBlue)
-    g_Noise_vs_Vov_average[ds.sipm].SetFillColor(ROOT.kBlue)
-    g_Noise_vs_Vov_average[ds.sipm].SetFillColorAlpha(ROOT.kBlue,0.5)
-    g_Noise_vs_Vov_average[ds.sipm].SetFillStyle(3004)
-    g_Noise_vs_Vov_average[ds.sipm].Draw('E3lsame')
-    g_Stoch_vs_Vov_average[ds.sipm].SetLineWidth(2)
-    g_Stoch_vs_Vov_average[ds.sipm].SetLineColor(ROOT.kGreen+2)
-    g_Stoch_vs_Vov_average[ds.sipm].SetFillColor(ROOT.kGreen+2)
-    g_Stoch_vs_Vov_average[ds.sipm].SetFillStyle(3001)
-    g_Stoch_vs_Vov_average[ds.sipm].SetFillColorAlpha(ROOT.kGreen+2,0.5)
-    g_Stoch_vs_Vov_average[ds.sipm].Draw('E3lsame')
-    g_Tot_vs_Vov_average[ds.sipm].SetLineWidth(2)
-    g_Tot_vs_Vov_average[ds.sipm].SetLineColor(ROOT.kRed+1)
-    g_Tot_vs_Vov_average[ds.sipm].SetFillColor(ROOT.kRed+1)
-    g_Tot_vs_Vov_average[ds.sipm].SetFillColorAlpha(ROOT.kRed+1,0.5)
-    g_Tot_vs_Vov_average[ds.sipm].SetFillStyle(3001)
-    g_Tot_vs_Vov_average[ds.sipm].Draw('E3lsame')
-    leg[ds.sipm].Draw()
+    g_data_average[ds.moduleLabel].SetMarkerStyle(20)
+    g_data_average[ds.moduleLabel].SetMarkerSize(1)
+    g_data_average[ds.moduleLabel].SetMarkerColor(1)
+    g_data_average[ds.moduleLabel].SetLineColor(1)
+    g_data_average[ds.moduleLabel].SetLineWidth(2)
+    g_data_average[ds.moduleLabel].Draw('plsame')
+    g_Noise_vs_Vov_average[ds.moduleLabel].SetLineWidth(2)
+    g_Noise_vs_Vov_average[ds.moduleLabel].SetLineColor(ROOT.kBlue)
+    g_Noise_vs_Vov_average[ds.moduleLabel].SetFillColor(ROOT.kBlue)
+    g_Noise_vs_Vov_average[ds.moduleLabel].SetFillColorAlpha(ROOT.kBlue,0.5)
+    g_Noise_vs_Vov_average[ds.moduleLabel].SetFillStyle(3004)
+    g_Noise_vs_Vov_average[ds.moduleLabel].Draw('E3lsame')
+    g_Stoch_vs_Vov_average[ds.moduleLabel].SetLineWidth(2)
+    g_Stoch_vs_Vov_average[ds.moduleLabel].SetLineColor(ROOT.kGreen+2)
+    g_Stoch_vs_Vov_average[ds.moduleLabel].SetFillColor(ROOT.kGreen+2)
+    g_Stoch_vs_Vov_average[ds.moduleLabel].SetFillStyle(3001)
+    g_Stoch_vs_Vov_average[ds.moduleLabel].SetFillColorAlpha(ROOT.kGreen+2,0.5)
+    g_Stoch_vs_Vov_average[ds.moduleLabel].Draw('E3lsame')
+    g_Tot_vs_Vov_average[ds.moduleLabel].SetLineWidth(2)
+    g_Tot_vs_Vov_average[ds.moduleLabel].SetLineColor(ROOT.kRed+1)
+    g_Tot_vs_Vov_average[ds.moduleLabel].SetFillColor(ROOT.kRed+1)
+    g_Tot_vs_Vov_average[ds.moduleLabel].SetFillColorAlpha(ROOT.kRed+1,0.5)
+    g_Tot_vs_Vov_average[ds.moduleLabel].SetFillStyle(3001)
+    g_Tot_vs_Vov_average[ds.moduleLabel].Draw('E3lsame')
+    leg[ds.moduleLabel].Draw()
     latex.Draw()
     outfile.cd()
-    g_Noise_vs_Vov_average[ds.sipm].Write('g_Noise_vs_Vov_average_%s'%ds.sipm)
-    g_Stoch_vs_Vov_average[ds.sipm].Write('g_Stoch_vs_Vov_average_%s'%ds.sipm)
-    g_Tot_vs_Vov_average[ds.sipm].Write('g_Tot_vs_Vov_average_%s'%ds.sipm)
+    g_data_average[ds.moduleLabel].Write('g_Data_vs_Vov_average_%s'%ds.moduleLabel)
+    g_Noise_vs_Vov_average[ds.moduleLabel].Write('g_Noise_vs_Vov_average_%s'%ds.moduleLabel)
+    g_Stoch_vs_Vov_average[ds.moduleLabel].Write('g_Stoch_vs_Vov_average_%s'%ds.moduleLabel)
+    g_Tot_vs_Vov_average[ds.moduleLabel].Write('g_Tot_vs_Vov_average_%s'%ds.moduleLabel)
     c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
     c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
     hdummy2.Delete()
@@ -779,22 +713,22 @@ for ds in data_structs:
 
 # average stoch. term vs Npe/tau
 ROOT.gStyle.SetOptFit(111)
-c2 =  ROOT.TCanvas('c_stoch_vs_NpeTau_average','c_stoch_vs_NpeTau_average',600,600)
+c2 =  ROOT.TCanvas('c_stoch_vs_Npe_average','c_stoch_vs_Npe_average',600,600)
 c2.SetGridx()
 c2.SetGridy()
 c2.cd()    
-hdummy2 = ROOT.TH2F('hdummy2','',100, 40, 300, 100, 0, 100)
-hdummy2.GetXaxis().SetTitle('Npe/tau [p.e./ns]')
+hdummy2 = ROOT.TH2F('hdummy2','',100, 0, 8000, 100, 0, 100)
+hdummy2.GetXaxis().SetTitle('Npe[p.e.]')
 hdummy2.GetYaxis().SetTitle('#sigma_{t,stoch} [ps]')
 hdummy2.Draw()
-g_stoch_vs_NpeTau_average.Draw('psame')
+g_stoch_vs_Npe_average.Draw('psame')
 fitFunStoch = ROOT.TF1('fitFunStoch','[0]*pow(x,[1])', 0, 1000)
 fitFunStoch.SetNpx(10000)
 fitFunStoch.SetLineStyle(2)
 fitFunStoch.SetLineWidth(1)
 fitFunStoch.SetLineColor(2)
 fitFunStoch.SetParameters(30, -0.5)
-g_stoch_vs_NpeTau_average.Fit(fitFunStoch)
+g_stoch_vs_Npe_average.Fit(fitFunStoch)
 #print fitFunStoch.GetChisquare()/fitFunStoch.GetNDF()
 c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
 c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
@@ -812,22 +746,22 @@ c7 = {}
 hdummy7 = {}
 c8 = {}
 hdummy8 = {}
-for ov in Vovs[ds.sipm]:
+for ov in Vovs[ds.moduleLabel]:
     c5[ov] = ROOT.TCanvas('c_slewRate_vs_bar_Vov%.2f'%(ov),'c_slewRate_vs_bar_Vov%.2f'%(ov),600,600)
     c5[ov].SetGridy()
     c5[ov].cd()
     ymax = 40.
     if (ov > 1.50): ymax = 60
-    hdummy5[ov] = ROOT.TH2F('hdummy5_%s_%d'%(ds.sipm,ov),'',100,-0.5,15.5,100,0,ymax)
+    hdummy5[ov] = ROOT.TH2F('hdummy5_%s_%d'%(ds.moduleLabel,ov),'',100,-0.5,15.5,100,0,ymax)
     hdummy5[ov].GetXaxis().SetTitle('bar')
     hdummy5[ov].GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
     hdummy5[ov].Draw()
     for j,ds in enumerate(data_structs):
-        if (ov not in g_SR_vs_bar[ds.sipm].keys()): continue
-        g_SR_vs_bar[ds.sipm][ov].SetMarkerStyle( ds.marker )
-        g_SR_vs_bar[ds.sipm][ov].SetMarkerColor(ds.color)
-        g_SR_vs_bar[ds.sipm][ov].SetLineColor(ds.color)
-        g_SR_vs_bar[ds.sipm][ov].Draw('psame')
+        if (ov not in g_SR_vs_bar[ds.moduleLabel].keys()): continue
+        g_SR_vs_bar[ds.moduleLabel][ov].SetMarkerStyle( ds.marker )
+        g_SR_vs_bar[ds.moduleLabel][ov].SetMarkerColor(ds.color)
+        g_SR_vs_bar[ds.moduleLabel][ov].SetLineColor(ds.color)
+        g_SR_vs_bar[ds.moduleLabel][ov].Draw('psame')
     leg2.Draw()
     latex = ROOT.TLatex(0.75,0.85,'V_{OV} = %.02f V'%ov)
     latex.SetNDC()
@@ -841,16 +775,16 @@ for ov in Vovs[ds.sipm]:
     c6[ov] = ROOT.TCanvas('c_bestTh_vs_bar_Vov%.2f'%(ov),'c_bestTh_vs_bar_Vov%.2f'%(ov),600,600)
     c6[ov].SetGridy()
     c6[ov].cd()
-    hdummy6[ov] = ROOT.TH2F('hdummy6_%s_%d'%(ds.sipm,ov),'',100,-0.5,15.5,100,0,20)
+    hdummy6[ov] = ROOT.TH2F('hdummy6_%s_%d'%(ds.moduleLabel,ov),'',100,-0.5,15.5,100,0,20)
     hdummy6[ov].GetXaxis().SetTitle('bar')
     hdummy6[ov].GetYaxis().SetTitle('timing threshold [DAC]')
     hdummy6[ov].Draw()
     for j,ds in enumerate(data_structs):
-        if (ov not in g_bestTh_vs_bar[ds.sipm].keys()): continue
-        g_bestTh_vs_bar[ds.sipm][ov].SetMarkerStyle( ds.marker )
-        g_bestTh_vs_bar[ds.sipm][ov].SetMarkerColor(ds.color)
-        g_bestTh_vs_bar[ds.sipm][ov].SetLineColor(ds.color)
-        g_bestTh_vs_bar[ds.sipm][ov].Draw('plsame')
+        if (ov not in g_bestTh_vs_bar[ds.moduleLabel].keys()): continue
+        g_bestTh_vs_bar[ds.moduleLabel][ov].SetMarkerStyle( ds.marker )
+        g_bestTh_vs_bar[ds.moduleLabel][ov].SetMarkerColor(ds.color)
+        g_bestTh_vs_bar[ds.moduleLabel][ov].SetLineColor(ds.color)
+        g_bestTh_vs_bar[ds.moduleLabel][ov].Draw('plsame')
     leg2.Draw()        
     c6[ov].SaveAs(outdir+'/'+c6[ov].GetName()+'.png')
     c6[ov].SaveAs(outdir+'/'+c6[ov].GetName()+'.pdf')
@@ -859,16 +793,16 @@ for ov in Vovs[ds.sipm]:
     c7[ov] = ROOT.TCanvas('c_noise_vs_bar_Vov%.2f'%(ov),'c_noise_vs_bar_Vov%.2f'%(ov),600,600)
     c7[ov].SetGridy()
     c7[ov].cd()
-    hdummy7[ov] = ROOT.TH2F('hdummy7_%s_%d'%(ds.sipm,ov),'',100,-0.5,15.5,100,0,100)
+    hdummy7[ov] = ROOT.TH2F('hdummy7_%s_%d'%(ds.moduleLabel,ov),'',100,-0.5,15.5,100,0,100)
     hdummy7[ov].GetXaxis().SetTitle('bar')
     hdummy7[ov].GetYaxis().SetTitle('#sigma_{t, noise} [ps]')
     hdummy7[ov].Draw()
     for j,ds in enumerate(data_structs):
-        if (ov not in g_Noise_vs_bar[ds.sipm].keys()): continue
-        g_Noise_vs_bar[ds.sipm][ov].SetMarkerStyle( ds.marker )
-        g_Noise_vs_bar[ds.sipm][ov].SetMarkerColor(ds.color)
-        g_Noise_vs_bar[ds.sipm][ov].SetLineColor(ds.color)
-        g_Noise_vs_bar[ds.sipm][ov].Draw('psame')
+        if (ov not in g_Noise_vs_bar[ds.moduleLabel].keys()): continue
+        g_Noise_vs_bar[ds.moduleLabel][ov].SetMarkerStyle( ds.marker )
+        g_Noise_vs_bar[ds.moduleLabel][ov].SetMarkerColor(ds.color)
+        g_Noise_vs_bar[ds.moduleLabel][ov].SetLineColor(ds.color)
+        g_Noise_vs_bar[ds.moduleLabel][ov].Draw('psame')
     leg2.Draw()        
     latex = ROOT.TLatex(0.75,0.85,'V_{OV} = %.02f V'%ov)
     latex.SetNDC()
@@ -882,89 +816,26 @@ for ov in Vovs[ds.sipm]:
     c8[ov] = ROOT.TCanvas('c_stoch_vs_bar_Vov%.2f'%(ov),'c_stoch_vs_bar_Vov%.2f'%(ov),600,600)
     c8[ov].SetGridy()
     c8[ov].cd()
-    hdummy8[ov] = ROOT.TH2F('hdummy8_%s_%d'%(ds.sipm,ov),'',100,-0.5,15.5,100,0,100)
+    hdummy8[ov] = ROOT.TH2F('hdummy8_%s_%d'%(ds.moduleLabel,ov),'',100,-0.5,15.5,100,0,100)
     hdummy8[ov].GetXaxis().SetTitle('bar')
     hdummy8[ov].GetYaxis().SetTitle('#sigma_{t, stoch} [ps]')
     hdummy8[ov].Draw()
     for j,ds in enumerate(data_structs):
-        if (ov not in g_Stoch_vs_bar[ds.sipm].keys()): continue
-        g_Stoch_vs_bar[ds.sipm][ov].SetMarkerStyle( ds.marker )
-        g_Stoch_vs_bar[ds.sipm][ov].SetMarkerColor(ds.color)
-        g_Stoch_vs_bar[ds.sipm][ov].SetLineColor(ds.color)
-        g_Stoch_vs_bar[ds.sipm][ov].Draw('psame')
+        if (ov not in g_Stoch_vs_bar[ds.moduleLabel].keys()): continue
+        g_Stoch_vs_bar[ds.moduleLabel][ov].SetMarkerStyle( ds.marker )
+        g_Stoch_vs_bar[ds.moduleLabel][ov].SetMarkerColor(ds.color)
+        g_Stoch_vs_bar[ds.moduleLabel][ov].SetLineColor(ds.color)
+        g_Stoch_vs_bar[ds.moduleLabel][ov].Draw('psame')
     leg2.Draw()        
     c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.png')
     c8[ov].SaveAs(outdir+'/'+c8[ov].GetName()+'.pdf')
     hdummy8[ov].Delete() 
 
-# ratio of photo-stat. terms:
-'''
-glist = [g_ratio_stoch1]
-if (len(sipms) > 2): 
-    glist.append(g_ratio_stoch2)
-    glist.append(g_ratio_stoch3)
-
-for i,g in enumerate(glist):
-    if i == 0:
-        sipm1 = sipms[1]
-        sipm2 = sipms[0]
-    if i == 1:
-        sipm1 = sipms[1]
-        sipm2 = sipms[2]
-    if i == 2:
-        sipm1 = sipms[0]
-        sipm2 = sipms[2]
-    
-    cc = ROOT.TCanvas('c_ratioStoch_vs_bar_%s_%s'%(sipm1, sipm2),'c_ratioStoch_vs_bar_%s_%s_'%(sipm1, sipm2),600,600)
-    print cc.GetName()
-    cc.cd()
-    hdummy = ROOT.TH2F('hdummy','',16,-0.5,15.5,100,0.2,1.5)
-    hdummy.GetXaxis().SetTitle('bar')
-    hdummy.GetYaxis().SetTitle('#sigma_{stoch.}^{%s}/#sigma_{stoch.}^{%s}'%(labels[sipm1],labels[sipm2]))
-    hdummy.GetYaxis().SetTitleOffset(1.1)
-    hdummy.Draw('')
-    g.SetMarkerStyle(20)
-    g.Draw('psame')
-    expRatioLO    = math.sqrt(Npe[sipm2][ov_ref]/Npe[sipm1][ov_ref])
-    expRatioLOTau = math.sqrt((Npe[sipm2][ov_ref]/tau[sipm2])/(Npe[sipm1][ov_ref]/tau[sipm1]))
-    ll = ROOT.TLine(0, expRatioLO, 15, expRatioLO)
-    ll.SetLineStyle(7)
-    ll.SetLineWidth(2)
-    ll.SetLineColor(ROOT.kGray+1)
-    ll.Draw('same')
-    lll = ROOT.TLine(0, expRatioLOTau, 15, expRatioLOTau)
-    lll.SetLineStyle(7)
-    lll.SetLineWidth(2)
-    lll.SetLineColor(ROOT.kBlue)
-    lll.Draw('same')
-    leg2 = ROOT.TLegend(0.20,0.20,0.60,0.40)
-    leg2.SetBorderSize(0)
-    leg2.AddEntry(g,'ratio of photostat. terms','PL')
-    leg2.AddEntry(ll,'sqrt(LO) = %.2f'%expRatioLO,'L')
-    leg2.AddEntry(lll,'sqrt(LO/#tau) = %.2f'%expRatioLOTau,'L')
-    leg2.Draw('same')
-    fitFun=ROOT.TF1('fitFun','pol0',0,16)
-    fitFun.SetLineColor(1)
-    g.Fit(fitFun,'QRS')
-    hint = ROOT.TH1F("hint","Fitted Gaussian with .95 conf.band", 16, -0.5, 15.5);
-    hint.SetMarkerStyle(1)
-    hint.SetMarkerSize(0)
-    tvf = ROOT.TVirtualFitter.GetFitter()
-    tvf.GetConfidenceIntervals(hint);
-    hint.SetFillColorAlpha(1,0.2);
-    hint.Draw("e3 same");
-    print 'ratio of stoch. terms expected from sqrt(LO)      = ', expRatioLO
-    print 'ratio of stoch. terms expected from sqrt(LO/tau)  = ', expRatioLOTau
-    print 'ratio of stoch. terms measured at 3.5 V           = ', fitFun.GetParameter(0)
-    cc.SaveAs(outdir+'/'+cc.GetName()+'.png')                        
-    cc.SaveAs(outdir+'/'+cc.GetName()+'.pdf')                        
-    hdummy.Delete()
-'''
 
 for ds in data_structs: 
-    for ov in Vovs[ds.sipm]:
-            print(ds.sipm, ov, '  average stoch. term = ', g_Stoch_vs_bar[ds.sipm][ov].GetMean(2),' ps' )
-            print(ds.sipm, ov, '  average noise  term = ', g_Noise_vs_bar[ds.sipm][ov].GetMean(2),' ps')
+    for ov in Vovs[ds.moduleLabel]:
+            print(ds.moduleLabel, ov, '  average stoch. term = ', g_Stoch_vs_bar[ds.moduleLabel][ov].GetMean(2),' ps' )
+            print(ds.moduleLabel, ov, '  average noise  term = ', g_Noise_vs_bar[ds.moduleLabel][ov].GetMean(2),' ps')
     
 
 outfile.Close()    
