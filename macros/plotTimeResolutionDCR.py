@@ -45,12 +45,14 @@ fnames[('HPK_2E14_LYSO825_T-35C')] = inputdir+'/timeResolution_2E14_20um_25um_T2
 fnames[('HPK_2E14_LYSO825_T-30C')] = inputdir+'/timeResolution_2E14_20um_25um_T2/plots_timeResolution_2E14_20um_25um_T2_TBMay23.root'
 
 
-#fnames[('HPK_1E14_LYSO819_T-22C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
-#fnames[('HPK_1E14_LYSO819_T-27C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
-#fnames[('HPK_1E14_LYSO819_T-32C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
-#fnames[('HPK_1E14_LYSO819_T-37C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
+fnames[('HPK_1E14_LYSO819_T-22C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
+fnames[('HPK_1E14_LYSO819_T-27C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
+fnames[('HPK_1E14_LYSO819_T-32C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
+fnames[('HPK_1E14_LYSO819_T-37C')] = inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'
 
-#fnames[('HPK_1E13_LYSO829_T-19C')] = inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'
+fnames[('HPK_1E13_LYSO829_T-19C')] = inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'
+fnames[('HPK_1E13_LYSO829_T0C')]   = inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'
+fnames[('HPK_1E13_LYSO829_T12C')]  = inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'
 
 
 gAll = ROOT.TGraphErrors()
@@ -93,9 +95,9 @@ leg = ROOT.TLegend(0.50,0.18,0.89,0.58)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 
-#c = ROOT.TCanvas('c_timeResolution_DCR_all_TBMay23','', 700, 600)
+c = ROOT.TCanvas('c_timeResolution_DCR_all_TBMay23','', 700, 600)
 #c = ROOT.TCanvas('c_timeResolution_DCR_1E13_1E14_TBMay23','', 700, 600)
-c = ROOT.TCanvas('c_timeResolution_DCR_2E14_TBMay23','', 700, 600)
+#c = ROOT.TCanvas('c_timeResolution_DCR_2E14_TBMay23','', 700, 600)
 hdummy = ROOT.TH2F('hdummy','hdummy',100,0.0,80.0,100,0,80)
 hdummy.GetXaxis().SetTitle('DCR [GHz]')
 hdummy.GetYaxis().SetTitle('Npe/6000 #times #sigma_{t}^{DCR} [ps]')

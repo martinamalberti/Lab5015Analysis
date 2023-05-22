@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser(description='Module characterization summary pl
 parser.add_argument("-i",  "--inputLabels",   required=True, type=str, help="comma-separated list of input labels")
 parser.add_argument("-m",  "--resMode",       required=True, type=int, help="resolution mode: 2 - tDiff, 1 - tAve")
 parser.add_argument("-o",  "--outFolder",     required=True, type=str, help="out folder")
+parser.add_argument("-v",  "--versionTOFHIR", required=True, type=str, help="TOFHIR version: TOFHIR2X or TOFHIR2C")
 args = parser.parse_args()
 
 
@@ -76,13 +77,13 @@ def getTimeResolution(h1_deltaT):
 
 
 # INPUT
-inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/' 
-#inputdir = '/eos/home-s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/plots/' 
+inputdir = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/%s/'%args.versionTOFHIR 
+print('Input dir: %s'%inputdir)
 #source = 'Laser'
 source = 'TB'
 
 # OUTPUT
-outdir  = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/ModuleCharacterization/' 
+outdir  = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/ModuleCharacterization/'%args.versionTOFHIR 
 outdir=outdir+args.outFolder
 outFileName = inputdir+'/summaryPlots_'+args.outFolder+'.root'
 print 'Saving root file ', outFileName
@@ -138,6 +139,7 @@ cols = { 0.50 : 51,
          1.50 : 51+40,
          2.00 : 51+44,
          2.50 : 51+46,
+         3.00 : 51+47,
          3.50 : 51+48
 }
 
@@ -148,6 +150,7 @@ os.system('mkdir %s/summaryPlots/'%outdir)
 os.system('mkdir %s/summaryPlots/tot/'%outdir)
 os.system('mkdir %s/summaryPlots/energy/'%outdir)
 os.system('mkdir %s/summaryPlots/timeResolution/'%outdir)
+os.system('mkdir %s/summaryPlots/timeResolution/fits/'%outdir)
     
 
 # -- ref threhsold
@@ -160,7 +163,7 @@ Vovs = []
 for label in label_list:
     inputFile = None
     inputFile = ROOT.TFile.Open(inputdir+'/moduleCharacterization_step2_%s.root'%label)
-    listOfKeys = [key.GetName().replace('h1_deltaT_energyRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_energyRatioCorr_bar')]
+    listOfKeys = [key.GetName().replace('h1_deltaT_totRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_totRatioCorr_bar')]
     for k in listOfKeys:
         barNum = int (k.split('_')[0][3:5])
         bars.append(barNum)
@@ -180,167 +183,293 @@ goodBars = {}
 VovsEff = {}
 plots_label = ''
 
-if ('528' in args.outFolder):
-    plots_label = 'HPK (15#mum) + LYSO528 (prod5, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[3.50] = [2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[2.00] = [2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[1.50] = [2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[1.00] = [2,3,4,5,7,8,9,10,11,12,13] 
 
-elif ('813' in args.outFolder):
-    plots_label = 'HPK (25 #mum) + LYSO813 (prod1, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[3.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[2.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[1.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[1.00] = [0,1,2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.50] = [0,3,4,5,7,8,9,11,12,13]
+
+if ('528' in args.outFolder):
+   plots_label = 'HPK (15#mum) + LYSO528 (prod5, type2)'
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2B'): 
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [2,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[2.00] = [2,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[1.50] = [2,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[1.00] = [2,3,4,5,7,8,9,10,11,12,13] 
+
+elif ('HPK_nonIrr_LYSO813_T-30C' in args.outFolder):
+   plots_label = 'HPK (25 #mum) + LYSO813 (prod1, type2) T=-30#circC '
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [0,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,8,12,13,15]
+
+elif ('HPK_nonIrr_LYSO813_T-15C' in args.outFolder):
+   plots_label = 'HPK (25 #mum) + LYSO813 (prod1, type2) T=-15#circC '
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[0.80] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,8,11,12,13,15]
+
+elif ('HPK_nonIrr_LYSO813_T0C' in args.outFolder):
+   plots_label = 'HPK (25 #mum) + LYSO813 (prod1, type2) T=0#circC '
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[0.80] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,8,9,12,13,15]
+
+elif ('HPK_nonIrr_LYSO813_T15C' in args.outFolder):
+   plots_label = 'HPK (25 #mum) + LYSO813 (prod1, type2) T=15#circC '
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13,14,15] 
+         goodBars[1.50] = [0,1,2,3,4,5,7,8,9,10,11,12,13,15] 
+         goodBars[0.80] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,8,9,11,12,13,15]
 
 elif ('814' in args.outFolder):
-    plots_label = 'HPK (20 #mum) + LYSO814 (prod1, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[3.50] = [0,2,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[1.00] = [0,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.80] = [0,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.50] = [0,3,4,5,7,8,9,10,11,12,13]
+   plots_label = 'HPK (20 #mum) + LYSO814 (prod1, type2)'
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+   if (args.versionTOFHIR=='TOFHIR2B'):
+      goodBars[vov] = bars
+   else:
+      goodBars[3.50] = [0,2,3,4,5,7,8,9,10,11,12,13] 
+      goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13]
+      goodBars[1.00] = [0,2,3,4,5,7,8,9,10,11,12,13]
+      goodBars[0.80] = [0,3,4,5,7,8,9,10,11,12,13]
+      goodBars[0.50] = [0,3,4,5,7,8,9,10,11,12,13]
 
 elif ('824' in args.outFolder):
-    plots_label = 'HPK (25 #mum, low Cgrid) + LYSO824 (prod5, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[3.50] = [0,1,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[1.50] = [0,1,3,4,5,7,8,9,10,11,12,13] 
-    goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13]
-    goodBars[0.50] = [0,3,4,5,7,8,9,11,12,13]
+   plots_label = 'HPK (25 #mum, low Cgrid) + LYSO824 (prod5, type2)'
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [0,1,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[1.50] = [0,1,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13]
+         goodBars[0.50] = [0,3,4,5,7,8,9,11,12,13]
 
 elif ('HPK_2E14_LYSO815_T-40C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-40#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO815_T-40C', ('%.02f'%vov))[0]
-    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
+   plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-40#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO815_T-40C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:      
+         goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
 
 elif ('HPK_2E14_LYSO815_T-35C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-35#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO815_T-35C', ('%.02f'%vov))[0]
-    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
+   plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-35#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO815_T-35C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
 
 elif ('HPK_2E14_LYSO815_T-30C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-30#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data, 'HPK_2E14_LYSO815_T-30C', ('%.02f'%vov))[0]
-    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
+   plots_label = 'HPK (25 #mum, 2E14) + LYSO815 (prod1,type2) T=-30#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_2E14_LYSO815_T-30C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
 
 elif ('HPK_2E14_LYSO825_T-40C' in args.outFolder):
-    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-40#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO825_T-40C', ('%.02f'%vov))[0]
-    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[1.25] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,12,13]
-    goodBars[0.60] = [4,5,7]
+   plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-40#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO825_T-40C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.25] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,12,13]
+         goodBars[0.60] = [4,5,7]
 
 elif ('HPK_2E14_LYSO825_T-35C' in args.outFolder):
-    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-35#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO825_T-35C', ('%.02f'%vov))[0]
-    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[1.25] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,12,13]
-    goodBars[0.60] = [4,5,7]
+   plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-35#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO825_T-35C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.25] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,12,13]
+         goodBars[0.60] = [4,5,7]
 
 elif ('HPK_2E14_LYSO825_T-30C' in args.outFolder):
-    plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-30#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data, 'HPK_2E14_LYSO825_T-30C', ('%.02f'%vov))[0]
-    goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[1.25] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,12,13]
-    goodBars[0.60] = [4,5,7]
+   plots_label = 'HPK (20 #mum, 2E14) + LYSO825 (prod5,type2) T=-30#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_2E14_LYSO825_T-30C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.25] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,12,13]
+         goodBars[0.60] = [4,5,7]
 
 elif ('HPK_1E14_LYSO819_T-37C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-37#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data,'HPK_1E14_LYSO819_T-37C', ('%.02f'%vov))[0]
-    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
-
+   plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-37#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data,'HPK_1E14_LYSO819_T-37C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
+         
 elif ('HPK_1E14_LYSO819_T-32C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-32#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data, 'HPK_1E14_LYSO819_T-32C', ('%.02f'%vov))[0]
-    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
+   plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-32#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E14_LYSO819_T-32C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
 
 elif ('HPK_1E14_LYSO819_T-27C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-27#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data,'HPK_1E14_LYSO819_T-27C', ('%.02f'%vov))[0]
-    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15]
-    goodBars[2.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
+   plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-27#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data,'HPK_1E14_LYSO819_T-27C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15]
+         goodBars[2.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
 
 elif ('HPK_1E14_LYSO819_T-22C' in args.outFolder):
-    plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-22#circC'
-    for vov in Vovs:
-       VovsEff[vov] = getVovEffDCR(data, 'LYSO819','HPK_1E14_T-22C', ('%.02f'%vov))[0]
-    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15]
-    goodBars[2.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
-    goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
-    goodBars[0.60] = [0,3,4,5,7,12,13]
+   plots_label = 'HPK (25 #mum, 1E14) + LYSO819 (prod1,type1) T=-22#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E14_LYSO819_T-22C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15]
+         goodBars[2.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.50] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[1.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,12,13]
 
+elif ('HPK_1E13_LYSO829_T-19C' in args.outFolder):
+   plots_label = 'HPK (25 #mum, 1E13) + LYSO829 (prod5,type1) T=-19#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E13_LYSO829_T-19C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[3.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[1.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         
+elif ('HPK_1E13_LYSO829_T-32C' in args.outFolder):
+   plots_label = 'HPK (25 #mum, 1E13) + LYSO829 (prod5,type1) T=-32#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E13_LYSO829_T-32C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:      
+         goodBars[3.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[2.00] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[1.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13]
+      
+elif ('HPK_1E13_LYSO829_T0C' in args.outFolder):
+   plots_label = 'HPK (25 #mum, 1E13) + LYSO829 (prod5,type1) T=0#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E13_LYSO829_T0C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[2.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[1.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[1.25] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+         goodBars[0.80] = [0,3,4,5,7,8,9,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,8,9,11,12,13,15]
 
+elif ('HPK_1E13_LYSO829_T12C' in args.outFolder):
+   plots_label = 'HPK (25 #mum, 1E13) + LYSO829 (prod5,type1) T=12#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E13_LYSO829_T12C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2B'):
+         goodBars[vov] = bars
+      else:
+         goodBars[1.25] = [0,2,3,4,5,7,8,9,10,11,12,13,14,15]
+         goodBars[1.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
+         goodBars[0.60] = [0,3,4,5,7,8,9,11,12,13,15]
+      
 else:
-    for vov in Vovs:
-        VovsEff[vov] = vov
-        goodBars[vov] = bars 
-    print VovsEff
-
-
+   for vov in Vovs:
+      VovsEff[vov] = vov
+      goodBars[vov] = bars 
+      print VovsEff
+      
 print 'bars:', bars
 print 'good bars:', goodBars
 print 'Vovs:',Vovs
@@ -536,7 +665,7 @@ for label in label_list:
                ctemp = ROOT.TCanvas()
                h1_deltaT_totCorr.GetYaxis().SetRangeUser(0, h1_deltaT_totCorr.GetBinContent(h1_deltaT_totCorr.GetMaximumBin())*1.2)                
                h1_deltaT_totCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
 
                # energyRatio + phase corr
@@ -549,7 +678,7 @@ for label in label_list:
                ctemp = ROOT.TCanvas()
                h1_deltaT_energyCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr.GetBinContent(h1_deltaT_energyCorr.GetMaximumBin())*1.2)                
                h1_deltaT_energyCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
                # energyRatio + totRatio + phase corr
                if (h1_deltaT_energyCorr_totCorr == None): continue
@@ -561,7 +690,7 @@ for label in label_list:
                ctemp = ROOT.TCanvas()
                h1_deltaT_energyCorr_totCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr_totCorr.GetBinContent(h1_deltaT_energyCorr_totCorr.GetMaximumBin())*1.2)
                h1_deltaT_energyCorr_totCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
 
                # graphs vs threshold

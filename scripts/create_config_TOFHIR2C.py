@@ -11,7 +11,7 @@ import subprocess
 
 # ----
 #cfgFolder = '/afs/cern.ch/user/s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/cfg'
-cfgFolder = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/TOFHIR2X/'
+cfgFolder = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/TOFHIR2C/'
 # ----
 
 
@@ -36,29 +36,29 @@ else:
 
 #---- write min energy ---
 
-temp_min = '%s/minEnergies_%s.txt'%(cfgFolder,args.modulelabel)
+temp_min = '%s/minEnergies_%s_TOFHIR2C.txt'%(cfgFolder,args.modulelabel)
 if not (os.path.isfile(temp_min)):
-   baseMinEnergy = open('%s/minEnergies_base_TOFHIR2X.txt'%cfgFolder, 'r')
-   newMinEnergy  = open('%s/minEnergies_%s.txt'%(cfgFolder,args.modulelabel), 'w')
+   baseMinEnergy = open('%s/minEnergies_base_TOFHIR2C.txt'%cfgFolder, 'r')
+   newMinEnergy  = open('%s/minEnergies_%s_TOFHIR2C.txt'%(cfgFolder,args.modulelabel), 'w')
 
-   command = 'cp %s/minEnergies_base.txt %s/minEnergies_%s.txt'%(cfgFolder, cfgFolder, args.modulelabel)
+   command = 'cp %s/minEnergies_base_TOFHIR2C.txt %s/minEnergies_%s_TOFHIR2C.txt'%(cfgFolder, cfgFolder, args.modulelabel)
 
    os.system(command)
 
 # --- write cfg ---- moduleChar
-baseCfg = open('%s/moduleCharacterization_base_TOFHIR2X.cfg'%cfgFolder, 'r')
+baseCfg = open('%s/moduleCharacterization_base_TOFHIR2C.cfg'%cfgFolder, 'r')
 
 if args.extraLabel:
-   newCfg = open('%s/moduleCharacterization_%s.cfg'%(cfgFolder,label), 'w')
-   print 'writing \t moduleCharacterization_%s.cfg'%(label)
+   newCfg = open('%s/moduleCharacterization_%s_TOFHIR2C.cfg'%(cfgFolder,label), 'w')
+   print 'writing \t moduleCharacterization_%s_TOFHIR2C.cfg'%(label)
 else:
-   newCfg = open('%s/moduleCharacterization_%s.cfg'%(cfgFolder,label), 'w')
-   print 'writing \t moduleCharacterization_%s.cfg'%(label)
+   newCfg = open('%s/moduleCharacterization_%s_TOFHIR2C.cfg'%(cfgFolder,label), 'w')
+   print 'writing \t moduleCharacterization_%s_TOFHIR2C.cfg'%(label)
 
 for line in baseCfg:
    if (line.startswith('Vov') and args.Vov not in line):
       print 'ERROR: missing ov in moduleCharacterization.cfg file'
-      newCfg.write(line + '%s \n'%args.Vov) # non funziona perche va a capo
+      #newCfg.write(line + '%s \n'%args.Vov) # non funziona perche va a capo
       sys.exit()
    elif 'runNumbers' in line:
       newCfg.write(line.replace('runNumbers', '%s'%runs))
@@ -79,15 +79,15 @@ newCfg.close()
 
 
 # --- write cfg ---- pulseShape
-baseCfg = open('%s/drawPulseShapeTB_base_TOFHIR2X.cfg'%cfgFolder, 'r')
+baseCfg = open('%s/drawPulseShapeTB_base_TOFHIR2C.cfg'%cfgFolder, 'r')
 
 
 if args.extraLabel:
-   newCfg = open('%s/drawPulseShapeTB_%s.cfg'%(cfgFolder,label), 'w')
-   print 'writing \t drawPulseShapeTB_%s.cfg'%(label)
+   newCfg = open('%s/drawPulseShapeTB_%s_TOFHIR2C.cfg'%(cfgFolder,label), 'w')
+   print 'writing \t drawPulseShapeTB_%s_TOFHIR2C.cfg'%(label)
 else:
-   newCfg = open('%s/drawPulseShapeTB_%s.cfg'%(cfgFolder,label), 'w')
-   print 'writing \t drawPulseShapeTB_%s.cfg'%(label)
+   newCfg = open('%s/drawPulseShapeTB_%s_TOFHIR2C.cfg'%(cfgFolder,label), 'w')
+   print 'writing \t drawPulseShapeTB_%s_TOFHIR2C.cfg'%(label)
 
 
 for line in baseCfg:
