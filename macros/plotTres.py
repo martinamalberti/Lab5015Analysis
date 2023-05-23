@@ -35,6 +35,7 @@ ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetOptFit(111)
 
 from SiPM import *
+from data_structures import *
 
 
 
@@ -72,10 +73,10 @@ def getSlewRateFromPulseShape(g1, timingThreshold, npoints, gtemp, canvas=None):
         canvas.Update()
         ps = gtemp.FindObject('stats')
         ps.SetTextColor(g1.GetMarkerColor())
-        if ('L' in g1.GetName()):
+        if ('L' in (g1.GetName().replace('TOFHIR','')) ):
             ps.SetY1NDC(0.85) # new y start position
             ps.SetY2NDC(0.95)# new y end position
-        if ('R' in g1.GetName()):
+        if ('R' in (g1.GetName().replace('TOFHIR','')) ):
             ps.SetY1NDC(0.73) # new y start position
             ps.SetY2NDC(0.83)# new y end position
     return(sr,err_sr)
@@ -96,98 +97,19 @@ def findTimingThreshold(g2):
     
 # =====================================
 
-'''
-class DataStruct(NamedTuple):
-    sipm: str
-    sipmType: str
-    fName: str
-    fNamePS: str
-    label: str
-    LO: str
-    tau: str
-    marker: int
-    color: int
-
-data_structs = []
-
-
-#HPK_25 um 
-data_structs.append(
-        DataStruct(
-            sipm = 'HPK_nonIrr_LYSO813',
-            sipmType = 'HPK-PIT-C25-ES2',
-            fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO813.root',
-            fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/pulseShape_HPK_nonIrr_LYSO813',
-            label = 'HPK(25#mum)+LYSO813',
-            LO = 2418,
-            tau = 41.4,
-            marker = 20,
-            color = 1
-        )
-)
-
-#HPK_20 um 
-data_structs.append(
-        DataStruct(
-            sipm = 'HPK_nonIrr_LYSO814',
-            sipmType = 'HPK-PIT-C20-ES2',
-            fName = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO814.root',
-            fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/pulseShape_HPK_nonIrr_LYSO814',
-            label = 'HPK(20#mum)+LYSO814',
-            LO = 2165,
-            tau = 41.4,
-            marker = 20,
-            color = 2
-        )
-)
-
-
-#HPK_15 um 
-data_structs.append(
-        DataStruct(
-            sipm = 'HPK_nonIrr_LYSO528',
-            sipmType = 'HPK-MS',
-            fName = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO528.root',
-            fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/pulseShape_HPK_nonIrr_LYSO528',
-            label = 'HPK(15#mum)+LYSO528',
-            LO = 1323,
-            tau = 38.6,
-            marker = 20,
-            color = 3
-        )
-)
-
-#HPK_25 um - low Cgrid
-data_structs.append(
-        DataStruct(
-            sipm ='HPK_nonIrr_LYSO824',
-            sipmType = 'HPK-PIT-C25-ES3',
-            fName = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO824.root',
-            fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/pulseShape_HPK_nonIrr_LYSO824',
-            label = 'HPK(25#mum, low Cgrid)+LYSO824',
-            LO = 2276,
-            tau = 38.6,
-            marker = 24,
-            color = 4
-        )
-)
-'''
-
-
-
-# =====================================
+#tofhir = 'TOFHIR2X'
+tofhir = 'TOFHIR2C'
 
 #outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_cellSizes_test/'
 #outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_Cgrid/'
-outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_nonIrr/'
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr/'%tofhir
 
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TBMar23_cellSizes_test.root','recreate')  
-outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TBMay23.root','recreate')  
+outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_HPK_nonIrr_TBMay23_%s.root'%tofhir,'recreate')  
 
 
 np = 3
@@ -283,19 +205,18 @@ for ds in data_structs:
         
         sigma_stoch_ref = 0
         err_sigma_stoch_ref = 0
-        ov_ref = ds.ov_ref
 
-        data = g_data[ds.moduleLabel][bar].Eval(ov_ref)
-        indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) == ov_ref]
+        data = g_data[ds.moduleLabel][bar].Eval(ds.ov_ref)
+        indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) == ds.ov_ref]
         if ( len(indref)<1): continue
         data_err = g_data[ds.moduleLabel][bar].GetErrorY(indref[0])
-        g_psL = fPS[ds.moduleLabel][ov_ref].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov_ref))
-        g_psR = fPS[ds.moduleLabel][ov_ref].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov_ref))
+        g_psL = fPS[ds.moduleLabel][ds.ov_ref].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ds.ov_ref))
+        g_psR = fPS[ds.moduleLabel][ds.ov_ref].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ds.ov_ref))
         if (g_psL==None): continue
         if (g_psR==None): continue
-        g_psL.SetName('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov_ref))
-        g_psR.SetName('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov_ref))
-        timingThreshold = findTimingThreshold(f.Get('g_deltaT_totRatioCorr_vs_th_bar%02d_Vov%.2f_enBin01'%(bar,ov_ref)))
+        g_psL.SetName('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ds.ov_ref))
+        g_psR.SetName('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ds.ov_ref))
+        timingThreshold = findTimingThreshold(f.Get('g_deltaT_totRatioCorr_vs_th_bar%02d_Vov%.2f_enBin01'%(bar,ds.ov_ref)))
         gtempL = ROOT.TGraphErrors()
         gtempR = ROOT.TGraphErrors()
         srL,err_srL = getSlewRateFromPulseShape(g_psL, timingThreshold, np, gtempL)
@@ -397,8 +318,8 @@ for ds in data_structs:
             
 
             # compute stoch by scaling from 3.5 V OV
-            stoch = stoch_ref/math.sqrt(  PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref)  )
-            stoch_err = stoch_ref_err/math.sqrt( PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref) )
+            stoch = stoch_ref/math.sqrt(  PDE(ds.sipmType,ov)/PDE(ds.sipmType,ds.ov_ref)  )
+            stoch_err = stoch_ref_err/math.sqrt( PDE(ds.sipmType,ov)/PDE(ds.sipmType,ds.ov_ref) )
           
             g_Stoch_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Stoch_vs_Vov[ds.moduleLabel][bar].GetN(), ov, stoch)
             g_Stoch_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Stoch_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, stoch_err)
@@ -425,9 +346,9 @@ g_stoch_vs_Npe_average = ROOT.TGraphErrors()
 for ds in data_structs:                             
     # stochastic term at the reference OV
     fitpol0_stoch = ROOT.TF1('fitpol0_stoch','pol0',-100,100)  
-    g_Stoch_vs_bar[ds.moduleLabel][ov_ref].Fit(fitpol0_stoch,'QNR')
-    err_npe = 0.05*Npe[ds.moduleLabel][ov_ref]
-    g_stoch_vs_Npe_average.SetPoint(g_stoch_vs_Npe_average.GetN(), Npe[ds.moduleLabel][ov_ref], fitpol0_stoch.GetParameter(0))
+    g_Stoch_vs_bar[ds.moduleLabel][ds.ov_ref].Fit(fitpol0_stoch,'QNR')
+    err_npe = 0.05*Npe[ds.moduleLabel][ds.ov_ref]
+    g_stoch_vs_Npe_average.SetPoint(g_stoch_vs_Npe_average.GetN(), Npe[ds.moduleLabel][ds.ov_ref], fitpol0_stoch.GetParameter(0))
     g_stoch_vs_Npe_average.SetPointError(g_stoch_vs_Npe_average.GetN()-1, err_npe, fitpol0_stoch.GetParError(0))
     
     # average tRes, split contributions
@@ -456,8 +377,8 @@ for ds in data_structs:
             g_Noise_vs_Vov_average[ds.moduleLabel].SetPointError(g_Noise_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, noise_err) 
     
             # compute stoch by scaling from 3.5 V OV
-            stoch = stoch_average/math.sqrt(  PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref)  )
-            stoch_err = stoch_average_err/math.sqrt( PDE(ds.sipmType,ov)/PDE(ds.sipmType,ov_ref) )
+            stoch = stoch_average/math.sqrt(  PDE(ds.sipmType,ov)/PDE(ds.sipmType,ds.ov_ref)  )
+            stoch_err = stoch_average_err/math.sqrt( PDE(ds.sipmType,ov)/PDE(ds.sipmType,ds.ov_ref) )
             g_Stoch_vs_Vov_average[ds.moduleLabel].SetPoint(g_Stoch_vs_Vov_average[ds.moduleLabel].GetN(), ov, stoch)
             g_Stoch_vs_Vov_average[ds.moduleLabel].SetPointError(g_Stoch_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, stoch_err)
 
@@ -533,7 +454,7 @@ for ds in data_structs:
             leg[ds.moduleLabel].AddEntry(g_Stoch_vs_Vov[ds.moduleLabel][bar], 'stoch', 'L')
             leg[ds.moduleLabel].AddEntry(g_Tot_vs_Vov[ds.moduleLabel][bar], 'stoch #oplus noise', 'L')
         leg[ds.moduleLabel].Draw('same')
-        latex = ROOT.TLatex(0.20,0.86,'%s'%(ds.plotLabel)
+        latex = ROOT.TLatex(0.20,0.86,'%s'%(ds.plotLabel))
         latex.SetNDC()
         latex.SetTextSize(0.045)
         latex.SetTextFont(42)
@@ -642,8 +563,7 @@ c2 =  ROOT.TCanvas('c_slewRate_vs_Vov_average','c_slewRate_vs_Vov_average',600,6
 c2.SetGridx()
 c2.SetGridy()
 c2.cd()    
-#hdummy2 = ROOT.TH2F('hdummy2','',16, 0.5, 2.7,100,0,15)
-hdummy2 = ROOT.TH2F('hdummy2','',100, 0., 5.,100,0,35)
+hdummy2 = ROOT.TH2F('hdummy2','',100, 0., 5.,100,0,50)
 hdummy2.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy2.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
 hdummy2.Draw()
@@ -660,7 +580,29 @@ c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
 c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
 hdummy2.Delete()
 
-# average tRes
+# average tRes vs OV
+c2 =  ROOT.TCanvas('c_timeResolution_vs_Vov_average','c_timeResolution_vs_Vov_average',600,600)
+c2.SetGridx()
+c2.SetGridy()
+c2.cd()    
+hdummy2 = ROOT.TH2F('hdummy2','',100, 0., 5.,100,0,120)
+hdummy2.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
+hdummy2.GetYaxis().SetTitle('time resolution [ps]')
+hdummy2.Draw()
+for ds in data_structs:
+    for i in range(0, g_data_average[ds.moduleLabel].GetN()):
+        print(ds.moduleLabel, ov, g_data_average[ds.moduleLabel].GetPointY(i))
+    g_data_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_data_average[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_data_average[ds.moduleLabel].SetLineWidth(1)
+    g_data_average[ds.moduleLabel].SetLineColor(ds.color)
+    g_data_average[ds.moduleLabel].Draw('plsame')
+leg2.Draw()  
+c2.SaveAs(outdir+'/'+c2.GetName()+'.png')
+c2.SaveAs(outdir+'/'+c2.GetName()+'.pdf')
+hdummy2.Delete()
+
+# average tRes 
 for ds in data_structs:
     latex = ROOT.TLatex(0.18,0.94,'%s'%(ds.plotLabel))
     latex.SetNDC()

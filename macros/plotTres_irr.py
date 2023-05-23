@@ -114,18 +114,20 @@ with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.jso
 
 
 # =====================================
-outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'
-#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/'
-#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/'
+tofhir = 'TOFHIR2X'
+#tofhir = 'TOFHIR2B'
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/%tofhir'
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/%tofhir'
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 
-outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23.root','recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23.root','recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23.root','recreate')
+outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23_%s..root'%tofhir,'recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23_%s..root'%tofhir,'recreate')
 
 np = 3
 errSRsyst  = 0.10 # error on the slew rate
