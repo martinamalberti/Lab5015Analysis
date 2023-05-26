@@ -227,9 +227,31 @@
 #TOFHIR2C
 ################
 
-python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 0.6        -r  5777
-python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 0.8        -r  5778
-python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 1.25       -r  5779
-python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 1.5        -r  5780
-python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 3.5        -r  5781
+# config 32.00
+#python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 0.6        -r  5777
+#python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 0.8        -r  5778
+#python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 1.25       -r  5779
+#python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 1.5        -r  5780
+#python create_config_TOFHIR2C.py     -t   5     -ml HPK_nonIrr_LYSO813    -c config_32.00    -ov 3.5        -r  5781
 
+#config 36.00
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO815    -c config_36.00    -ov 0.6        -r  5851,5852
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO815    -c config_36.00    -ov 0.8        -r  5853,5854
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO815    -c config_36.00    -ov 1.0        -r  5855,5856
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO815    -c config_36.00    -ov 1.25       -r  5857
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO815    -c config_36.00    -ov 1.5        -r  5858
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO815    -c config_36.00    -ov 2.0        -r  5859
+
+#python create_config_TOFHIR2C.py     -t -30     -ml HPK_2E14_LYSO815    -c config_36.01    -ov 0.6        -r  5860,5861
+#python create_config_TOFHIR2C.py     -t -30     -ml HPK_2E14_LYSO815    -c config_36.01    -ov 0.8        -r  5862
+#python create_config_TOFHIR2C.py     -t -30     -ml HPK_2E14_LYSO815    -c config_36.01    -ov 1.0        -r  5863
+#python create_config_TOFHIR2C.py     -t -30     -ml HPK_2E14_LYSO815    -c config_36.01    -ov 1.25       -r  5864
+#python create_config_TOFHIR2C.py     -t -30     -ml HPK_2E14_LYSO815    -c config_36.01    -ov 1.5        -r  5865
+#python create_config_TOFHIR2C.py     -t -30     -ml HPK_2E14_LYSO815    -c config_36.01    -ov 2.0        -r  5866,5867
+
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO825    -c config_37.00    -ov 0.6        -r  5910
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO825    -c config_37.00    -ov 0.8        -r  5911
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO825    -c config_37.00    -ov 1.0        -r  5912,5913
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO825    -c config_37.00    -ov 1.25       -r  5914
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO825    -c config_37.00    -ov 1.5        -r  5915,5916
+python create_config_TOFHIR2C.py     -t -35     -ml HPK_2E14_LYSO825    -c config_37.00    -ov 2.0        -r  5917

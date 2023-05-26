@@ -220,9 +220,11 @@ int main(int argc, char** argv)
       int nActiveBars0 = 0;
       int nActiveBars1 = 0;
       for(unsigned int iBar = 0; iBar < channelMapping.size()/2; ++iBar){          
-        if ( channelIdx[chL[iBar]] > 0  &&  channelIdx[chR[iBar]] > 0 && (*energy)[channelIdx[chL[iBar]]] > 0 && (*energy)[channelIdx[chR[iBar]]] > 0 )
+        // active bars in array 0
+	if ( channelIdx[chL[iBar] - 64] > 0  &&  channelIdx[chR[iBar]-64] > 0 && (*energy)[channelIdx[chL[iBar]-64]] > 0 && (*energy)[channelIdx[chR[iBar]-64]] > 0 )
 	  nActiveBars0+=1;
-        if ( channelIdx[chL[iBar]+64] > 0  &&  channelIdx[chR[iBar]+64] > 0 && (*energy)[channelIdx[chL[iBar]+64]] > 0 && (*energy)[channelIdx[chR[iBar]+64]] > 0 )
+	// active bars in array 1
+        if ( channelIdx[chL[iBar]] > 0  &&  channelIdx[chR[iBar]] > 0 && (*energy)[channelIdx[chL[iBar]]] > 0 && (*energy)[channelIdx[chR[iBar]]] > 0 )
 	  nActiveBars1+=1;
       }
       

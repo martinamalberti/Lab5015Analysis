@@ -39,10 +39,11 @@ fnames = {
     #(20, -40) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_2E14_LYSO825_T-40C.root',
     #(20, -35) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_2E14_LYSO825_T-35C.root',
     #(20, -30) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_2E14_LYSO825_T-30C.root',
-    (25, -22) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-22C.root',
-    (25, -27) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-27C.root',
-    (25, -32) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-32C.root',
-    (25, -37) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-37C.root',
+    #(25, -22) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-22C.root',
+    #(25, -27) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-27C.root',
+    #(25, -32) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-32C.root',
+    #(25, -37) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-37C.root',
+    #(25, -37) : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_1E14_LYSO819_T-37C.root',
 }
 
 plotAttrs = { #(25, -40) : [20, ROOT.kBlue,     'HPK 25#mum 2E14 T=-40C'],

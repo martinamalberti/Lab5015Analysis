@@ -183,7 +183,8 @@ goodBars = {}
 VovsEff = {}
 plots_label = ''
 
-print Vovs
+print('Vovs:',Vovs)
+print('Bars:',bars)
 
 
 if ('528' in args.outFolder):
@@ -302,7 +303,7 @@ elif ('HPK_2E14_LYSO815_T-35C' in args.outFolder):
    for vov in Vovs:
       VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO815_T-35C', ('%.02f'%vov))[0]
       if (args.versionTOFHIR=='TOFHIR2C'):
-         goodBars[vov] = bars
+         goodBars[vov] = [ b for b in bars if b!=3] 
       else:
          goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
          goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
@@ -316,7 +317,7 @@ elif ('HPK_2E14_LYSO815_T-30C' in args.outFolder):
    for vov in Vovs:
       VovsEff[vov] = getVovEffDCR(data, 'HPK_2E14_LYSO815_T-30C', ('%.02f'%vov))[0]
       if (args.versionTOFHIR=='TOFHIR2C'):
-         goodBars[vov] = bars
+         goodBars[vov] = [ b for b in bars if b!=3] 
       else:
          goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
          goodBars[1.50] = [0,3,4,5,7,8,9,10,11,12,13,15]
@@ -344,7 +345,8 @@ elif ('HPK_2E14_LYSO825_T-35C' in args.outFolder):
    for vov in Vovs:
       VovsEff[vov] = getVovEffDCR(data,'HPK_2E14_LYSO825_T-35C', ('%.02f'%vov))[0]
       if (args.versionTOFHIR=='TOFHIR2C'):
-         goodBars[vov] = bars
+         goodBars[vov]  = [0,1,2,4,5,7,8,9,10,11,12,13,14]
+         goodBars[0.60] = [1,2,4,5,7,8,9,10,11]
       else:
          goodBars[2.00] = [0,3,4,5,7,8,9,10,11,12,13,15]
          goodBars[1.50] = [0,3,4,5,7,8,9,11,12,13,15]
@@ -678,7 +680,7 @@ for label in label_list:
                ctemp = ROOT.TCanvas()
                h1_deltaT_totCorr.GetYaxis().SetRangeUser(0, h1_deltaT_totCorr.GetBinContent(h1_deltaT_totCorr.GetMaximumBin())*1.2)                
                h1_deltaT_totCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               #ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
 
                # energyRatio + phase corr
@@ -691,7 +693,7 @@ for label in label_list:
                ctemp = ROOT.TCanvas()
                h1_deltaT_energyCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr.GetBinContent(h1_deltaT_energyCorr.GetMaximumBin())*1.2)                
                h1_deltaT_energyCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               #ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
                # energyRatio + totRatio + phase corr
                if (h1_deltaT_energyCorr_totCorr == None): continue
@@ -703,7 +705,7 @@ for label in label_list:
                ctemp = ROOT.TCanvas()
                h1_deltaT_energyCorr_totCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr_totCorr.GetBinContent(h1_deltaT_energyCorr_totCorr.GetMaximumBin())*1.2)
                h1_deltaT_energyCorr_totCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               #ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
 
                # graphs vs threshold

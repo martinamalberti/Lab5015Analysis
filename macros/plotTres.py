@@ -102,7 +102,7 @@ tofhir = 'TOFHIR2C'
 
 #outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_cellSizes_test/'
 #outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_Cgrid/'
-outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr/'%tofhir
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr_new/'%tofhir
 
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
@@ -643,7 +643,7 @@ for ds in data_structs:
     leg[ds.moduleLabel].Draw()
     latex.Draw()
     outfile.cd()
-    g_data_average[ds.moduleLabel].Write('g_Data_vs_Vov_average_%s'%ds.moduleLabel)
+    g_data_average[ds.moduleLabel].Write('g_data_vs_Vov_average_%s'%ds.moduleLabel)
     g_Noise_vs_Vov_average[ds.moduleLabel].Write('g_Noise_vs_Vov_average_%s'%ds.moduleLabel)
     g_Stoch_vs_Vov_average[ds.moduleLabel].Write('g_Stoch_vs_Vov_average_%s'%ds.moduleLabel)
     g_Tot_vs_Vov_average[ds.moduleLabel].Write('g_Tot_vs_Vov_average_%s'%ds.moduleLabel)

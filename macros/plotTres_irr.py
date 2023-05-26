@@ -114,20 +114,25 @@ with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.jso
 
 
 # =====================================
-tofhir = 'TOFHIR2X'
-#tofhir = 'TOFHIR2B'
+#tofhir = 'TOFHIR2X'
+tofhir = 'TOFHIR2C'
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2_2X_2C/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2/'%tofhir
 outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/%tofhir'
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/%tofhir'
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
 outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23_%s..root'%tofhir,'recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23_%s..root'%tofhir,'recreate')
 
 np = 3
 errSRsyst  = 0.10 # error on the slew rate
@@ -225,9 +230,13 @@ for ds in data_structs:
         print(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
         #if ( (ds.temperature == -35 and ds.lyso == 'LYSO815') or  ds.lyso == 'LYSO829'):
         if ( (ds.temperature == -35 and ds.lyso == 'LYSO815') ):
-            fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_angle52_T%dC.root'%(ov,ds.temperature))
+            if ( 'TOFHIR2C' in ds.moduleLabel ):
+                fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
+            else:
+                fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_angle52_T%dC.root'%(ov,ds.temperature))
         else:
             fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
+        
 
 
         g_SR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
@@ -370,7 +379,7 @@ for ds in data_structs:
                 g_DCR_vs_bar[ds.moduleLabel][ov].SetPoint( g_DCR_vs_bar[ds.moduleLabel][ov].GetN(), bar, s_dcr )
                 g_DCR_vs_bar[ds.moduleLabel][ov].SetPointError( g_DCR_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  err_s_dcr)
                 
-                dcr = getVovEffDCR(data, ds.moduleLabel,('%.02f'%ov))[1]
+                dcr = getVovEffDCR(data, ds.moduleLabel,('%.02f'%ov))[4]
                 g_DCR_vs_Npe[ds.moduleLabel][bar].SetPoint( g_DCR_vs_Npe[ds.moduleLabel][bar].GetN(), math.sqrt(dcr)/Npe[ds.moduleLabel][ov]/(math.sqrt(30.)/3000.), s_dcr )
                 g_DCR_vs_Npe[ds.moduleLabel][bar].SetPointError( g_DCR_vs_Npe[ds.moduleLabel][bar].GetN()-1, 0,  err_s_dcr)
 
@@ -413,11 +422,13 @@ for ds in data_structs:
     for ov in Vovs[ds.moduleLabel]:
         ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0] 
         dcr   = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[1] 
-        staticCurrent = dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19; 
-        staticPower = staticCurrent * (37. + ovEff) * 1000.; #in mW
-        
+        #staticCurrent = dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19; 
+        #staticPower = staticCurrent * (37. + ovEff) * 1000.; #in mW
+        staticCurrent = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[2] # per SiPM current in mA
+        staticPower = staticCurrent * (37. + ovEff) #in mW
+
         g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetPoint(g_DCRfromCurrent_vs_Vov[ds.moduleLabel].GetN(), ovEff, dcr)
-        g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetPointError(g_DCRfromCurrent_vs_Vov[ds.moduleLabel].GetN()-1, 0, getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[2])
+        g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetPointError(g_DCRfromCurrent_vs_Vov[ds.moduleLabel].GetN()-1, 0, getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[4])
 
 
         if (ov in  g_SR_vs_bar[ds.moduleLabel].keys()): 
@@ -670,6 +681,30 @@ for ds in data_structs:
     leg2.AddEntry(g_data_vs_Npe[ds.moduleLabel], '%s'%ds.plotLabel, 'PL')
     outfile.cd()
     g_data_vs_Npe[ds.moduleLabel].Write('g_data_vs_Npe_average_%s'%(ds.moduleLabel))
+leg2.Draw()  
+c.SaveAs(outdir+'/'+c.GetName()+'.png')
+c.SaveAs(outdir+'/'+c.GetName()+'.pdf')
+hdummy.Delete()
+
+
+#average time resolution vs Vov
+c =  ROOT.TCanvas('c_timeResolution_vs_Vov_average','c_timeResolution_vs_Vov_average',600,600)
+c.SetGridx()
+c.SetGridy()
+c.cd()    
+maxVov = 2.00
+if ('1E13' in ds.moduleLabel): maxVov = 3.5
+hdummy = ROOT.TH2F('hdummy','',100, 0., maxVov,100,0,120)
+hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
+hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
+hdummy.Draw()
+for ds in data_structs:
+    g_data_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
+    g_data_average[ds.moduleLabel].SetMarkerColor(ds.color)
+    g_data_average[ds.moduleLabel].SetLineWidth(1)
+    g_data_average[ds.moduleLabel].SetLineColor(ds.color)
+    g_data_average[ds.moduleLabel].Draw('plsame')
+c.cd()
 leg2.Draw()  
 c.SaveAs(outdir+'/'+c.GetName()+'.png')
 c.SaveAs(outdir+'/'+c.GetName()+'.pdf')

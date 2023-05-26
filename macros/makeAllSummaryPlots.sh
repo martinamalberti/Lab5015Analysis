@@ -1,6 +1,6 @@
 ## LYSO813 (25um)
 #python moduleCharacterizationSummaryPlots.py -m 2 -i HPK_nonIrr_LYSO813_Vov0.50,HPK_nonIrr_LYSO813_Vov0.80,HPK_nonIrr_LYSO813_Vov1.50,HPK_nonIrr_LYSO813_Vov3.50 -o HPK_nonIrr_LYSO813
-python moduleCharacterizationSummaryPlots.py  -v TOFHIR2X  -m 2 -i HPK_nonIrr_LYSO813_Vov0.80,HPK_nonIrr_LYSO813_Vov1.50,HPK_nonIrr_LYSO813_Vov3.50 -o HPK_nonIrr_LYSO813_T5C
+#python moduleCharacterizationSummaryPlots.py  -v TOFHIR2X  -m 2 -i HPK_nonIrr_LYSO813_Vov0.80,HPK_nonIrr_LYSO813_Vov1.50,HPK_nonIrr_LYSO813_Vov3.50 -o HPK_nonIrr_LYSO813_T5C
 
 #python moduleCharacterizationSummaryPlots.py -m 2 -i HPK_nonIrr_LYSO813_Vov0.60_T-30C,HPK_nonIrr_LYSO813_Vov0.80_T-30C,HPK_nonIrr_LYSO813_Vov1.50_T-30C,HPK_nonIrr_LYSO813_Vov3.50_T-30C -o HPK_nonIrr_LYSO813_T-30C
 
@@ -61,3 +61,14 @@ python moduleCharacterizationSummaryPlots.py  -v TOFHIR2X  -m 2 -i HPK_nonIrr_LY
 #python moduleCharacterizationSummaryPlots.py -v TOFHIR2C -m 2 -i HPK_nonIrr_LYSO813_Vov0.60_T5C,HPK_nonIrr_LYSO813_Vov0.80_T5C,HPK_nonIrr_LYSO813_Vov1.25_T5C,HPK_nonIrr_LYSO813_Vov1.50_T5C,HPK_nonIrr_LYSO813_Vov3.50_T5C -o HPK_nonIrr_LYSO813_T5C
 
 #python moduleCharacterizationSummaryPlots.py -v TOFHIR2C -m 2 -i HPK_nonIrr_LYSO813_Vov0.60_T5C,HPK_nonIrr_LYSO813_Vov0.80_T5C,HPK_nonIrr_LYSO813_Vov1.25_T5C,HPK_nonIrr_LYSO813_Vov1.50_T5C,HPK_nonIrr_LYSO813_Vov3.50_T5C -o HPK_nonIrr_LYSO813_T5C
+
+
+## LYSO815 (25um) - 2E14 T=-30C
+#python moduleCharacterizationSummaryPlots.py -m 2 -v TOFHIR2C -i HPK_2E14_LYSO815_Vov0.60_T-30C,HPK_2E14_LYSO815_Vov0.80_T-30C,HPK_2E14_LYSO815_Vov1.00_T-30C,HPK_2E14_LYSO815_Vov1.25_T-30C,HPK_2E14_LYSO815_Vov1.50_T-30C,HPK_2E14_LYSO815_Vov2.00_T-30C -o HPK_2E14_LYSO815_T-30C
+
+
+## LYSO815 (25um) - 2E14 T=-35C
+#python moduleCharacterizationSummaryPlots.py -m 2 -v TOFHIR2C -i HPK_2E14_LYSO815_Vov0.60_T-35C,HPK_2E14_LYSO815_Vov0.80_T-35C,HPK_2E14_LYSO815_Vov1.00_T-35C,HPK_2E14_LYSO815_Vov1.25_T-35C,HPK_2E14_LYSO815_Vov1.50_T-35C,HPK_2E14_LYSO815_Vov2.00_T-35C -o HPK_2E14_LYSO815_T-35C
+
+## LYSO815 (20um) - 2E14 T=-35C
+python moduleCharacterizationSummaryPlots.py -m 2 -v TOFHIR2C -i HPK_2E14_LYSO825_Vov0.60_T-35C,HPK_2E14_LYSO825_Vov0.80_T-35C,HPK_2E14_LYSO825_Vov1.00_T-35C,HPK_2E14_LYSO825_Vov1.25_T-35C,HPK_2E14_LYSO825_Vov1.50_T-35C,HPK_2E14_LYSO825_Vov2.00_T-35C -o HPK_2E14_LYSO825_T-35C
