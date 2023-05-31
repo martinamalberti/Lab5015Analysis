@@ -91,8 +91,13 @@ print 'Saving plots in ', outdir
 outfile = ROOT.TFile(outFileName, 'RECREATE' )
 
 # Import file with VovEff and DCR
-with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
-   data = json.load(f)   
+if (args.versionTOFHIR == 'TOFHIR2X'):
+   with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
+      data = json.load(f)   
+if (args.versionTOFHIR == 'TOFHIR2C'):
+   with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
+      data = json.load(f)   
+
 
 
 # ranges for plots
@@ -478,6 +483,13 @@ elif ('HPK_1E13_LYSO829_T12C' in args.outFolder):
          goodBars[1.00] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
          goodBars[0.80] = [0,2,3,4,5,7,8,9,10,11,12,13,15]
          goodBars[0.60] = [0,3,4,5,7,8,9,11,12,13,15]
+
+elif ('HPK_1E14_LYSO844_T-30C' in args.outFolder):
+   plots_label = 'HPK (15 #mum, 1E14) + LYSO844 (prod10,type2) T=-30#circC'
+   for vov in Vovs:
+      VovsEff[vov] = getVovEffDCR(data, 'HPK_1E14_LYSO844_T-30C', ('%.02f'%vov))[0]
+      if (args.versionTOFHIR=='TOFHIR2C'):
+         goodBars[vov] = bars
       
 else:
    for vov in Vovs:

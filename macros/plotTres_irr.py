@@ -108,20 +108,28 @@ def findTimingThreshold(g2, ov):
 
 
 # =====================================
-# import file with VovEff and DCR
-with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
-    data = json.load(f)       
-
-
 # =====================================
+
 #tofhir = 'TOFHIR2X'
 tofhir = 'TOFHIR2C'
+
+
+# import file with VovEff and DCR
+if (tofhir=='TOFHIR2X'):
+    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
+        data = json.load(f)       
+if (tofhir=='TOFHIR2C'):
+    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
+        data = json.load(f)       
+
+
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2_2X_2C/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2/'%tofhir
 outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_15um_T2/'%tofhir
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
@@ -133,6 +141,7 @@ if (os.path.exists(outdir+'/plotsSR')==False):
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
 outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
+#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir,'recreate')
 
 np = 3
 errSRsyst  = 0.10 # error on the slew rate
@@ -185,8 +194,8 @@ for ds in data_structs:
         Vovs[ds.moduleLabel].append( float(k[3:7]) )
 
     if ( 'HPK_2E14_LYSO825' in ds.moduleLabel ): Vovs[ds.moduleLabel].remove(0.6) # too small signals for reasonable SR fits
-    print(bars[ds.moduleLabel])
-    print(Vovs[ds.moduleLabel])
+    print(ds.moduleLabel,bars[ds.moduleLabel])
+    print(ds.moduleLabel,Vovs[ds.moduleLabel])
 
     
 fPS = {}
@@ -237,8 +246,6 @@ for ds in data_structs:
         else:
             fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
         
-
-
         g_SR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_Noise_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
@@ -266,19 +273,26 @@ for ds in data_structs:
                    
         for ov in Vovs[ds.moduleLabel]:
             ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0]
+            
+            print('aaaa',bar, ds.moduleLabel, ov, ovEff)
                     
             # get measured time resolution
             s_data = g_data[ds.moduleLabel][bar].Eval(ovEff)
+            for i in range(0, g_data[ds.moduleLabel][bar].GetN()):
+                print(g_data[ds.moduleLabel][bar].GetPointX(i), ovEff)
             indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) == ovEff]
             if ( len(indref)<1 ): continue
             err_s_data = g_data[ds.moduleLabel][bar].GetErrorY(indref[0])            
+
+            print('bbbb',bar, ds.moduleLabel, ov, ovEff)
 
             # Npe and Gain at this OVeff
             # LO is referred to 3.50 V OV 
             # scale also with thickness module (4.2 is for 3 mm thick lyso rotated by 52 deg )
             Npe[ds.moduleLabel][ov]  = 4.2*ds.LO*PDE(ds.sipmType,ovEff,ds.irradiation)/PDE(ds.sipmType,3.50,'0')*ds.thickness/3.00
             gain[ds.moduleLabel][ov] = Gain(ds.sipmType, ovEff, ds.irradiation)
-        
+
+
             # get pulse shapes
             g_psL = fPS[ds.moduleLabel][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
             g_psR = fPS[ds.moduleLabel][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
@@ -333,7 +347,8 @@ for ds in data_structs:
             if (srL<0 and srR<0): continue
             errSR = math.sqrt(errSR*errSR+errSRsyst*errSRsyst*sr*sr) 
 
-            #print sipm, ov, ovEff, gain, Npe[ds.moduleLabel][ov], srL, srR, sr, errSR
+            
+
             g_SR_vs_Vov[ds.moduleLabel][bar].SetPoint( g_SR_vs_Vov[ds.moduleLabel][bar].GetN(), ovEff, sr )
             g_SR_vs_Vov[ds.moduleLabel][bar].SetPointError( g_SR_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, errSR )
             
@@ -425,6 +440,7 @@ for ds in data_structs:
         #staticCurrent = dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19; 
         #staticPower = staticCurrent * (37. + ovEff) * 1000.; #in mW
         staticCurrent = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[2] # per SiPM current in mA
+        print(ds.moduleLabel, ov, ovEff, (dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19)*1000, staticCurrent)
         staticPower = staticCurrent * (37. + ovEff) #in mW
 
         g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetPoint(g_DCRfromCurrent_vs_Vov[ds.moduleLabel].GetN(), ovEff, dcr)
@@ -433,9 +449,13 @@ for ds in data_structs:
 
         if (ov in  g_SR_vs_bar[ds.moduleLabel].keys()): 
 
+            print(ds.moduleLabel, ov, g_SR_vs_bar[ds.moduleLabel][ov].GetN())
+            if (g_SR_vs_bar[ds.moduleLabel][ov].GetN()==0): continue;
+
+
+
             # average SR
             fitpol0_sr = ROOT.TF1('fitpol0_sr','pol0',-100,100)
-            if (g_SR_vs_bar[ds.moduleLabel][ov].GetN()==0): continue;
             g_SR_vs_bar[ds.moduleLabel][ov].Fit(fitpol0_sr,'QNR')
             sr = fitpol0_sr.GetParameter(0)
             g_SR_vs_Vov_average[ds.moduleLabel].SetPoint(g_SR_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, sr)
@@ -538,6 +558,7 @@ for ds in data_structs:
         c.cd()
         maxVov = 2.00
         if ('1E13' in ds.moduleLabel and ds.temperature < 0): maxVov = 3.5
+        if ('844' in ds.moduleLabel): maxVov = 3.0
         hdummy = ROOT.TH2F('hdummy_%s_%d'%(ds.moduleLabel,bar),'',100,0,maxVov,140,0,140)
         hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
         hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
@@ -612,6 +633,7 @@ for ds in data_structs:
     c.cd()
     maxVov = 2.00
     if ('1E13' in ds.moduleLabel and ds.temperature < 0): maxVov = 3.5
+    if ('844' in ds.moduleLabel): maxVov = 3.0
     hdummy = ROOT.TH2F('hdummy','',100, 0., maxVov,100,0,120)
     hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
     hdummy.GetYaxis().SetTitle('time resolution [ps]')
@@ -694,7 +716,8 @@ c.SetGridy()
 c.cd()    
 maxVov = 2.00
 if ('1E13' in ds.moduleLabel): maxVov = 3.5
-hdummy = ROOT.TH2F('hdummy','',100, 0., maxVov,100,0,120)
+if ('844' in ds.moduleLabel): maxVov = 3.0
+hdummy = ROOT.TH2F('hdummy','',100, 0., maxVov,100,20,140)
 hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.Draw()
@@ -850,6 +873,7 @@ c.SetGridy()
 c.cd()    
 maxVov = 2.00
 if ('1E13' in outdir): maxVov = 3.5
+if ('844' in ds.moduleLabel): maxVov = 3.0
 hdummy = ROOT.TH2F('hdummy','',100, 0.0, maxVov, 100, 0, 35)
 hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
@@ -903,6 +927,7 @@ for bar in range(0,16):
     ymax = 35
     maxVov = 2.00
     if ('1E13' in ds.moduleLabel and ds.temperature < 0): maxVov = 3.5
+    if ('844' in ds.moduleLabel): maxVov = 3.0
     hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,maxVov,100,0,ymax)
     hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
     hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')

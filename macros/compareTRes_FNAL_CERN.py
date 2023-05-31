@@ -32,21 +32,25 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 
 
-fnames = { (25, 'FNAL') : '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO813.root',
-           (25, 'CERN')    : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO813.root',
+fnames = { #(25, 'FNAL') : '/afs/cern.ch/work/m/malberti/MTD/TBatFNALMar2023/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO813.root',
+           (25, 'CERN')    : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_nonIrr_LYSO813_T5C.root',
+           (30, 'CERN')    : '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_nonIrr_LYSO820.root',
 }
 
 
-gnames = { (25, 'FNAL') : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
+gnames = { #(25, 'FNAL') : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
            (25, 'CERN') : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
+           (30, 'CERN') : 'g_deltaT_totRatioCorr_bestTh_vs_vov_bar07_enBin01'
 }
 
 plotAttrs = { (25, 'FNAL') : [20, ROOT.kBlue,  'LYSO813 + HPK 25#mum (FNAL March23)'],
               (25, 'CERN') : [20, ROOT.kRed ,  'LYSO813 + HPK 25#mum (CERN May23)' ],
+              (30, 'CERN') : [20, ROOT.kRed+2 ,'LYSO820 + HPK 30#mum (CERN May23)' ],
 }
 
 
-c = ROOT.TCanvas('c_comparison_HPK_nonIrr_LYSO813','c_comparison_HPK_nonIrr_LYSO813')
+#c = ROOT.TCanvas('c_comparison_HPK_nonIrr_LYSO813','c_comparison_HPK_nonIrr_LYSO813')
+c = ROOT.TCanvas('c_comparison_HPK_nonIrr_25um_30um','c_comparison_HPK_nonIrr_25um_30um')
 hPad = ROOT.gPad.DrawFrame(0.,0.,5.,130.)
 hPad.SetTitle(";V_{OV};#sigma_{t}^{bar} [ps]")
 hPad.Draw()
@@ -62,8 +66,9 @@ leg.SetTextSize(0.04)
 g = {}
 f = {}
 
-for temp in ['FNAL','CERN']:
-    for cell in [25]:
+#for temp in ['FNAL','CERN']:
+for temp in ['CERN']:
+    for cell in [25,30]:
         f[(cell,temp)] = ROOT.TFile.Open(fnames[(cell,temp)])
         g[(cell,temp)] = f[(cell,temp)].Get(gnames[(cell,temp)])
         g[(cell,temp)].SetMarkerSize(1)
