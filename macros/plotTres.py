@@ -100,8 +100,14 @@ def findTimingThreshold(g2):
 #tofhir = 'TOFHIR2X'
 tofhir = 'TOFHIR2C'
 
-#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_cellSizes_test/'
-#outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_Cgrid/'
+#data_struct.append(HPK_nonIrr_LYSO813_Tp5C) # TOFHIR2X 
+data_struct.append(HPK_nonIrr_LYSO813_Tm30C) # TOFHIR2X
+#data_struct.append(HPK_nonIrr_LYSO813_Tm15C) # TOFHIR2X
+#data_struct.append(HPK_nonIrr_LYSO813_T0C)   # TOFHIR2X
+#data_struct.append(HPK_nonIrr_LYSO813_Tp15C) # TOFHIR2X
+#data_struct.append(HPK_nonIrr_LYSO813_Tp5C_TOFHIR2C)  # TOFHIR2C
+data_struct.append(HPK_nonIrr_LYSO813_Tm30C_TOFHIR2C) # TOFHIR2C
+
 outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr_new/'%tofhir
 
 if (os.path.exists(outdir)==False):

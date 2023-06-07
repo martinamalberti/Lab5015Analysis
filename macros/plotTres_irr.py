@@ -110,8 +110,8 @@ def findTimingThreshold(g2, ov):
 # =====================================
 # =====================================
 
-#tofhir = 'TOFHIR2X'
-tofhir = 'TOFHIR2C'
+tofhir = 'TOFHIR2X'
+#tofhir = 'TOFHIR2C'
 
 
 # import file with VovEff and DCR
@@ -123,12 +123,32 @@ if (tofhir=='TOFHIR2C'):
         data = json.load(f)       
 
 
+data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
+data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
+data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
+data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
+data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
+data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
+#data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E13_LYSO829_Tm32C) # 1E13 T1 25 um
+#data_structs.append(HPK_1E13_LYSO829_Tm19C) # 1E13 T1 25 um
+#data_structs.append(HPK_1E13_LYSO829_Tm0C) # 1E13 T1 25 um
+#data_structs.append(HPK_1E13_LYSO829_Tp12C) # 1E13 T1 25 um
+#data_structs.append(HPK_2E14_LYSO815_Tm35C_TOFHIR2C) # 2E14 T2 25 um 
+#data_structs.append(HPK_2E14_LYSO815_Tm30C_TOFHIR2C) # 2E14 T2 25 um 
+#data_structs.append(HPK_2E14_LYSO825_Tm35C_TOFHIR2C) # 2E14 T2 20 um 
+#data_structs.append(HPK_1E14_LYSO844_Tm30C_TOFHIR2C) # 1E14 T2 15 um 
+
+
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/prova/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2_2X_2C/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2/'%tofhir
-outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_15um_T2/'%tofhir
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
@@ -136,11 +156,10 @@ if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
+outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
-outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
 #outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir,'recreate')
 
 np = 3
