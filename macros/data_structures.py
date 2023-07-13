@@ -166,7 +166,7 @@ HPK_2E14_LYSO815_Tm35C = DataStruct(
     irradiation = '2E14',
     temperature = -35,
     fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_2E14_LYSO815_T-35C.root',
-    fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/4martina/pulseShapes/pulseShape_HPK_2E14_LYSO815',
+    fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/pulseShape_HPK_2E14_LYSO815',
     plotLabel = 'HPK(25#mum,2E14) - Type2 - T=-35#circC',
     stoch_ref = 30., # tRes for non-irradiated at 1.0 V                                                                                                             
     ov_ref    = 1.00,
@@ -186,8 +186,8 @@ HPK_2E14_LYSO815_Tm30C = DataStruct(
     sipmType = 'HPK-PIT-C25-ES2',
     irradiation = '2E14',
     temperature = -30,
-    fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/4martina/summaryPlots/summaryPlots_HPK_2E14_LYSO815_T-30C.root',
-    fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/4martina/pulseShapes/pulseShape_HPK_2E14_LYSO815',
+    fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/summaryPlots_HPK_2E14_LYSO815_T-30C.root',
+    fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2X/pulseShape_HPK_2E14_LYSO815',
     plotLabel = 'HPK(25#mum,2E14) - Type2 - T=-30#circC',
     stoch_ref = 30., # tRes for non-irradiated at 1.0 V                                                                                                             
     ov_ref    = 1.00,

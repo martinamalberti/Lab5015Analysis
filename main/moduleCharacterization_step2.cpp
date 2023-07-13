@@ -692,10 +692,16 @@ int main(int argc, char** argv)
 	    //ranges[LRLabel][index] -> push_back( std::min(f_landau[index]->GetParameter(1)*2.0, 940.)); // tight selection around the MIP peak
 	    ranges[LRLabel][index] -> push_back( 940 ); // use the entire mip spectrum
 	    
-	    if ( opts.GetOpt<std::string>("Input.runs") == "5665" or opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ){
+	    if ( opts.GetOpt<std::string>("Input.runs") == "5665" ||
+		 opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ||
+		 opts.GetOpt<std::string>("Input.runs") == "5685" ||
+		 opts.GetOpt<std::string>("Input.runs") == "5686" 
+		 ){
 	      ranges[LRLabel][index] -> clear();
 	      if ( opts.GetOpt<std::string>("Input.runs") == "5665" ) ranges[LRLabel][index] -> push_back(600);
 	      if ( opts.GetOpt<std::string>("Input.runs") == "5669,5670,5671" ) ranges[LRLabel][index] -> push_back(250);
+	      if ( opts.GetOpt<std::string>("Input.runs") == "5685" ) ranges[LRLabel][index] -> push_back(minE[std::make_pair(iBar, Vov)]);
+	      if ( opts.GetOpt<std::string>("Input.runs") == "5686" ) ranges[LRLabel][index] -> push_back(minE[std::make_pair(iBar, Vov)]);
 	      ranges[LRLabel][index] -> push_back(1024);
 	    }
 

@@ -33,9 +33,10 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 inputdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/'
 
-irradiations = ['2E14', '1E14']
+irradiations = ['2E14', '1E14', '1E13']
 temperatures = {'2E14' : [-40, -35, -30],
-                '1E14' : [-37, -32, -27, -22]}
+                '1E14' : [-37, -32, -27, -22],
+                '1E13' : [-32, -19, 0, 12]}
 
 module_dict = OrderedDict()
 
@@ -51,6 +52,11 @@ module_dict= { 'HPK_2E14_LYSO815_T-40C' : ['2E14', -40, 25, inputdir+'/timeResol
                'HPK_1E14_LYSO819_T-32C' : ['1E14', -32, 25, inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'],
                'HPK_1E14_LYSO819_T-27C' : ['1E14', -27, 25, inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'],
                'HPK_1E14_LYSO819_T-22C' : ['1E14', -22, 25, inputdir+'/timeResolution_1E14_25um_T1/plots_timeResolution_1E14_25um_T1_TBMay23.root'],
+               
+               'HPK_1E13_LYSO829_T-32C' : ['1E13', -32, 25, inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'],
+               'HPK_1E13_LYSO829_T-19C' : ['1E13', -19, 25, inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'],
+               'HPK_1E13_LYSO829_T0C'   : ['1E13',   0, 25, inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'],
+               'HPK_1E13_LYSO829_T12C'  : ['1E13',  12, 25, inputdir+'/timeResolution_1E13_25um_T1/plots_timeResolution_1E13_25um_T1_TBMay23.root'],
            }
 
 
@@ -83,6 +89,7 @@ for irr in irradiations:
 
 
 #plot
+line = {}
 for irr in irradiations:
     for cell in [20,25]:
         leg = ROOT.TLegend(0.20, 0.75, 0.85, 0.89)
@@ -106,7 +113,12 @@ for irr in irradiations:
         leg.Draw()
 
         c.cd(2)
-        hPad2 = ROOT.gPad.DrawFrame(0.,0.,2.,3)
+        xmax = 2
+        ymax = 3
+        if (irr == '1E13'):
+            xmax = 3
+            ymax = 20
+        hPad2 = ROOT.gPad.DrawFrame(0.,0.,xmax,ymax)
         hPad2.SetTitle(";V_{OV}; ratio")
         hPad2.Draw()
         ROOT.gPad.SetGridx()
@@ -114,6 +126,12 @@ for irr in irradiations:
         for temp in temperatures[irr]:
             if ( (irr,temp,cell) not in gratio.keys() ): continue
             gratio[irr,temp,cell].Draw('plsame')
+            expFromDT = pow(1.9,(temp - temperatures[irr][0])/10.)
+            print irr, cell, temp, (temp - temperatures[irr][0]), expFromDT
+            line[irr,temp,cell] = ROOT.TLine(0, expFromDT, xmax, expFromDT)
+            line[irr,temp,cell].SetLineColor(g[irr,temp,cell].GetLineColor())
+            line[irr,temp,cell].SetLineStyle(2)
+            line[irr,temp,cell].Draw('same')
         #leg.Draw()
 
         c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/DCR/%s.png'%c.GetName())

@@ -116,26 +116,28 @@ tofhir = 'TOFHIR2X'
 
 # import file with VovEff and DCR
 if (tofhir=='TOFHIR2X'):
-    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
+    #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
+    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_v2.json', 'r') as f:
         data = json.load(f)       
 if (tofhir=='TOFHIR2C'):
-    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
+    #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
+    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C_v2.json', 'r') as f:
         data = json.load(f)       
 
 
-data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
-data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
-data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
-#data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
+#data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
+#data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
+#data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
+#data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
+#data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
+#data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
+data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
+data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
+data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
+data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_Tm32C) # 1E13 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_Tm19C) # 1E13 T1 25 um
-#data_structs.append(HPK_1E13_LYSO829_Tm0C) # 1E13 T1 25 um
+#data_structs.append(HPK_1E13_LYSO829_T0C) # 1E13 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_Tp12C) # 1E13 T1 25 um
 #data_structs.append(HPK_2E14_LYSO815_Tm35C_TOFHIR2C) # 2E14 T2 25 um 
 #data_structs.append(HPK_2E14_LYSO815_Tm30C_TOFHIR2C) # 2E14 T2 25 um 
@@ -143,24 +145,24 @@ data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
 #data_structs.append(HPK_1E14_LYSO844_Tm30C_TOFHIR2C) # 1E14 T2 15 um 
 
 
-outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/prova/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/'%tofhir
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1_v2/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1_v2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2_2X_2C/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_15um_T2/'%tofhir
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
+#outfileName = 'plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir
+outfileName = 'plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir
+#outfileName = 'plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir
+#outfileName = 'plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir
 
-outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir,'recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_2E14_25um_T2_TBMay23_%s.root'%tofhir,'recreate')
-#outfile   = ROOT.TFile.Open(outdir+'/plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir,'recreate')
+outfile   = ROOT.TFile.Open(outdir+'/'+outfileName,'recreate')
+print('Output dir :', outdir)
+print('Output file:', outfileName)
 
 np = 3
 errSRsyst  = 0.10 # error on the slew rate
@@ -257,13 +259,14 @@ for ds in data_structs:
     for ov in Vovs[ds.moduleLabel]:
         print(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
         #if ( (ds.temperature == -35 and ds.lyso == 'LYSO815') or  ds.lyso == 'LYSO829'):
-        if ( (ds.temperature == -35 and ds.lyso == 'LYSO815') ):
-            if ( 'TOFHIR2C' in ds.moduleLabel ):
-                fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
-            else:
-                fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_angle52_T%dC.root'%(ov,ds.temperature))
-        else:
-            fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
+        #if ( (ds.temperature == -35 and ds.lyso == 'LYSO815') ):
+        #    if ( 'TOFHIR2C' in ds.moduleLabel ):
+        #        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
+        #    else:
+        #        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_angle52_T%dC.root'%(ov,ds.temperature))
+        #else:
+        #    fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
+        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
         
         g_SR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
@@ -292,18 +295,12 @@ for ds in data_structs:
                    
         for ov in Vovs[ds.moduleLabel]:
             ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0]
-            
-            print('aaaa',bar, ds.moduleLabel, ov, ovEff)
-                    
+                                
             # get measured time resolution
             s_data = g_data[ds.moduleLabel][bar].Eval(ovEff)
-            for i in range(0, g_data[ds.moduleLabel][bar].GetN()):
-                print(g_data[ds.moduleLabel][bar].GetPointX(i), ovEff)
             indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) == ovEff]
             if ( len(indref)<1 ): continue
             err_s_data = g_data[ds.moduleLabel][bar].GetErrorY(indref[0])            
-
-            print('bbbb',bar, ds.moduleLabel, ov, ovEff)
 
             # Npe and Gain at this OVeff
             # LO is referred to 3.50 V OV 
@@ -459,7 +456,6 @@ for ds in data_structs:
         #staticCurrent = dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19; 
         #staticPower = staticCurrent * (37. + ovEff) * 1000.; #in mW
         staticCurrent = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[2] # per SiPM current in mA
-        print(ds.moduleLabel, ov, ovEff, (dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19)*1000, staticCurrent)
         staticPower = staticCurrent * (37. + ovEff) #in mW
 
         g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetPoint(g_DCRfromCurrent_vs_Vov[ds.moduleLabel].GetN(), ovEff, dcr)
@@ -470,8 +466,6 @@ for ds in data_structs:
 
             print(ds.moduleLabel, ov, g_SR_vs_bar[ds.moduleLabel][ov].GetN())
             if (g_SR_vs_bar[ds.moduleLabel][ov].GetN()==0): continue;
-
-
 
             # average SR
             fitpol0_sr = ROOT.TF1('fitpol0_sr','pol0',-100,100)
@@ -540,8 +534,9 @@ for ds in data_structs:
             g_DCR_vs_DCRNpe_average_all.SetPointError( g_DCR_vs_DCRNpe_average_all.GetN()-1, 0.5*(x_up-x_down),  g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2))
             
             y = s_dcr * Npe[ds.moduleLabel][ov]/6000 
-            #err_y = err_s_dcr * Npe[ds.moduleLabel][ov]/6000  # fixme: need to account also for error on Npe
-            err_y = g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2) * Npe[ds.moduleLabel][ov]/6000
+            #err_y = err_s_dcr * Npe[ds.moduleLabel][ov]/6000  # fixme: need to account also for error on Npe (~ 10%?)
+            #err_y = g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2) * Npe[ds.moduleLabel][ov]/6000
+            err_y = math.sqrt( pow(err_s_dcr*Npe[ds.moduleLabel][ov]/6000,2) + pow( s_dcr * 0.10*Npe[ds.moduleLabel][ov]/6000,2))
             g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetPoint( g_DCRNpe_vs_DCR_average[ds.moduleLabel].GetN(), dcr, y )
             g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetPointError( g_DCRNpe_vs_DCR_average[ds.moduleLabel].GetN()-1, 0., err_y)
             g_DCRNpe_vs_DCR_average_all.SetPoint( g_DCRNpe_vs_DCR_average_all.GetN(), dcr, y)
@@ -713,6 +708,7 @@ hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.GetXaxis().SetNdivisions(505)
 hdummy.Draw()
 for ds in data_structs:
+    g_data_vs_Npe[ds.moduleLabel].SetMarkerSize(1)
     g_data_vs_Npe[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_data_vs_Npe[ds.moduleLabel].SetMarkerColor(ds.color)
     g_data_vs_Npe[ds.moduleLabel].SetLineWidth(1)
@@ -741,6 +737,7 @@ hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.Draw()
 for ds in data_structs:
+    g_data_average[ds.moduleLabel].SetMarkerSize(1)
     g_data_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_data_average[ds.moduleLabel].SetMarkerColor(ds.color)
     g_data_average[ds.moduleLabel].SetLineWidth(1)
@@ -763,6 +760,7 @@ hdummy.GetXaxis().SetTitle('DCR [GHz]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.Draw()
 for ds in data_structs:
+    g_data_vs_DCR[ds.moduleLabel].SetMarkerSize(1)
     g_data_vs_DCR[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_data_vs_DCR[ds.moduleLabel].SetMarkerColor(ds.color)
     g_data_vs_DCR[ds.moduleLabel].SetLineWidth(1)
@@ -787,6 +785,7 @@ hdummy.GetXaxis().SetTitle('static power [mW]')
 hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.Draw()
 for ds in data_structs:
+    g_data_vs_staticPower[ds.moduleLabel].SetMarkerSize(1)
     g_data_vs_staticPower[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_data_vs_staticPower[ds.moduleLabel].SetMarkerColor(ds.color)
     g_data_vs_staticPower[ds.moduleLabel].SetLineWidth(1)
@@ -811,6 +810,7 @@ hdummy.GetYaxis().SetTitle('#sigma_{t} [ps]')
 hdummy.GetXaxis().SetNdivisions(505)
 hdummy.Draw()
 for ds in data_structs:
+    g_data_vs_GainNpe[ds.moduleLabel].SetMarkerSize(1)
     g_data_vs_GainNpe[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_data_vs_GainNpe[ds.moduleLabel].SetMarkerColor(ds.color)
     g_data_vs_GainNpe[ds.moduleLabel].SetLineWidth(1)
@@ -838,6 +838,7 @@ g_DCR_vs_DCRNpe_average_all.Draw('p*same')
 outfile.cd() 
 g_DCR_vs_DCRNpe_average_all.Write('g_DCR_vs_DCRNpe_average_all')
 for ds in data_structs:
+    g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerSize(1)
     g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetMarkerColor(ds.color)
     g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetLineWidth(1)
@@ -860,7 +861,7 @@ hdummy = ROOT.TH2F('hdummy_%d'%(bar),'',100,0,80,100,0,80)
 hdummy.GetXaxis().SetTitle('DCR[GHz]')
 hdummy.GetYaxis().SetTitle('(Npe/6000) #times #sigma_{t}^{DCR} [ps]')
 hdummy.Draw()
-fitFun_tRes_dcr = ROOT.TF1('fitFun_tRes_dcr','[1] * pow(x/30.,[0])', 0,10)  
+fitFun_tRes_dcr = ROOT.TF1('fitFun_tRes_dcr','[1] * pow(x/30.,[0])', 0,100)  
 fitFun_tRes_dcr.SetParameter(0,0.5)
 fitFun_tRes_dcr.SetParameter(1,40)
 fitFun_tRes_dcr.SetLineColor(1)
@@ -871,6 +872,7 @@ fitFun_tRes_dcr.Draw('same')
 outfile.cd() 
 g_DCRNpe_vs_DCR_average_all.Write('g_DCRNpe_vs_DCR_average_all')
 for ds in data_structs:
+    g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerSize(1)
     g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetMarkerColor(ds.color)
     g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetLineWidth(1)
@@ -898,6 +900,7 @@ hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('slew rate at the timing thr. [#muA/ns]')
 hdummy.Draw()
 for ds in data_structs:
+    g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerSize(1)
     g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_SR_vs_Vov_average[ds.moduleLabel].SetMarkerColor(ds.color)
     g_SR_vs_Vov_average[ds.moduleLabel].SetLineWidth(1)
@@ -922,6 +925,7 @@ hdummy.GetXaxis().SetTitle('V_{OV}^{eff} [V]')
 hdummy.GetYaxis().SetTitle('DCR [GHz]')
 hdummy.Draw()
 for ds in data_structs:
+    g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetMarkerSize(1)
     g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetMarkerStyle(ds.marker)
     g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetMarkerColor(ds.color)
     g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetLineWidth(1)
@@ -953,6 +957,7 @@ for bar in range(0,16):
     hdummy.Draw()
     for ds in data_structs:
         if (bar not in g_SR_vs_Vov[ds.moduleLabel].keys()): continue
+        g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerSize(1)
         g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerStyle(ds.marker)
         g_SR_vs_Vov[ds.moduleLabel][bar].SetMarkerColor(ds.color)
         g_SR_vs_Vov[ds.moduleLabel][bar].SetLineColor(ds.color)

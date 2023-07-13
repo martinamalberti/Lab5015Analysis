@@ -3,8 +3,10 @@ import math
 
 def PDE(sipm_type, ov, irr='0'):
     k = 1.
-    if (irr == '2E14' and 'HPK' in sipm_type): k = 0.78 # 22% PDE reduction for HPK SiPMs irradiated 2E14   
-    if (irr == '1E14' and 'HPK' in sipm_type): k = 0.89 # 11% PDE reduction for HPK SiPMs irradiated 1E14 ?(assume that for 1E14 is half of 2E14) 
+    if (irr == '2E14' and 'HPK-MS' in sipm_type): k = 0.78 # 22% PDE reduction for HPK SiPMs irradiated 2E14   
+    if (irr == '1E14' and 'HPK-MS' in sipm_type): k = 0.89 # 11% PDE reduction for HPK SiPMs irradiated 1E14 ?(assume that for 1E14 is half of 2E14) 
+    if (irr == '2E14' and 'HPK-PIT' in sipm_type): k = 0.85 # 15% PDE reduction for HPK SiPMs irradiated 2E14  - large cell-size 
+    if (irr == '1E14' and 'HPK-PIT' in sipm_type): k = 0.925 # %7.5% PDE reduction for HPK SiPMs irradiated 1E14 ?(assume that for 1E14 is half of 2E14) 
 
     if   (sipm_type == "HPK-MS"): 
         return k * 0.389 * ( 1. - math.exp(-1.*0.593*ov) )
@@ -34,8 +36,10 @@ def PDE(sipm_type, ov, irr='0'):
 def Gain(sipm_type, ov, irr='0'):
 
     k = 1.
-    if (irr == '2E14' and 'HPK' in sipm_type): k = 0.92 # gain reduction for HPK 2E14 irradiated SiPMs 
-    if (irr == '1E14' and 'HPK' in sipm_type): k = 0.96 # gain reduction for HPK 1E14 irradiated SiPMs (assume that for 1E14 is half of 2E14)
+    if (irr == '2E14' and 'HPK-MS' in sipm_type): k = 0.92 # gain reduction for HPK 2E14 irradiated SiPMs 
+    if (irr == '1E14' and 'HPK-MS' in sipm_type): k = 0.96 # gain reduction for HPK 1E14 irradiated SiPMs (assume that for 1E14 is half of 2E14)
+    if (irr == '2E14' and 'HPK-PIT' in sipm_type): k = 0.95 # gain reduction for HPK 2E14 irradiated SiPMs - large cells
+    if (irr == '1E14' and 'HPK-PIT' in sipm_type): k = 0.975 # gain reduction for HPK 1E14 irradiated SiPMs (assume that for 1E14 is half of 2E14) - large cells
 
     if   (sipm_type == "HPK-MS"): 
         return k * (97602.9*(ov+0.377962))
@@ -104,5 +108,4 @@ def fit_PDE_ECF_Gain(x, par):
 
 def sigma_noise(sr):
     noise_single = math.sqrt( pow(420./sr,2) + 16.7*16.7 )
-    #noise_single = math.sqrt( pow(350./sr,2) + 16.7*16.7 )  # test
     return noise_single / math.sqrt(2)

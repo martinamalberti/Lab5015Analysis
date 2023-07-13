@@ -41,7 +41,7 @@ if not (os.path.isfile(temp_min)):
    baseMinEnergy = open('%s/minEnergies_base_TOFHIR2X.txt'%cfgFolder, 'r')
    newMinEnergy  = open('%s/minEnergies_%s.txt'%(cfgFolder,args.modulelabel), 'w')
 
-   command = 'cp %s/minEnergies_base.txt %s/minEnergies_%s.txt'%(cfgFolder, cfgFolder, args.modulelabel)
+   command = 'cp %s/minEnergies_base_TOFHIR2X.txt %s/minEnergies_%s.txt'%(cfgFolder, cfgFolder, args.modulelabel)
 
    os.system(command)
 
