@@ -125,16 +125,16 @@ if (tofhir=='TOFHIR2C'):
         data = json.load(f)       
 
 
-#data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
-#data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
-#data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
-#data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
-#data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
-#data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
-data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
-data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
-data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
-data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
+data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
+data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
+data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
+data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
+data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
+data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
+#data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
+#data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_Tm32C) # 1E13 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_Tm19C) # 1E13 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_T0C) # 1E13 T1 25 um
@@ -145,8 +145,8 @@ data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
 #data_structs.append(HPK_1E14_LYSO844_Tm30C_TOFHIR2C) # 1E14 T2 15 um 
 
 
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/'%tofhir
-outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1_v2/'%tofhir
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1_v2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1_v2/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2_2X_2C/'%tofhir
 #outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_15um_T2/'%tofhir
@@ -155,8 +155,8 @@ if (os.path.exists(outdir)==False):
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
-#outfileName = 'plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir
-outfileName = 'plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir
+outfileName = 'plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir
+#outfileName = 'plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir
 #outfileName = 'plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir
 #outfileName = 'plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir
 
@@ -214,7 +214,7 @@ for ds in data_structs:
     for k in listOfKeys2:
         Vovs[ds.moduleLabel].append( float(k[3:7]) )
 
-    if ( 'HPK_2E14_LYSO825' in ds.moduleLabel ): Vovs[ds.moduleLabel].remove(0.6) # too small signals for reasonable SR fits
+    #if ( 'HPK_2E14_LYSO825' in ds.moduleLabel ): Vovs[ds.moduleLabel].remove(0.6) # too small signals for reasonable SR fits
     print(ds.moduleLabel,bars[ds.moduleLabel])
     print(ds.moduleLabel,Vovs[ds.moduleLabel])
 
@@ -310,6 +310,8 @@ for ds in data_structs:
 
 
             # get pulse shapes
+            if ( 'HPK_2E14_LYSO825' in ds.moduleLabel and ov == 0.6 ): continue # too small signals for reasonable SR fits     
+
             g_psL = fPS[ds.moduleLabel][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
             g_psR = fPS[ds.moduleLabel][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
             if (g_psL==None and g_psR==None): continue
@@ -462,10 +464,12 @@ for ds in data_structs:
         g_DCRfromCurrent_vs_Vov[ds.moduleLabel].SetPointError(g_DCRfromCurrent_vs_Vov[ds.moduleLabel].GetN()-1, 0, getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[4])
 
 
-        if (ov in  g_SR_vs_bar[ds.moduleLabel].keys()): 
+        #        if (ov in  g_SR_vs_bar[ds.moduleLabel].keys()): 
+                    #if (g_SR_vs_bar[ds.moduleLabel][ov].GetN()==0): continue;
 
+        if (ov in  g_SR_vs_bar[ds.moduleLabel].keys() and g_SR_vs_bar[ds.moduleLabel][ov].GetN()!=0):
+            
             print(ds.moduleLabel, ov, g_SR_vs_bar[ds.moduleLabel][ov].GetN())
-            if (g_SR_vs_bar[ds.moduleLabel][ov].GetN()==0): continue;
 
             # average SR
             fitpol0_sr = ROOT.TF1('fitpol0_sr','pol0',-100,100)
@@ -473,7 +477,7 @@ for ds in data_structs:
             sr = fitpol0_sr.GetParameter(0)
             g_SR_vs_Vov_average[ds.moduleLabel].SetPoint(g_SR_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, sr)
             g_SR_vs_Vov_average[ds.moduleLabel].SetPointError(g_SR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, fitpol0_sr.GetParError(0))
-
+            
             # noise using average SR
             g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, sigma_noise(sr))
             sr_err = max(fitpol0_sr.GetParError(0), errSRsyst*sr)
@@ -481,7 +485,7 @@ for ds in data_structs:
             sr_down = sr - sr_err 
             noise_err  = 0.5 * ( sigma_noise(sr_down) - sigma_noise(sr_up) ) 
             g_Noise_vs_Vov_average[ds.moduleLabel].SetPointError(g_Noise_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, noise_err) 
-    
+            
             # average stochastic 
             fitpol0_stoch = ROOT.TF1('fitpol0_stoch','pol0',-100,100)  
             g_Stoch_vs_bar[ds.moduleLabel][ov].Fit(fitpol0_stoch,'QNR')
@@ -506,42 +510,42 @@ for ds in data_structs:
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPointError(g_Tot_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, err_tot)
 
             
-            # average tRes vs Npe, DCR, static power, GainNpe            
-            fitpol0 = ROOT.TF1('fitpol0','pol0',-100,100)
-            gg = f[ds.moduleLabel].Get('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%ov)    
-            gg.Fit(fitpol0,'QNR')
-            g_data_vs_Npe[ds.moduleLabel].SetPoint(g_data_vs_Npe[ds.moduleLabel].GetN(), Npe[ds.moduleLabel][ov], fitpol0.GetParameter(0))
-            g_data_vs_Npe[ds.moduleLabel].SetPointError(g_data_vs_Npe[ds.moduleLabel].GetN()-1, 0, fitpol0.GetParError(0))
-
-            g_data_vs_DCR[ds.moduleLabel].SetPoint(g_data_vs_DCR[ds.moduleLabel].GetN(), dcr, fitpol0.GetParameter(0))
-            g_data_vs_DCR[ds.moduleLabel].SetPointError(g_data_vs_DCR[ds.moduleLabel].GetN()-1, 0,  fitpol0.GetParError(0))
-
-            g_data_vs_staticPower[ds.moduleLabel].SetPoint(g_data_vs_staticPower[ds.moduleLabel].GetN(), staticPower, fitpol0.GetParameter(0))
-            g_data_vs_staticPower[ds.moduleLabel].SetPointError(g_data_vs_staticPower[ds.moduleLabel].GetN()-1, 0,  fitpol0.GetParError(0))
-
-            g_data_vs_GainNpe[ds.moduleLabel].SetPoint(g_data_vs_GainNpe[ds.moduleLabel].GetN(), gain[ds.moduleLabel][ov]*Npe[ds.moduleLabel][ov], fitpol0.GetParameter(0))
-            g_data_vs_GainNpe[ds.moduleLabel].SetPointError(g_data_vs_GainNpe[ds.moduleLabel].GetN()-1, 0, fitpol0.GetParError(0))
-
-
-            x = math.sqrt(dcr)/Npe[ds.moduleLabel][ov]/ (math.sqrt(30.)/3000)
-            x_down = math.sqrt(dcr)/(Npe[ds.moduleLabel][ov]*(1+errPDE) )/ (math.sqrt(30.)/3000)
-            x_up   = math.sqrt(dcr)/(Npe[ds.moduleLabel][ov]*(1-errPDE))/ (math.sqrt(30.)/3000)
-            if (g_DCR_vs_bar[ds.moduleLabel][ov].GetN()==0):continue
-
-            g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetPoint( g_DCR_vs_DCRNpe_average[ds.moduleLabel].GetN(), x,  s_dcr)
-            g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetPointError( g_DCR_vs_DCRNpe_average[ds.moduleLabel].GetN()-1, 0.5*(x_up-x_down), g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2))
-            g_DCR_vs_DCRNpe_average_all.SetPoint( g_DCR_vs_DCRNpe_average_all.GetN(), x,  s_dcr)
-            g_DCR_vs_DCRNpe_average_all.SetPointError( g_DCR_vs_DCRNpe_average_all.GetN()-1, 0.5*(x_up-x_down),  g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2))
-            
-            y = s_dcr * Npe[ds.moduleLabel][ov]/6000 
-            #err_y = err_s_dcr * Npe[ds.moduleLabel][ov]/6000  # fixme: need to account also for error on Npe (~ 10%?)
-            #err_y = g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2) * Npe[ds.moduleLabel][ov]/6000
-            err_y = math.sqrt( pow(err_s_dcr*Npe[ds.moduleLabel][ov]/6000,2) + pow( s_dcr * 0.10*Npe[ds.moduleLabel][ov]/6000,2))
-            g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetPoint( g_DCRNpe_vs_DCR_average[ds.moduleLabel].GetN(), dcr, y )
-            g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetPointError( g_DCRNpe_vs_DCR_average[ds.moduleLabel].GetN()-1, 0., err_y)
-            g_DCRNpe_vs_DCR_average_all.SetPoint( g_DCRNpe_vs_DCR_average_all.GetN(), dcr, y)
-            g_DCRNpe_vs_DCR_average_all.SetPointError( g_DCRNpe_vs_DCR_average_all.GetN()-1, 0, err_y)
-
+        # average tRes vs Npe, DCR, static power, GainNpe            
+        fitpol0 = ROOT.TF1('fitpol0','pol0',-100,100)
+        gg = f[ds.moduleLabel].Get('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%ov)    
+        gg.Fit(fitpol0,'QNR')
+        g_data_vs_Npe[ds.moduleLabel].SetPoint(g_data_vs_Npe[ds.moduleLabel].GetN(), Npe[ds.moduleLabel][ov], fitpol0.GetParameter(0))
+        g_data_vs_Npe[ds.moduleLabel].SetPointError(g_data_vs_Npe[ds.moduleLabel].GetN()-1, 0, fitpol0.GetParError(0))
+        
+        g_data_vs_DCR[ds.moduleLabel].SetPoint(g_data_vs_DCR[ds.moduleLabel].GetN(), dcr, fitpol0.GetParameter(0))
+        g_data_vs_DCR[ds.moduleLabel].SetPointError(g_data_vs_DCR[ds.moduleLabel].GetN()-1, 0,  fitpol0.GetParError(0))
+        
+        g_data_vs_staticPower[ds.moduleLabel].SetPoint(g_data_vs_staticPower[ds.moduleLabel].GetN(), staticPower, fitpol0.GetParameter(0))
+        g_data_vs_staticPower[ds.moduleLabel].SetPointError(g_data_vs_staticPower[ds.moduleLabel].GetN()-1, 0,  fitpol0.GetParError(0))
+        
+        g_data_vs_GainNpe[ds.moduleLabel].SetPoint(g_data_vs_GainNpe[ds.moduleLabel].GetN(), gain[ds.moduleLabel][ov]*Npe[ds.moduleLabel][ov], fitpol0.GetParameter(0))
+        g_data_vs_GainNpe[ds.moduleLabel].SetPointError(g_data_vs_GainNpe[ds.moduleLabel].GetN()-1, 0, fitpol0.GetParError(0))
+        
+        
+        x = math.sqrt(dcr)/Npe[ds.moduleLabel][ov]/ (math.sqrt(30.)/3000)
+        x_down = math.sqrt(dcr)/(Npe[ds.moduleLabel][ov]*(1+errPDE) )/ (math.sqrt(30.)/3000)
+        x_up   = math.sqrt(dcr)/(Npe[ds.moduleLabel][ov]*(1-errPDE))/ (math.sqrt(30.)/3000)
+        if (g_DCR_vs_bar[ds.moduleLabel][ov].GetN()==0):continue
+        
+        g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetPoint( g_DCR_vs_DCRNpe_average[ds.moduleLabel].GetN(), x,  s_dcr)
+        g_DCR_vs_DCRNpe_average[ds.moduleLabel].SetPointError( g_DCR_vs_DCRNpe_average[ds.moduleLabel].GetN()-1, 0.5*(x_up-x_down), g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2))
+        g_DCR_vs_DCRNpe_average_all.SetPoint( g_DCR_vs_DCRNpe_average_all.GetN(), x,  s_dcr)
+        g_DCR_vs_DCRNpe_average_all.SetPointError( g_DCR_vs_DCRNpe_average_all.GetN()-1, 0.5*(x_up-x_down),  g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2))
+        
+        y = s_dcr * Npe[ds.moduleLabel][ov]/6000 
+        err_y = err_s_dcr * Npe[ds.moduleLabel][ov]/6000  # fixme: need to account also for error on Npe (~ 10%?)
+        #err_y = g_DCR_vs_bar[ds.moduleLabel][ov].GetRMS(2) * Npe[ds.moduleLabel][ov]/6000
+        #err_y = math.sqrt( pow(err_s_dcr*Npe[ds.moduleLabel][ov]/6000,2) + pow( s_dcr * 0.10*Npe[ds.moduleLabel][ov]/6000,2))
+        g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetPoint( g_DCRNpe_vs_DCR_average[ds.moduleLabel].GetN(), dcr, y )
+        g_DCRNpe_vs_DCR_average[ds.moduleLabel].SetPointError( g_DCRNpe_vs_DCR_average[ds.moduleLabel].GetN()-1, 0., err_y)
+        g_DCRNpe_vs_DCR_average_all.SetPoint( g_DCRNpe_vs_DCR_average_all.GetN(), dcr, y)
+        g_DCRNpe_vs_DCR_average_all.SetPointError( g_DCRNpe_vs_DCR_average_all.GetN()-1, 0, err_y)
+        
 
 
 
