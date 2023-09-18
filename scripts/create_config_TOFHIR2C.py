@@ -11,7 +11,7 @@ import subprocess
 
 # ----
 #cfgFolder = '/afs/cern.ch/user/s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/cfg'
-cfgFolder = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/TOFHIR2C/'
+cfgFolder = '/afs/cern.ch/work/m/malberti/MTD/TBatH8Sep2023/Lab5015Analysis/cfg/TOFHIR2C/'
 # ----
 
 
@@ -29,7 +29,8 @@ args = parser.parse_args()
 runs = args.runs
 
 if args.extraLabel:
-   label = '%s_Vov%.2f_%s_T%sC' %(args.modulelabel, float(args.Vov),args.extraLabel,  args.temperature)
+   #label = '%s_Vov%.2f_%s_T%sC' %(args.modulelabel, float(args.Vov),args.extraLabel,  args.temperature)
+   label = '%s_Vov%.2f_T%sC_%s' %(args.modulelabel, float(args.Vov), args.temperature, args.extraLabel)
 else:
    label = '%s_Vov%.2f_T%sC' %(args.modulelabel, float(args.Vov) , args.temperature)
 
@@ -68,6 +69,8 @@ for line in baseCfg:
       newCfg.write(line.replace('moduleLabel', '%s'%args.modulelabel))
    elif 'confNumber' in line:
       newCfg.write(line.replace('confNumber', '%s'%args.config))
+   elif 'vovLabel' in line:
+      newCfg.write(line.replace('vovLabel', '%s'%args.Vov))
       print 'config : ', args.config
    else:
       newCfg.write(line)
