@@ -714,10 +714,22 @@ int main(int argc, char** argv)
       if( !g_pulseShapeL[index2] ) g_pulseShapeL[index2] = new TGraphErrors();
 
       // -- find smallest interval containing 90% of the events
-      FindSmallestInterval(vals,histo,fract);
-      float mean = vals[0];
-      float meanErr = vals[1];
-      histo->GetXaxis()->SetRangeUser(vals[4],vals[5]);
+      // doesn;t work very well for low thr/high DCR... very large tails
+      /*
+	FindSmallestInterval(vals,histo,fract);
+	float mean = vals[0];
+	float meanErr = vals[1];
+	histo->GetXaxis()->SetRangeUser(vals[4],vals[5]);
+      */
+      int maxbin = histo->GetMaximumBin();
+      float xmax = histo->GetBinCenter(maxbin);
+      TF1 *fGaus = new TF1("fGaus","gaus", -50, 50);
+      fGaus->SetRange(xmax-1.0, xmax+1.0);
+      histo->Fit(fGaus, "QRS");
+      fGaus->SetRange( fGaus->GetParameter(1)-2*fGaus->GetParameter(2), fGaus->GetParameter(1)+2*fGaus->GetParameter(2));
+      histo->Fit(fGaus, "QRS");
+      float mean = fGaus->GetParameter(1);
+      float meanErr = fGaus->GetParError(1);
       g_pulseShapeL[index2] -> SetPoint(g_pulseShapeL[index2]->GetN(),mean-timeOffsetL[index2],ith*dac_to_uA);
       g_pulseShapeL[index2] -> SetPointError(g_pulseShapeL[index2]->GetN()-1,meanErr,0.);
             
@@ -768,10 +780,20 @@ int main(int argc, char** argv)
       if( !g_pulseShapeR[index2] ) g_pulseShapeR[index2] = new TGraphErrors();
       
       // -- find smallest interval containing 90% of the events
-      FindSmallestInterval(vals,histo,fract);
+      /*FindSmallestInterval(vals,histo,fract);
       float mean = vals[0];
       float meanErr = vals[1];
-      histo->GetXaxis()->SetRangeUser(vals[4],vals[5]); 
+      histo->GetXaxis()->SetRangeUser(vals[4],vals[5]);
+      */
+      int maxbin = histo->GetMaximumBin();
+      float xmax = histo->GetBinCenter(maxbin);
+      TF1 *fGaus = new TF1("fGaus","gaus", -50, 50);
+      fGaus->SetRange(xmax-1.0, xmax+1.0);
+      histo->Fit(fGaus, "QRS");
+      fGaus->SetRange( fGaus->GetParameter(1)-2*fGaus->GetParameter(2), fGaus->GetParameter(1)+2*fGaus->GetParameter(2));
+      histo->Fit(fGaus, "QRS");
+      float mean = fGaus->GetParameter(1);
+      float meanErr = fGaus->GetParError(1);
       g_pulseShapeR[index2] -> SetPoint(g_pulseShapeR[index2]->GetN(),mean-timeOffsetR[index2],ith*dac_to_uA);
       g_pulseShapeR[index2] -> SetPointError(g_pulseShapeR[index2]->GetN()-1,meanErr,0.);
 
