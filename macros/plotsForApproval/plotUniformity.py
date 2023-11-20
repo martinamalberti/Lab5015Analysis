@@ -38,7 +38,7 @@ with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_v2.
 
 
 inputdir = '/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/ANALYSIS/'
-outdir   = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/'
+outdir   = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/'
 
 
 #modules = {'HPK_nonIrr_LYSO813_T5C', 'HPK_2E14_LYSO815_T-35C', 'HPK_2E14_LYSO825_T-35C', 'HPK_1E14_LYSO819_T-22C'}
@@ -50,8 +50,8 @@ fnames = { 'HPK_nonIrr_LYSO813_T5C' : inputdir+'TOFHIR2C/ModuleCharacterization/
            'HPK_1E14_LYSO819_T-22C' : inputdir+'TOFHIR2X/ModuleCharacterization/summaryPlots_HPK_1E14_LYSO819_T-22C.root',
        }
 
-labels = {'HPK_nonIrr_LYSO813_T5C' : '#splitline{Type 2}{25 #mum}',
-          'HPK_2E14_LYSO815_T-35C' : '#splitline{Type 2}{25 #mum, 2E14}',
+labels = {'HPK_nonIrr_LYSO813_T5C' : '#splitline{Type 2}{25 #mum, non irradiated}',
+          'HPK_2E14_LYSO815_T-35C' : '#splitline{Type 2}{25 #mum, irradiated}',
           'HPK_2E14_LYSO825_T-35C' : 'HPK (20 #mum, 2E14), type 2',
           'HPK_1E14_LYSO819_T-22C' : 'HPK (25 #mum, 1E14), type 1',
      }
@@ -78,18 +78,20 @@ for mod in modules:
    f = ROOT.TFile.Open(fnames[mod])
    
    c = ROOT.TCanvas('c_timeResolution_vs_bar_%s'%mod,'c_timeResolution_vs_bar_%s'%mod, 600, 500)
-   hPad = ROOT.TH2F('hPad','', 100, -0.5, 15.5,100, 0,120)
+   hPad = ROOT.TH2F('hPad','', 100, -0.5, 15.5,100, 0,130)
    hPad.SetTitle("; bar; time resolution [ps]")
    hPad.Draw()
    c.SetGridy()
    c.SetTicks()
+
    leg = ROOT.TLegend(0.60, 0.90, 0.90, 0.70)
    leg.SetBorderSize(0)
    leg.SetFillStyle(0)
    if (len(Vovs[mod])>4):
       leg.SetNColumns(2);
       leg.SetColumnSeparation(0.2);
-   for vov in Vovs[mod]:
+
+   for iv,vov in enumerate(Vovs[mod]):
          
       g = f.Get('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.2f_enBin01'%vov) 
       print('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.2f_enBin01'%vov)
@@ -106,13 +108,20 @@ for mod in modules:
             if ('nonIrr' not in mod):
                h_irr.Fill(x)
 
+      g.SetMarkerStyle(20+iv)
       g.SetMarkerSize(1)
+      if ( mod == 'HPK_2E14_LYSO815_T-35C' and vov == 1.00): 
+         g.SetMarkerColor(ROOT.kAzure+10)
+         g.SetLineColor(ROOT.kAzure+10)
       g.Draw('psame')
+
       ovEff = vov
       if ('2E14' in mod or '1E14' in mod or '1E13' in mod):
          ovEff = getVovEffDCR(data, mod, ('%.02f'%vov))[0]
       leg.AddEntry(g, 'V_{OV} = %.2f V'%ovEff, 'PL') 
    leg.Draw()
+
+   
    
    latex = ROOT.TLatex(0.20,0.84,'%s'%(labels[mod]))
    latex.SetNDC()

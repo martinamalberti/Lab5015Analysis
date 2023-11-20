@@ -31,7 +31,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 
-outdir = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/'
+outdir = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/'
 
 fnames = { 'HPK_nonIrr_LYSO818' : '/eos/home-s/spalluot/MTD/TB_FNAL_Mar23/Lab5015Analysis/plots/compareTimeResolution_vs_Vov_HPK_nonIrr_T1_T2_T3_angle52.root',
            #'HPK_nonIrr_LYSO813' : '/eos/home-s/spalluot/MTD/TB_FNAL_Mar23/Lab5015Analysis/plots/compareTimeResolution_vs_Vov_HPK_nonIrr_T1_T2_T3_angle52.root',
@@ -74,6 +74,7 @@ leg.SetTextSize(0.045)
 for mod in ['HPK_nonIrr_LYSO818','HPK_nonIrr_LYSO816']:
     f = ROOT.TFile.Open(fnames[mod])
     g = f.Get(gnames[mod]) 
+    if (mod == 'HPK_nonIrr_LYSO816'): g.SetMarkerStyle(21)
     g.Draw('plsame')
     leg.AddEntry(g, '%s'%labels[mod],'PL')
 
@@ -104,10 +105,12 @@ ROOT.gPad.SetTicks(1)
 for mod in ['HPK_1E14_LYSO819_T-32C','HPK_1E14_LYSO817_T-32C']:
     f = ROOT.TFile.Open(fnames[mod])
     g = f.Get(gnames[mod]) 
+    if (mod == 'HPK_1E14_LYSO817_T-32C'): g.SetMarkerStyle(21)
     g.Draw('plsame')
 leg.Draw()
 
-latex = ROOT.TLatex(0.60,0.60,'1 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+#latex = ROOT.TLatex(0.60,0.60,'1 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+latex = ROOT.TLatex(0.65,0.60,'#it{L}_{eq.DCR}=1300 fb^{-1}')
 latex.SetNDC()
 latex.SetTextSize(0.045)
 latex.SetTextFont(42)

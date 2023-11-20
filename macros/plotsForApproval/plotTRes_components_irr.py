@@ -50,10 +50,8 @@ f = {}
 for cell in [25,20]:
     c = ROOT.TCanvas('c_timeResolution_components_vs_Vov_%dum_2E14'%cell,'c_timeResolution_components_vs_Vov_%dum_2E14'%cell, 600, 500)
     hPad = ROOT.gPad.DrawFrame(0.,0.,2.,140.)
-    hPad.SetTitle(";V_{OV}[V];time resolution[ps]")
+    hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
     hPad.Draw()
-    #ROOT.gPad.SetGridx()
-    #ROOT.gPad.SetGridy()
     ROOT.gPad.SetTicks(1)
 
     f[cell] = ROOT.TFile.Open(fnames[cell])
@@ -98,9 +96,9 @@ for cell in [25,20]:
     leg.SetTextFont(42)
     leg.SetTextSize(0.050)
     leg.AddEntry(g_data[cell], 'data', 'PL')
-    leg.AddEntry(g_noise[cell], 'noise', 'L')
+    leg.AddEntry(g_noise[cell], 'noise', 'FL')
     leg.AddEntry(g_stoch[cell], 'stochastic', 'L')    
-    leg.AddEntry(g_stoch[cell], 'DCR', 'L')    
+    leg.AddEntry(g_dcr[cell], 'DCR', 'FL')    
     leg.Draw()
 
     tl = ROOT.TLatex()
@@ -119,13 +117,14 @@ for cell in [25,20]:
     tl3.SetNDC()
     tl3.SetTextFont(42)
     tl3.SetTextSize(0.050)
-    tl3.DrawLatex(0.20,0.74,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+    #tl3.DrawLatex(0.20,0.74,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+    tl3.DrawLatex(0.20,0.74,'#it{L}_{eq.DCR}=2700 fb^{-1}')
 
     cms_logo = draw_logo()
     cms_logo.Draw()
 
-    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/%s.png'%c.GetName())
-    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/%s.pdf'%c.GetName())
+    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/%s.png'%c.GetName())
+    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/%s.pdf'%c.GetName())
 
 
 

@@ -53,7 +53,7 @@ f = {}
 for cell in [25,20,15]:
     c = ROOT.TCanvas('c_timeResolution_components_vs_Vov_%dum_nonIrradiated'%cell,'c_timeResolution_components_vs_Vov_%dum_nonIrradiated'%cell, 600, 500)
     hPad = ROOT.gPad.DrawFrame(0.,0.,4.,120.)
-    hPad.SetTitle(";V_{OV}[V];time resolution[ps]")
+    hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
     hPad.Draw()
     #ROOT.gPad.SetGridx()
     #ROOT.gPad.SetGridy()
@@ -114,7 +114,7 @@ for cell in [25,20,15]:
     leg.SetTextFont(42)
     leg.SetTextSize(0.050)
     leg.AddEntry(g_data[cell], 'data', 'PL')
-    leg.AddEntry(g_noise[cell], 'noise', 'L')
+    leg.AddEntry(g_noise[cell], 'noise', 'FL')
     leg.AddEntry(g_stoch[cell], 'stochastic', 'L')    
     leg.Draw()
 
@@ -132,8 +132,8 @@ for cell in [25,20,15]:
     cms_logo = draw_logo()
     cms_logo.Draw()
         
-    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/%s.png'%c.GetName())
-    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/%s.pdf'%c.GetName())
+    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/%s.png'%c.GetName())
+    c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/%s.pdf'%c.GetName())
 
 
 

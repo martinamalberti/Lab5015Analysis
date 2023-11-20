@@ -30,6 +30,11 @@ ROOT.gStyle.SetPadTopMargin(0.07)
 ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
+
+cells  = [25, 20, 15]
+#cells  = [30, 25, 20, 15]
+
+
 inputdir = '/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_FNAL_Mar2023/ANALYSIS/ModuleCharacterization/'
 
 fnames = { (30, 'TB') : '/eos/home-s/spalluot/MTD/TB_CERN_May23/Lab5015Analysis/plots/summaryPlots_HPK_nonIrr_LYSO820_angle52_T5C.root',
@@ -53,17 +58,19 @@ gnames = { (30, 'TB') : 'g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average',
            (15, 'Laser') : 'g_tRes_vs_Vov_LYSO743_SiPM_HPK_2-32_tune78',
 }
 
-plotAttrs = { (30, 'TB') : [21, ROOT.kGray+1,  'TB - 30#mum'],
-              (25, 'TB') : [21, ROOT.kBlack,  'TB - 25#mum'],
-              (20, 'TB') : [21, ROOT.kRed,  'TB - 20#mum' ],
-              (15, 'TB') : [21, ROOT.kGreen+1,'TB - 15#mum'],
-              (25, 'Laser') : [24, ROOT.kBlack, 'Laser - 25#mum'],
-              (20, 'Laser') : [24, ROOT.kRed+2,   'Laser - 20#mum'],
-              (15, 'Laser') : [24, ROOT.kGreen+2,  'Laser - 15#mum'],
+plotAttrs = { (30, 'TB') : [33, ROOT.kGray+1,  'TB - 30 #mum'],
+              (25, 'TB') : [22, ROOT.kBlack,  'TB - 25 #mum'],
+              (20, 'TB') : [21, ROOT.kRed,  'TB - 20 #mum' ],
+              (15, 'TB') : [20, ROOT.kGreen+1,'TB - 15 #mum'],
+              (25, 'Laser') : [26, ROOT.kBlack, 'Laser - 25 #mum'],
+              (20, 'Laser') : [25, ROOT.kRed+2,   'Laser - 20 #mum'],
+              (15, 'Laser') : [24, ROOT.kGreen+2,  'Laser - 15 #mum'],
 }
 
 
 c = ROOT.TCanvas('c_comparison_TB_Laser_cellSizes','c_comparison_TB_Laser_cellSizes', 600, 500)
+if (30 in cells):
+    c = ROOT.TCanvas('c_comparison_TB_Laser_cellSizes_v2','c_comparison_TB_Laser_cellSizes_v2', 600, 500)
 hPad = ROOT.gPad.DrawFrame(0.,0.,4.,175.)
 hPad.SetTitle(";V_{OV} [V]; time resolution [ps]")
 hPad.Draw()
@@ -84,8 +91,7 @@ f = {}
 
 
 for data in ['Laser', 'TB']:
-    #for cell in [30,25,20,15]:
-    for cell in [25,20,15]:
+    for cell in cells:
         if (data == 'Laser' and cell == 30): continue
         f[(cell,data)] = ROOT.TFile.Open(fnames[(cell,data)])
         gtemp = f[(cell,data)].Get(gnames[(cell,data)])
@@ -96,7 +102,8 @@ for data in ['Laser', 'TB']:
                 g[(cell,data)].SetPoint(g[(cell,data)].GetN(), gtemp.GetPointX(i), gtemp.GetPointY(i))
                 g[(cell,data)].SetPointError(g[(cell,data)].GetN()-1, gtemp.GetErrorX(i), gtemp.GetErrorY(i))
 
-        g[(cell,data)].SetMarkerSize(1)
+        g[(cell,data)].SetMarkerSize(1.0)
+        if (cell == 25 and data == 'TB'): g[(cell,data)].SetMarkerSize(1.2)
         g[(cell,data)].SetMarkerStyle(plotAttrs[(cell,data)][0])
         g[(cell,data)].SetMarkerColor(plotAttrs[(cell,data)][1])
         g[(cell,data)].SetLineColor(plotAttrs[(cell,data)][1])
@@ -110,8 +117,8 @@ leg.Draw()
 cms_logo = draw_logo()
 cms_logo.Draw()
 
-c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/%s.png'%c.GetName())
-c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/%s.pdf'%c.GetName())
+c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/%s.png'%c.GetName())
+c.SaveAs('/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/%s.pdf'%c.GetName())
 
 for vov in [0.8, 1.0, 1.5, 2.0, 3.5]:
     for cell in [25,20,15]:

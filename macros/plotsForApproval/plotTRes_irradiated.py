@@ -31,7 +31,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 
-outdir = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/'
+outdir = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/'
 
 fnames = { 
     (25, -40, '2E14') :'/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2X.root',
@@ -76,16 +76,16 @@ plotAttrs = { #(25, -40,'2E14') : [20, ROOT.kBlue,     '25#mum T=-40#circC'],
               #(25, -37, '1E14') : [20, ROOT.kBlue ,     '25#mum T=-37#circC' ],
 
               (25, -40,'2E14') : [20, ROOT.kBlue,     '25 #mum - #it{L}_{eq.DCR}=1900 fb^{-1}'], # round lumis to 2 digits
-              (25, -35,'2E14') : [20, ROOT.kOrange+1, '25 #mum - #it{L}_{eq.DCR}=2700 fb^{-1}'],
-              (25, -30,'2E14') : [20, ROOT.kRed ,     '25 #mum - #it{L}_{eq.DCR}=3700 fb^{-1}'],
+              (25, -35,'2E14') : [21, ROOT.kOrange+1, '25 #mum - #it{L}_{eq.DCR}=2700 fb^{-1}'],
+              (25, -30,'2E14') : [22, ROOT.kRed ,     '25 #mum - #it{L}_{eq.DCR}=3700 fb^{-1}'],
               (20, -40,'2E14') : [24, ROOT.kBlue,     '20 #mum - #it{L}_{eq.DCR}=1900 fb^{-1}'],
-              (20, -35,'2E14') : [24, ROOT.kOrange+1, '20 #mum - #it{L}_{eq.DCR}=2700 fb^{-1}'],
-              (20, -30,'2E14') : [24, ROOT.kRed ,     '20 #mum - #it{L}_{eq.DCR}=3700 fb^{-1}'],
+              (20, -35,'2E14') : [25, ROOT.kOrange+1, '20 #mum - #it{L}_{eq.DCR}=2700 fb^{-1}'],
+              (20, -30,'2E14') : [26, ROOT.kRed ,     '20 #mum - #it{L}_{eq.DCR}=3700 fb^{-1}'],
               
               (25, -22, '1E14') : [20, ROOT.kRed,       '25 #mum - #it{L}_{eq.DCR}=2500 fb^{-1}' ],
               (25, -27, '1E14') : [20, ROOT.kOrange+1,  '25 #mum - #it{L}_{eq.DCR}=1800 fb^{-1}' ],
-              (25, -32, '1E14') : [20, ROOT.kGreen+1 ,  '25 #mum - #it{L}_{eq.DCR}=1300 fb^{-1}' ],
-              (25, -37, '1E14') : [20, ROOT.kBlue ,     '25 #mum - #it{L}_{eq.DCR}=1000 fb^{-1}' ],
+              (25, -32, '1E14') : [21, ROOT.kGreen+1 ,  '25 #mum - #it{L}_{eq.DCR}=1300 fb^{-1}' ],
+              (25, -37, '1E14') : [22, ROOT.kBlue ,     '25 #mum - #it{L}_{eq.DCR}=1000 fb^{-1}' ],
 }
 
 g = {}
@@ -107,13 +107,12 @@ c = ROOT.TCanvas('c_timeResolution_HPK_2E14_vs_Vov','c_timeResolution_HPK_2E14_v
 hPad = ROOT.gPad.DrawFrame(0.,40.,2.0,140.)
 hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
 hPad.Draw()
-#ROOT.gPad.SetGridx()
-#ROOT.gPad.SetGridy()
 ROOT.gPad.SetTicks(1)
 for cell in [25, 20]:
     for temp in [-40, -35, -30]:
         g[(cell,temp,'2E14')] = f[(cell,temp, '2E14')].Get('g_data_vs_Vov_average_HPK_2E14_%s_T%sC'%(names[cell, temp, '2E14'], str(temp)))
         g[(cell,temp,'2E14')].SetMarkerSize(1)
+        if (cell == 25 and temp == -30): g[(cell,temp,'2E14')].SetMarkerSize(1.2)
         g[(cell,temp,'2E14')].SetMarkerStyle(plotAttrs[(cell,temp,'2E14')][0])
         g[(cell,temp,'2E14')].SetMarkerColor(plotAttrs[(cell,temp,'2E14')][1])
         g[(cell,temp,'2E14')].SetLineColor(plotAttrs[(cell,temp,'2E14')][1])
@@ -125,13 +124,13 @@ tl2 = ROOT.TLatex()
 tl2.SetNDC()
 tl2.SetTextFont(42)
 tl2.SetTextSize(0.045)
-tl2.DrawLatex(0.58,0.25,'                            Type 2')
+tl2.DrawLatex(0.58,0.25,'                           Type 2')
 
 tl = ROOT.TLatex()
 tl.SetNDC()
 tl.SetTextFont(42)
 tl.SetTextSize(0.045)
-tl.DrawLatex(0.58,0.20,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+#tl.DrawLatex(0.58,0.20,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
 
 cms_logo = draw_logo()
 cms_logo.Draw()
@@ -144,21 +143,20 @@ c = ROOT.TCanvas('c_timeResolution_HPK_2E14_vs_staticPower','c_timeResolution_HP
 hPad = ROOT.gPad.DrawFrame(0.,40.,120.0,140.)
 hPad.SetTitle(";SiPM static power [mW]; time resolution [ps]")
 hPad.Draw()
-#ROOT.gPad.SetGridx()
-#ROOT.gPad.SetGridy()
 ROOT.gPad.SetTicks(1)
 for cell in [25, 20]:
     for temp in [-40, -35, -30]:
         g[(cell,temp,'2E14')] = f[(cell,temp, '2E14')].Get('g_data_vs_staticPower_average_HPK_2E14_%s_T%sC'%(names[cell, temp, '2E14'], str(temp)))
         g[(cell,temp,'2E14')].SetMarkerSize(1)
+        if (cell == 25 and temp == -30): g[(cell,temp,'2E14')].SetMarkerSize(1.2)
         g[(cell,temp,'2E14')].SetMarkerStyle(plotAttrs[(cell,temp,'2E14')][0])
         g[(cell,temp,'2E14')].SetMarkerColor(plotAttrs[(cell,temp,'2E14')][1])
         g[(cell,temp,'2E14')].SetLineColor(plotAttrs[(cell,temp,'2E14')][1])
         g[(cell,temp,'2E14')].Draw('plsame')
 leg.Draw()
 
-tl2.DrawLatex(0.58,0.25,'                            Type 2')
-tl.DrawLatex(0.58,0.20, '2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+tl2.DrawLatex(0.58,0.25,'                           Type 2')
+#tl.DrawLatex(0.58,0.20, '2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
 cms_logo = draw_logo()
 cms_logo.Draw()
 
@@ -166,7 +164,7 @@ line = ROOT.TLine(30., 40., 30., 140.)
 line.SetLineStyle(2)
 line.SetLineColor(ROOT.kGray+1)
 line.Draw()
-tl3 = ROOT.TLatex(0.38, 0.45, '#splitline{nominal power}{bugdet}')
+tl3 = ROOT.TLatex(0.38, 0.45, '#splitline{nominal}{operating point}')
 tl3.SetNDC()
 tl3.SetTextColor(ROOT.kGray+1)
 tl3.SetTextFont(42)
@@ -194,14 +192,13 @@ c = ROOT.TCanvas('c_timeResolution_HPK_1E14_vs_Vov','c_timeResolution_HPK_1E14_v
 hPad = ROOT.gPad.DrawFrame(0.,20.,2.0,100.)
 hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
 hPad.Draw()
-#ROOT.gPad.SetGridx()
-#ROOT.gPad.SetGridy()
 ROOT.gPad.SetTicks(1)
 for cell in [25]:
     #for temp in [-22, -27, -32, -37]:
     for temp in [-27, -32, -37]:
         g[(cell,temp,'1E14')] = f[(cell,temp, '1E14')].Get('g_data_vs_Vov_average_HPK_1E14_%s_T%sC'%(names[cell, temp, '1E14'], str(temp)))
         g[(cell,temp,'1E14')].SetMarkerSize(1)
+        if (cell == 25 and temp == -37): g[(cell,temp,'1E14')].SetMarkerSize(1.2)
         g[(cell,temp,'1E14')].SetMarkerStyle(plotAttrs[(cell,temp,'1E14')][0])
         g[(cell,temp,'1E14')].SetMarkerColor(plotAttrs[(cell,temp,'1E14')][1])
         g[(cell,temp,'1E14')].SetLineColor(plotAttrs[(cell,temp,'1E14')][1])
@@ -209,8 +206,8 @@ for cell in [25]:
         g[(cell,temp,'1E14')].Draw('plsame')
 leg.Draw()
 
-tl2.DrawLatex(0.58,0.25,'                            Type 1')
-tl.DrawLatex(0.58,0.20, '1 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+tl2.DrawLatex(0.58,0.25,'                           Type 1')
+#tl.DrawLatex(0.58,0.20, '1 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
 cms_logo = draw_logo()
 cms_logo.Draw()
 
@@ -222,22 +219,21 @@ c = ROOT.TCanvas('c_timeResolution_HPK_1E14_vs_staticPower','c_timeResolution_HP
 hPad = ROOT.gPad.DrawFrame(0.,20.,120.0,100.)
 hPad.SetTitle(";SiPM static power [mW];time resolution [ps]")
 hPad.Draw()
-#ROOT.gPad.SetGridx()
-#ROOT.gPad.SetGridy()
 ROOT.gPad.SetTicks(1)
 for cell in [25]:
     #for temp in [-22, -27, -32, -37]:
     for temp in [-27, -32, -37]:
         g[(cell,temp,'1E14')] = f[(cell,temp, '1E14')].Get('g_data_vs_staticPower_average_HPK_1E14_%s_T%sC'%(names[cell, temp, '1E14'], str(temp)))
         g[(cell,temp,'1E14')].SetMarkerSize(1)
+        if (cell == 25 and temp == -37): g[(cell,temp,'1E14')].SetMarkerSize(1.2)
         g[(cell,temp,'1E14')].SetMarkerStyle(plotAttrs[(cell,temp,'1E14')][0])
         g[(cell,temp,'1E14')].SetMarkerColor(plotAttrs[(cell,temp,'1E14')][1])
         g[(cell,temp,'1E14')].SetLineColor(plotAttrs[(cell,temp,'1E14')][1])
         g[(cell,temp,'1E14')].Draw('plsame')
 leg.Draw()
 
-tl2.DrawLatex(0.58,0.25,'                            Type 1')
-tl.DrawLatex(0.58,0.20, '1 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+tl2.DrawLatex(0.58,0.25,'                           Type 1')
+#tl.DrawLatex(0.58,0.20, '1 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
 line = ROOT.TLine(30., 20., 30., 100.)
 line.SetLineStyle(2)
 line.SetLineColor(ROOT.kGray+1)

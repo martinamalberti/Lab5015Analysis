@@ -32,7 +32,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 
-outdir = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/'
+outdir = '/eos/user/m/malberti/www/MTD/plotsForConferences2023/v2/'
 
 fnames = { 
     ('T2', 25, '0')    : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_FNAL_Mar23/timeResolution_vs_Vov_HPK_cellSizes/plots_timeResolution_HPK_nonIrr_TBMar23_cellSizes.root',
@@ -73,8 +73,8 @@ lumiMap = {
 
 
 plotAttrs = { ('T1', 25) :[20, ROOT.kGreen+1, 'Type1 + annealing at 60 #circC: 25 #mum'],
-              ('T2', 25) :[20, ROOT.kGray+2 , 'Type2 + annealing at 60 #circC: 25 #mum'],
-              ('T2', 20) :[20, ROOT.kGray+1 , 'Type2 + annealing at 60 #circC: 20 #mum'],
+              ('T2', 25) :[21, ROOT.kGray+2 , 'Type2 + annealing at 60 #circC: 25 #mum'],
+              ('T2', 20) :[22, ROOT.kGray+1 , 'Type2 + annealing at 60 #circC: 20 #mum'],
 }
 
 g_vs_lumi = {}
@@ -97,7 +97,7 @@ tdrLine = ROOT.TLine(0, 30, 4000, 65)
 tdrLine.SetLineStyle(2)
 tdrLine.SetLineColor(ROOT.kGray+2)
 
-leg = ROOT.TLegend(0.20, 0.70, 0.60, 0.89)
+leg = ROOT.TLegend(0.20, 0.65, 0.60, 0.89)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 leg.SetTextFont(42)
@@ -105,7 +105,7 @@ leg.SetTextSize(0.045)
 
 c = ROOT.TCanvas('c_timeResolution_vs_lumi','c_timeResolution_vs_lumi', 600, 500)
 hPad = ROOT.gPad.DrawFrame(0.,0.,4000.0,120.)
-hPad.SetTitle(";Integrated luminosity [fb^{-1}]; time resolution [ps]")
+hPad.SetTitle(";Integrated luminosity [fb^{ -1}]; time resolution [ps]")
 hPad.Draw()
 #ROOT.gPad.SetGridx()
 #ROOT.gPad.SetGridy()
@@ -114,19 +114,28 @@ ROOT.gPad.SetTicks(1)
 for typ in ['T1', 'T2']:
     for cell in [25, 20]:
         if ( g_vs_lumi[(typ, cell)].GetN() == 0 ): continue
-        g_vs_lumi[(typ,cell)].SetMarkerSize(1)
         g_vs_lumi[(typ,cell)].SetMarkerStyle(plotAttrs[(typ,cell)][0])
         g_vs_lumi[(typ,cell)].SetMarkerColor(plotAttrs[(typ,cell)][1])
         g_vs_lumi[(typ,cell)].SetLineColor(plotAttrs[(typ,cell)][1])
-        g_vs_lumi[(typ,cell)].Draw('p e 1 l same')
+        g_vs_lumi[(typ,cell)].SetMarkerSize(1)
+        if (g_vs_lumi[(typ,cell)].GetMarkerStyle()==22): g_vs_lumi[(typ,cell)].SetMarkerSize(1.2)
+        g_vs_lumi[(typ,cell)].Draw('p e1 l same')
         leg.AddEntry( g_vs_lumi[(typ,cell)], '%s'%plotAttrs[(typ,cell)][2], 'PL')
 
-leg.AddEntry( tdrLine, 'TDR', 'L')
-tdrLine.Draw()
+#leg.AddEntry( tdrLine, 'TDR', 'L')
+#tdrLine.Draw()
 leg.Draw()
 
 cms_logo = draw_logo()
 cms_logo.Draw()
 
+c.SaveAs(outdir+'%s_noTDR.png'%c.GetName())
+c.SaveAs(outdir+'%s_noTDR.pdf'%c.GetName())
+
+
+leg.AddEntry( tdrLine, 'TDR', 'L')
+tdrLine.Draw()
+
 c.SaveAs(outdir+'%s.png'%c.GetName())
 c.SaveAs(outdir+'%s.pdf'%c.GetName())
+
