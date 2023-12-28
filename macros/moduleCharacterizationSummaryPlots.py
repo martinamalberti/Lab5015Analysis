@@ -14,10 +14,10 @@ from VovsEff import *
 
 
 parser = argparse.ArgumentParser(description='Module characterization summary plots')
-#parser.add_argument("-r",  "--runs",          required=True, type=str, help="comma-separated list of runs to be processed")
 parser.add_argument("-i",  "--inputLabels",   required=True, type=str, help="comma-separated list of input labels")
 parser.add_argument("-m",  "--resMode",       required=True, type=int, help="resolution mode: 2 - tDiff, 1 - tAve")
 parser.add_argument("-o",  "--outFolder",     required=True, type=str, help="out folder")
+parser.add_argument("-v",  "--versionTOFHIR", required=True, type=str, help="TOFHIR version: TOFHIR2X or TOFHIR2C")
 args = parser.parse_args()
 
 
@@ -70,65 +70,67 @@ def getTimeResolution(h1_deltaT):
    #if (fitFunc.GetParameter(2) < 20): continue
    #if (fitFunc.GetParError(2) > 200): continue
    tRes = [ fitFunc.GetParameter(2),fitFunc.GetParError(2)]
-   print h1_deltaT.GetName(), fitFunc.GetParameter(2)
    return tRes
 
 
 # ====================================
 
-
 tofhir2b = False
-#tofhir2b = True
 
-# import file with VovEff and DCR
-#with open('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/Currents/VovsEff.json', 'r') as f:
-with open('/eos/user/m/malberti/www/MTD/TOFHIR2B/MTDTB_CERN_Jun22/Currents/VovsEff.json', 'r') as f:
-   data = json.load(f)   
+# INPUT
+inputdir = '/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_Jun2022/ANALYSIS/moduleCharacterization/' 
+print('Input dir: %s'%inputdir)
+#source = 'Laser'
+source = 'TB'
+
+# OUTPUT
+outdir  = '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/ModuleCharacterization/'
+outdir=outdir+args.outFolder
+#outFileName = inputdir+'/summaryPlots_'+args.outFolder+'.root'
+outFileName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/summaryPlots_'+args.outFolder+'.root'
+print('Saving root file ', outFileName)
+print('Saving plots in ', outdir)
+outfile = ROOT.TFile(outFileName, 'RECREATE' )
+
+# Import file with VovEff and DCR
+if (args.versionTOFHIR == 'TOFHIR2X'):
+   #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_Jun2022/VovsEff_TBJune2022.json', 'r') as f:
+   with open('/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/macros/VovsEff_TBJune2022.json', 'r') as f:
+      data = json.load(f)   
+#if (args.versionTOFHIR == 'TOFHIR2C'):
+   #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
+   #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C_v2.json', 'r') as f:
+   #   data = json.load(f)   
 
 
-source = 'Laser'
-#tResMin = 0
-#tResMax = 120
-#tResMaxTh = 200
-#vovMax = 7.5
-#tResMin = 0
-#tResMax = 180
-#tResMaxTh = 240
-#vovMax = 5 
+
+# ranges for plots
 tResMin = 0
-tResMax = 120
-tResMaxTh = 200
-vovMax = 6.0
+tResMax = 200
+tResMaxTh = 240
+vovMax = 3.0
+
 
 # create files list
 label_list = (args.inputLabels.split(','))
-print label_list
+print(label_list)
 
 # resolution mode : 0 : /1;  1: /sqrt(2) if CTR, 2: /2 if TDiff
 kscale = 2.
 if (args.resMode == 0): kscale = 1
 if (args.resMode == 1): kscale = math.sqrt(2)
 
-# output
-#outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
-#outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/'+args.outFolder+'.root'
-outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/Lab5015/ModuleCharacterization/'+args.outFolder
-outFileName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/'+args.outFolder+'.root'
-if (tofhir2b):
-    outdir = '/var/www/html/TOFHIR2B/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
-    outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/'+args.outFolder+'.root'
-print 'Saving plots in ', outdir
-outfile = ROOT.TFile(outFileName, 'RECREATE' )
-
-
 
 peaks = []
 enBins = []
 refPeak = 0
 if (source == 'Na22'):
-    peaks = [511, 1275]
-    enBins = [5, 7] ##??? non me li ricordo
-    refPeak = 511
+    #peaks = [511, 1275]
+    #enBins = [5, 7] ##??? non me li ricordo
+    #refPeak = 511
+    peaks = [1275]
+    enBins = [1] ##??? non me li ricordo
+    refPeak = 1275
 if (source == 'Laser'):
     peaks = [0]
     enBins = [1]
@@ -171,8 +173,6 @@ cols = { 0.90 : 48,
          5.00  : 12,
          7.00  : 15}
 
-
-
 # --- prepare output dir
 if (os.path.isdir(outdir) == False): 
     os.system('mkdir %s'%outdir)
@@ -180,10 +180,11 @@ os.system('mkdir %s/summaryPlots/'%outdir)
 os.system('mkdir %s/summaryPlots/tot/'%outdir)
 os.system('mkdir %s/summaryPlots/energy/'%outdir)
 os.system('mkdir %s/summaryPlots/timeResolution/'%outdir)
+os.system('mkdir %s/summaryPlots/timeResolution/fits/'%outdir)
     
 
 # -- ref threhsold
-thRef = 9
+thRef = 5
 
 # -- get list of bars, Vovs, thresholds to be analyzed
 bars = []
@@ -191,12 +192,8 @@ thresholds = []
 Vovs = [] 
 for label in label_list:
     inputFile = None
-    if (tofhir2b == False):
-       #inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-       inputFile = ROOT.TFile.Open('/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-    if (tofhir2b == True):
-        inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
-    listOfKeys = [key.GetName().replace('h1_deltaT_energyRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_energyRatioCorr_bar')]
+    inputFile = ROOT.TFile.Open(inputdir+'/moduleCharacterization_step2_%s.root'%label)
+    listOfKeys = [key.GetName().replace('h1_deltaT_totRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_totRatioCorr_bar')]
     for k in listOfKeys:
         barNum = int (k.split('_')[0][3:5])
         bars.append(barNum)
@@ -216,67 +213,33 @@ goodBars = {}
 VovsEff = {}
 plots_label = ''
 
-if ('528' in args.outFolder and tofhir2b==False):
-    plots_label = 'HPK + LYSO528 (prod5, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[5.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[2.50] = [0,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[1.50] = [0,3,7,8,9,10,11,13,14] 
+print('Vovs:',Vovs)
+print('Bars:',bars)
 
-if ('528' in args.outFolder and tofhir2b):
-    plots_label = 'HPK + LYSO528 (prod5, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[5.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[2.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
-    goodBars[1.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] 
 
-elif ('800' in args.outFolder):
-    plots_label = 'FBK + LYSO800 (prod5, type2)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[7.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[4.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.00] = [0,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15] 
-
-elif ('522' in args.outFolder):
-    plots_label = 'FBK + LYSO522 (prod5, type1)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[4.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.00] = [0,1,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15] 
-
-elif ('524' in args.outFolder):
-    plots_label = 'FBK + LYSO524 (prod5, type3)'
-    for vov in Vovs:
-        VovsEff[vov] = vov 
-    goodBars[4.00] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.50] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[3.00] = [0,1,3,4,5,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
-    goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15] 
-
+if ('528' in args.outFolder):
+   plots_label = 'HPK (15#mum) + LYSO528 (prod5, type2)'
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+      if (args.versionTOFHIR=='TOFHIR2C'): 
+         goodBars[vov] = bars
+      else:
+         goodBars[3.50] = [2,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[2.00] = [2,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[1.50] = [2,3,4,5,7,8,9,10,11,12,13] 
+         goodBars[1.00] = [2,3,4,5,7,8,9,10,11,12,13] 
 
 elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-40#circC'
     for ov in Vovs : 
-        VovsEff[ov] = getVovEffDCR(data, 'HPK_2E14_T-40C', ('%.02f'%ov))[0] 
+        VovsEff[ov] = getVovEffDCR(data, 'HPK_2E14_LYSO796_T-40C', ('%.02f'%ov))[0] 
         goodBars[ov] = [0,3,7,10,11,13,14,15]
 
 
 elif ('HPK_2E14_LYSO796_T-35C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-35#circC'
     for ov in Vovs : 
-       VovsEff[ov] = getVovEffDCR(data, 'HPK_2E14_T-35C', ('%.02f'%ov))[0] 
+       VovsEff[ov] = getVovEffDCR(data, 'HPK_2E14_LYSO796_T-35C', ('%.02f'%ov))[0] 
        goodBars[ov] = [0,3,7,10,11,13,14,15]
        if (tofhir2b== True): goodBars[ov] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,15] 
 
@@ -285,7 +248,6 @@ elif ('HPK_1E14_LYSO802_T-40C' in args.outFolder):
     for ov in Vovs : 
        VovsEff[ov]  = getVovEffDCR(data, 'HPK_1E14_T-40C', ('%.02f'%ov))[0]        
        goodBars[ov] = [0,3,7,10,11,13,14,15]
-
 
 elif ('HPK_1E14_LYSO802_T-35C' in args.outFolder):
     plots_label = 'HPK 1E14 + LYSO802 (prod9)  T=-35#circC'
@@ -300,7 +262,6 @@ elif ('HPK_1E14_LYSO802_T-35C' in args.outFolder):
     for ov in Vovs : 
        VovsEff[ov]  = getVovEffDCR(data, 'HPK_1E14_T-35C', ('%.02f'%ov))[0]        
        goodBars[ov] = [0,3,7,10,11,13,14,15]
-
 
 #CONF 8
 elif ('FBK_1E14_LYSO803_T-35C' in args.outFolder):
@@ -332,12 +293,11 @@ elif ('FBK_1E14_LYSO803_T-40C' in args.outFolder):
     goodBars[2.80] = [0,3,7,8,9,10,11,13,14,15]
     goodBars[3.60] = [0,3,7,8,9,10,11,13,14,15]
 
-
 #CONF 9.00
 elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
     plots_label = 'FBK 2E14 + LYSO797 (prod10)   T=-35#circC'
     for ov in Vovs : 
-       VovsEff[ov]  = getVovEffDCR(data, 'FBK_2E14_T-35C', ('%.02f'%ov))[0]        
+       VovsEff[ov]  = getVovEffDCR(data, 'FBK_2E14_LYSO797_T-35C', ('%.02f'%ov))[0]        
     goodBars[1.20] = [7,11,15]
     goodBars[1.40] = [0,3,7,10,11,13,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
@@ -352,27 +312,24 @@ elif ('FBK_2E14_LYSO797_T-35C' in args.outFolder):
 elif ('FBK_2E14_LYSO797_T-40C' in args.outFolder):
     plots_label = 'FBK 2E14 + LYSO797 (prod10)   T=-40#circC'
     for ov in Vovs : 
-       VovsEff[ov]  = getVovEffDCR(data, 'FBK_2E14_T-40C', ('%.02f'%ov))[0]        
+       VovsEff[ov]  = getVovEffDCR(data, 'FBK_2E14_LYSO797_T-40C', ('%.02f'%ov))[0]        
     goodBars[1.20] = [7,11,15]
     goodBars[1.60] = [0,3,7,10,11,13,14,15]
     goodBars[1.80] = [0,3,7,10,11,13,14,15]
     goodBars[2.00] = [0,3,7,10,11,13,14,15]
     goodBars[2.40] = [0,3,7,10,11,13,14,15]
     goodBars[3.00] = [0,3,7,9,10,11,13,14,15]
-
-
+    
 else:
-    for vov in Vovs:
-        VovsEff[vov] = vov
-        goodBars[vov] = bars 
-    print VovsEff
-
-
-
-print 'bars:', bars
-print 'good bars:', goodBars
-print 'Vovs:',Vovs
-print 'thresholds:', thresholds
+   for vov in Vovs:
+      VovsEff[vov] = vov
+      goodBars[vov] = bars 
+      print(VovsEff)
+      
+print ('bars:', bars)
+print ('good bars:', goodBars)
+print ('Vovs:',Vovs)
+print ('thresholds:', thresholds)
 
 
 # --- Summary graphs
@@ -404,6 +361,11 @@ g_deltaT_totRatioCorr_bestTh_vs_bar = {} # g [vov, energyBin]
 
 g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov = {} # g [bar, energyBin] 
 g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar = {} # g [vov, energyBin] 
+
+g_deltaT_totRatioCorr_bestTh_vs_vov_average = {} # g [energyBin]
+g_deltaT_energyRatioCorr_bestTh_vs_vov_average = {} # g [energyBin]
+g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average = {} # g [energyBin]
+
 
 for bar in bars:
    for l in ['L','R','L-R']:
@@ -445,18 +407,17 @@ for vov in Vovs:
         g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin] = ROOT.TGraphErrors()
         g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin] = ROOT.TGraphErrors()
 
+for enBin in enBins: 
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin] = ROOT.TGraphErrors()
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin] = ROOT.TGraphErrors()
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin] = ROOT.TGraphErrors()
+
 
 # --- Read the histograms from moduleCharacterization_step2 file
 for label in label_list:
-   print label
+   print (label)
    inputFile == None
-   if (tofhir2b == False):   
-      #inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-      inputFile = ROOT.TFile.Open('/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
-   if (tofhir2b == True):
-      inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
-
-   print '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label
+   inputFile = ROOT.TFile.Open(inputdir+'/moduleCharacterization_step2_%s.root'%label)
 
    for bar in bars:
       for l in ['L','R','L-R']:
@@ -543,49 +504,49 @@ for label in label_list:
             tRes_totCorr = {}
             tRes_energyCorr_totCorr = {}
             for enBin in enBins:
-               #h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               #h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
                #h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_energyRatioCorr_totRatioCorr_phaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_totRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin)) # placeholder
 
-               h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-
-               # energyRatio + phase corr
-               if (h1_deltaT_energyCorr == None): continue
-               if (h1_deltaT_energyCorr.GetEntries() < 200 ): continue
-               tRes_energyCorr[enBin] = getTimeResolution(h1_deltaT_energyCorr)
-               if ( tRes_energyCorr[enBin][0] < bestRes_energyCorr[bar, vov, enBin][0] ):
-                  #if ( ('1E14' in args.outFolder or  '2E14' in args.outFolder ) and VovsEff[vov] <= 1.50 and thr >= 13): continue
-                  bestRes_energyCorr[bar, vov, enBin] = tRes_energyCorr[enBin]
-               ctemp = ROOT.TCanvas()
-               h1_deltaT_energyCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr.GetBinContent(h1_deltaT_energyCorr.GetMaximumBin())*1.2)                
-               h1_deltaT_energyCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
                # totRatio + phase corr
                if (h1_deltaT_totCorr == None): continue
                if (h1_deltaT_totCorr.GetEntries() < 200 ): continue
                tRes_totCorr[enBin] = getTimeResolution(h1_deltaT_totCorr)
                if ( tRes_totCorr[enBin][0] < bestRes_totCorr[bar, vov, enBin][0]):
-                  #if ( ('1E14' in args.outFolder or  '2E14' in args.outFolder ) and VovsEff[vov] <= 1.50 and thr >= 13): continue
+                  if ( ('1E14' in args.outFolder or  '2E14' in args.outFolder ) and VovsEff[vov] <= 1.50 and thr >= 13): continue
                   bestRes_totCorr[bar, vov, enBin] = tRes_totCorr[enBin]
                ctemp = ROOT.TCanvas()
                h1_deltaT_totCorr.GetYaxis().SetRangeUser(0, h1_deltaT_totCorr.GetBinContent(h1_deltaT_totCorr.GetMaximumBin())*1.2)                
                h1_deltaT_totCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               #ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+
+
+               # energyRatio + phase corr
+               if (h1_deltaT_energyCorr == None): continue
+               if (h1_deltaT_energyCorr.GetEntries() < 200 ): continue
+               tRes_energyCorr[enBin] = getTimeResolution(h1_deltaT_energyCorr)
+               if ( tRes_energyCorr[enBin][0] < bestRes_energyCorr[bar, vov, enBin][0] ):
+                  if ( ('1E14' in args.outFolder or  '2E14' in args.outFolder ) and VovsEff[vov] <= 1.50 and thr >= 13): continue
+                  bestRes_energyCorr[bar, vov, enBin] = tRes_energyCorr[enBin]
+               ctemp = ROOT.TCanvas()
+               h1_deltaT_energyCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr.GetBinContent(h1_deltaT_energyCorr.GetMaximumBin())*1.2)                
+               h1_deltaT_energyCorr.Draw()                
+               #ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
 
                # energyRatio + totRatio + phase corr
                if (h1_deltaT_energyCorr_totCorr == None): continue
                if (h1_deltaT_energyCorr_totCorr.GetEntries() < 200 ): continue
                tRes_energyCorr_totCorr[enBin] = getTimeResolution(h1_deltaT_energyCorr_totCorr)
                if ( tRes_energyCorr_totCorr[enBin][0] < bestRes_energyCorr_totCorr[bar, vov, enBin][0]):
-                  #if ( ('1E14' in args.outFolder or  '2E14' in args.outFolder ) and VovsEff[vov] <= 1.50 and thr >= 13): continue
+                  if ( ('1E14' in args.outFolder or  '2E14' in args.outFolder ) and VovsEff[vov] <= 1.50 and thr >= 13): continue
                   bestRes_energyCorr_totCorr[bar, vov, enBin] = tRes_energyCorr_totCorr[enBin]
                ctemp = ROOT.TCanvas()
                h1_deltaT_energyCorr_totCorr.GetYaxis().SetRangeUser(0, h1_deltaT_energyCorr_totCorr.GetBinContent(h1_deltaT_energyCorr_totCorr.GetMaximumBin())*1.2)
                h1_deltaT_energyCorr_totCorr.Draw()                
-               ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+               #ctemp.SaveAs(outdir+'/summaryPlots/timeResolution/fits/'+'/c_h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d.png'%(bar, vov, thr, enBin))
+
 
                # graphs vs threshold
                g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].SetPoint(g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].GetN(), thr, tRes_energyCorr[enBin][0]/kscale )
@@ -644,6 +605,25 @@ for label in label_list:
                g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].SetPointError(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].GetN()-1, 0, (bestRes_energyCorr_totCorr[bar, vov, enBin][1])/kscale)            
                
 
+# fill graphs with average tRes vs OV
+for enBin in enBins:
+   for vov in Vovs:
+      fitpol0 = ROOT.TF1('fitpol0','pol0',-1,16) 
+      g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitpol0,'QSN')
+      ave, err = [fitpol0.GetParameter(0),fitpol0.GetParError(0)]
+      g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetPoint(g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].GetN(), VovsEff[vov], ave)
+      g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetPointError(g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].GetN()-1, 0, err)
+
+      g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitpol0,'QSN')
+      ave, err = [fitpol0.GetParameter(0),fitpol0.GetParError(0)]
+      g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetPoint(g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].GetN(), VovsEff[vov], ave)
+      g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetPointError(g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].GetN()-1, 0, err)
+
+      g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitpol0,'QSN')
+      ave, err = [fitpol0.GetParameter(0),fitpol0.GetParError(0)]
+      g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetPoint(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].GetN(), VovsEff[vov], ave)
+      g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetPointError(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].GetN()-1, 0, err)
+      
 
 # -- Draw
 latex = ROOT.TLatex(0.18,0.94,'%s'%(plots_label))
@@ -664,6 +644,7 @@ for bar in bars:
     leg.SetFillStyle(0)
     for i, vov in enumerate(Vovs):
         for l in ['L','R']:
+            g_tot_vs_th[bar, l, vov].Sort()
             g_tot_vs_th[bar, l, vov].SetMarkerStyle(20)
             if (l == 'R'): g_tot_vs_th[bar, l, vov].SetMarkerStyle(24)
             g_tot_vs_th[bar, l, vov].SetMarkerColor(i+1)
@@ -678,7 +659,7 @@ for bar in bars:
 
     # -- tot vs Vov
     ctot2 = ROOT.TCanvas('c_tot_vs_Vov_bar%.02d'%bar)
-    hPad2 = ROOT.TH2F('hPad2','', 10, 1., vovMax, 40, 0.,40.)
+    hPad2 = ROOT.TH2F('hPad2','', 10, 0., vovMax, 40, 0.,40.)
     hPad2.SetTitle(";V_{OV}^{eff} [V];ToT [ns]")
     hPad2.Draw()
     ctot2.SetGridy()
@@ -687,6 +668,7 @@ for bar in bars:
     leg.SetFillStyle(0)
     for i, thr in enumerate(thresholds):
         for l in ['L','R']:
+            g_tot_vs_vov[bar,l, thr].Sort()
             g_tot_vs_vov[bar,l, thr].SetMarkerStyle(20)
             if (l == 'R'): g_tot_vs_vov[bar, l, thr].SetMarkerStyle(24)
             g_tot_vs_vov[bar,l, thr].SetMarkerColor(i+1)
@@ -709,6 +691,7 @@ for bar in bars:
     leg.SetFillStyle(0)
     for i, vov in enumerate(Vovs):
         for l in ['L','R']:
+            g_energy_vs_th[bar, l, vov, refPeak].Sort()
             g_energy_vs_th[bar, l, vov, refPeak].SetMarkerStyle(20)
             if (l == 'R'): g_energy_vs_th[bar, l, vov, refPeak].SetMarkerStyle(24)
             g_energy_vs_th[bar, l, vov, refPeak].SetMarkerColor(i+1)
@@ -722,7 +705,7 @@ for bar in bars:
 
     # -- energy vs Vov
     cen2 = ROOT.TCanvas('c_energy_vs_Vov_bar%.02d'%bar)
-    hPadEn2 = ROOT.TH2F('hPadEn2','', 10, 1., vovMax,50, 0.,1000.)
+    hPadEn2 = ROOT.TH2F('hPadEn2','', 10, 0., vovMax,50, 0.,1000.)
     hPadEn2.SetTitle(";V_{OV}^{eff} [V]; energy")
     hPadEn2.Draw()
     cen2.SetGridy()
@@ -731,6 +714,7 @@ for bar in bars:
     leg.SetFillStyle(0)
     for i, thr in enumerate(thresholds):
         for l in ['L','R']:
+            g_energy_vs_vov[bar,l, thr, refPeak].Sort()
             g_energy_vs_vov[bar,l, thr, refPeak].SetMarkerStyle(20)
             if (l == 'R'): g_energy_vs_vov[bar, l, thr, refPeak].SetMarkerStyle(24)
             g_energy_vs_vov[bar,l, thr, refPeak].SetMarkerColor(i+1)
@@ -754,7 +738,7 @@ for bar in bars:
         leg.SetBorderSize(0)
         leg.SetFillStyle(0)
         for i, vov in enumerate(Vovs):
-            #print 'Vov, entries = ', vov, g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].GetN()
+            #print ('Vov, entries = ', vov, g_deltaT_energyRatioCorr_vs_th[bar, vov, enBin].GetN())
             g_deltaT_totRatioCorr_vs_th[bar, vov, enBin].SetMarkerStyle(20)
             g_deltaT_totRatioCorr_vs_th[bar, vov, enBin].SetMarkerColor(cols[vov])
             g_deltaT_totRatioCorr_vs_th[bar, vov, enBin].SetLineColor(cols[vov])
@@ -776,12 +760,12 @@ for bar in bars:
         latex.Draw('same')
         ctres1.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres1.GetName()+'.png')
         ctres1.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres1.GetName()+'.pdf')
-        hPadT1.Delete()   
+        hPadT1.Delete()
 
 
         # -- time resolution vs Vov
         ctres2 = ROOT.TCanvas('c_tRes_energyRatioCorr_vs_Vov_bar%.02d_enBin%02d'%(bar,enBin))
-        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.5, vovMax, 10, tResMin,tResMax)
+        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.0, vovMax, 10, tResMin,tResMax)
         hPadT2.SetTitle(";V_{OV}^{eff} [V];#sigma_{t} [ps]")
         hPadT2.Draw()
         ctres2.SetGridy()
@@ -814,7 +798,7 @@ for bar in bars:
 
         # -- time resolution vs Vov at the best Th
         ctres2 = ROOT.TCanvas('c_tRes_energyRatioCorr_bestTh_vs_Vov_bar%.02d_enBin%02d'%(bar,enBin))
-        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.5, vovMax,10, tResMin,tResMax)
+        hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.0, vovMax,10, tResMin,tResMax)
         hPadT2.SetTitle(";V_{OV}^{eff} [V];#sigma_{t} [ps]")
         hPadT2.Draw()
         ctres2.SetGridy()
@@ -839,82 +823,109 @@ for bar in bars:
         ctres2.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres2.GetName()+'.pdf')
         hPadT2.Delete()   
 
+# average time resolution vs OV
+for enBin in enBins:
+   ctres2 = ROOT.TCanvas('c_tRes_totRatioCorr_bestTh_vs_Vov_enBin%02d_average'%(enBin))
+   hPadT2 = ROOT.TH2F('hPadT2','', 6, 0.0, vovMax,10, tResMin,tResMax)
+   hPadT2.SetTitle(";V_{OV}^{eff} [V];#sigma_{t} [ps]")
+   hPadT2.Draw()
+   ctres2.SetGridy()
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerStyle(20)
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerColor(1)
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].SetLineColor(1)
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].Draw('plsame')
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerStyle(24)
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerColor(1)
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].SetLineColor(1)
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].Draw('plsame')
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerStyle(34)
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetMarkerColor(1)
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].SetLineColor(1)
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].Draw('plsame')
+   latex.Draw('same')
+   outfile.cd() 
+   g_deltaT_energyRatioCorr_bestTh_vs_vov_average[enBin].Write('g_deltaT_energyRatioCorr_bestTh_vs_vov_enBin%02d_average'%(enBin))
+   g_deltaT_totRatioCorr_bestTh_vs_vov_average[enBin].Write('g_deltaT_totRatioCorr_bestTh_vs_vov_enBin%02d_average'%(enBin))
+   g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_average[enBin].Write('g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_vov_enBin%02d_average'%(enBin))
+   ctres2.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres2.GetName()+'.png')
+   ctres2.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres2.GetName()+'.pdf')
+   hPadT2.Delete()   
+   
 # -- plots vs bar
 
 # -- tot vs bar 
 for i, vov in enumerate(Vovs):
-    ctot3 = ROOT.TCanvas('c_tot_vs_bar_Vov%.02f'%vov)
-    hPad3 = ROOT.TH2F('hPad3','', 100, -0.5, 15.5,40, 0.,40.)
-    hPad3.SetTitle("; bar; ToT [ns]")
-    hPad3.Draw()
-    ctot3.SetGridy()
-    leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
-    leg.SetBorderSize(0)
-    leg.SetFillStyle(0)
-    for i, vov in enumerate(Vovs):
-        for l in ['L','R']:
-            g_tot_vs_bar[l, vov, thRef].SetMarkerStyle(20)
-            if (l == 'R'): g_tot_vs_bar[l, vov, thRef].SetMarkerStyle(24)
-            g_tot_vs_bar[l, vov, thRef].SetMarkerColor(cols[vov])
-            g_tot_vs_bar[l, vov, thRef].SetLineColor(cols[vov])
-            g_tot_vs_bar[l, vov, thRef].Draw('plsame')
-        leg.AddEntry(g_tot_vs_bar['L', vov, thRef], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
-    leg.Draw()
-    ctot3.SaveAs(outdir+'/summaryPlots/tot/'+ctot3.GetName()+'.png')
-    ctot3.SaveAs(outdir+'/summaryPlots/tot/'+ctot3.GetName()+'.pdf')    
-    hPad3.Delete()
+   ctot3 = ROOT.TCanvas('c_tot_vs_bar_Vov%.02f'%vov)
+   hPad3 = ROOT.TH2F('hPad3','', 100, -0.5, 15.5,40, 0.,40.)
+   hPad3.SetTitle("; bar; ToT [ns]")
+   hPad3.Draw()
+   ctot3.SetGridy()
+   leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
+   leg.SetBorderSize(0)
+   leg.SetFillStyle(0)
+   for l in ['L','R']:
+      g_tot_vs_bar[l, vov, thRef].Sort()
+      g_tot_vs_bar[l, vov, thRef].SetMarkerStyle(20)
+      if (l == 'R'): g_tot_vs_bar[l, vov, thRef].SetMarkerStyle(24)
+      g_tot_vs_bar[l, vov, thRef].SetMarkerColor(cols[vov])
+      g_tot_vs_bar[l, vov, thRef].SetLineColor(cols[vov])
+      g_tot_vs_bar[l, vov, thRef].Draw('plsame')
+      leg.AddEntry(g_tot_vs_bar['L', vov, thRef], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
+   leg.Draw()
+   ctot3.SaveAs(outdir+'/summaryPlots/tot/'+ctot3.GetName()+'.png')
+   ctot3.SaveAs(outdir+'/summaryPlots/tot/'+ctot3.GetName()+'.pdf')    
+   hPad3.Delete()
 
 # -- energy vs bar
 for i, vov in enumerate(Vovs):
-    cen3 = ROOT.TCanvas('c_energy_vs_bar_Vov%.02f'%vov)
-    #hPadEn3 = ROOT.TH2F('hPadEn3','', 100, -0.5, 15.5, 40, 0.,1000.)
-    hPadEn3 = ROOT.TH2F('hPadEn3','', 100, -0.5, 15.5, 40, 0.,200.)
-    hPadEn3.SetTitle("; bar; energy")
-    hPadEn3.Draw()
-    cen3.SetGridy()
-    leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
-    leg.SetBorderSize(0)
-    leg.SetFillStyle(0)
-    for i, vov in enumerate(Vovs):
-        for l in ['L','R']:
-            g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerStyle(20)
-            if (l == 'R'): g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerStyle(24)
-            g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerColor(cols[vov])
-            g_energy_vs_bar[l, vov, thRef, refPeak].SetLineColor(cols[vov])
-            g_energy_vs_bar[l, vov, thRef, refPeak].Draw('plsame')
-            outfile.cd()  
-            g_energy_vs_bar[l, vov, thRef, refPeak].Write('g_energy%s_vs_bar_Vov%.02f_th%02d'%(l,vov,thRef))
-        leg.AddEntry(g_energy_vs_bar['L', vov, thRef, refPeak], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
-    leg.Draw()
-    cen3.SaveAs(outdir+'/summaryPlots/energy/'+cen3.GetName()+'.png')
-    cen3.SaveAs(outdir+'/summaryPlots/energy/'+cen3.GetName()+'.pdf')    
-    hPadEn3.Delete()
+   cen3 = ROOT.TCanvas('c_energy_vs_bar_Vov%.02f'%vov)
+   hPadEn3 = ROOT.TH2F('hPadEn3','', 100, -0.5, 15.5, 40, 0.,1000.)
+   hPadEn3.SetTitle("; bar; energy")
+   hPadEn3.Draw()
+   cen3.SetGridy()
+   leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
+   leg.SetBorderSize(0)
+   leg.SetFillStyle(0)
+   for l in ['L','R', 'L-R']:
+      g_energy_vs_bar[l, vov, thRef, refPeak].Sort()
+      g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerStyle(20)
+      if (l == 'R'): g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerStyle(24)
+      g_energy_vs_bar[l, vov, thRef, refPeak].SetMarkerColor(cols[vov])
+      g_energy_vs_bar[l, vov, thRef, refPeak].SetLineColor(cols[vov])
+      g_energy_vs_bar[l, vov, thRef, refPeak].Draw('plsame')
+      outfile.cd()  
+      g_energy_vs_bar[l, vov, thRef, refPeak].Write('g_energy%s_vs_bar_Vov%.02f_th%02d'%(l,vov,thRef))
+      leg.AddEntry(g_energy_vs_bar['L', vov, thRef, refPeak], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
+   leg.Draw()
+   cen3.SaveAs(outdir+'/summaryPlots/energy/'+cen3.GetName()+'.png')
+   cen3.SaveAs(outdir+'/summaryPlots/energy/'+cen3.GetName()+'.pdf')    
+   hPadEn3.Delete()
 
 # -- time resolution vs bar at the ref threshold
-for enBin in enBins:
-    ctres3 = ROOT.TCanvas('c_tRes_energyRatioCorr_refTh_vs_bar_Vov%.02f_enBin%02d'%(vov,enBin))
-    hPadT3 = ROOT.TH2F('hPadT3','', 100, -0.5, 15.5,100, tResMin,tResMax)
-    hPadT3.SetTitle("; bar; #sigma_{t}[ps]")
-    hPadT3.Draw()
-    ctres3.SetGridy()
-    #leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
-    leg = ROOT.TLegend(0.70, 0.18, 0.90, 0.45)
-    leg.SetBorderSize(0)
-    leg.SetFillStyle(0)
-    for i, vov in enumerate(Vovs):
-        g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerStyle(20)
-        g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerColor(cols[vov])
-        g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetLineColor(cols[vov])
-        g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].Draw('psame')
-        outfile.cd() 
-        g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].Write('g_deltaT_energyRatioCorr_vs_bar__Vov%.02f_th%02d'%(vov,thRef))
-        g_deltaT_totRatioCorr_vs_bar[vov, thRef, enBin].Write('g_deltaT_totRatioCorr_vs_bar__Vov%.02f_th%02d'%(vov,thRef))
-        leg.AddEntry(g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
-    leg.Draw()
-    latex.Draw('same')
-    ctres3.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres3.GetName()+'.png')
-    ctres3.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres3.GetName()+'.pdf')    
-    hPadT3.Delete()  
+for i, vov in enumerate(Vovs):
+   for enBin in enBins:
+      ctres3 = ROOT.TCanvas('c_tRes_energyRatioCorr_refTh_vs_bar_Vov%.02f_enBin%02d'%(vov,enBin))
+      hPadT3 = ROOT.TH2F('hPadT3','', 100, -0.5, 15.5,100, tResMin,tResMax)
+      hPadT3.SetTitle("; bar; #sigma_{t}[ps]")
+      hPadT3.Draw()
+      ctres3.SetGridy()
+      #leg = ROOT.TLegend(0.70, 0.50, 0.89, 0.89)
+      leg = ROOT.TLegend(0.70, 0.18, 0.90, 0.45)
+      leg.SetBorderSize(0)
+      leg.SetFillStyle(0)
+      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerStyle(20)
+      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetMarkerColor(cols[vov])
+      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].SetLineColor(cols[vov])
+      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].Draw('psame')
+      outfile.cd() 
+      g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin].Write('g_deltaT_energyRatioCorr_vs_bar__Vov%.02f_th%02d'%(vov,thRef))
+      g_deltaT_totRatioCorr_vs_bar[vov, thRef, enBin].Write('g_deltaT_totRatioCorr_vs_bar__Vov%.02f_th%02d'%(vov,thRef))
+      leg.AddEntry(g_deltaT_energyRatioCorr_vs_bar[vov, thRef, enBin], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
+   leg.Draw()
+   latex.Draw('same')
+   ctres3.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres3.GetName()+'.png')
+   ctres3.SaveAs(outdir+'/summaryPlots/timeResolution/'+ctres3.GetName()+'.pdf')    
+   hPadT3.Delete()  
 
 # -- time resolution vs bar at the best threshold
 for enBin in enBins:
@@ -931,14 +942,13 @@ for enBin in enBins:
       leg.SetNColumns(2);
       leg.SetColumnSeparation(0.2);
    for i, vov in enumerate(Vovs):
-      print g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].GetN()
-      g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].SetMarkerStyle(20)
+      g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].SetMarkerStyle(24)
       g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].SetMarkerColor(cols[vov])
       g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].SetLineColor(cols[vov])
       g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].Draw('psame')
       fitRes = ROOT.TF1('fitRes','pol0',0,16)
       g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitRes,'QRN')
-      print 'energy Corr. ===> Vov = %0.02f --> Average tRes = %.01f, spread (RMS) of tRes = %.01f %%'%(vov, fitRes.GetParameter(0), 100*g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].GetRMS(2)/g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].GetMean(2))
+      print ('energy Corr. ===> Vov = %0.02f --> Average tRes = %.01f, spread (RMS) of tRes = %.01f %%'%(vov, fitRes.GetParameter(0), 100*g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].GetRMS(2)/g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].GetMean(2)))
       leg.AddEntry(g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
       outfile.cd()
       g_deltaT_energyRatioCorr_bestTh_vs_bar[vov, enBin].Write('g_deltaT_energyRatioCorr_bestTh_vs_bar_Vov%.02f_enBin%02d'%(vov, enBin))
@@ -961,13 +971,13 @@ for enBin in enBins:
       leg.SetNColumns(2);
       leg.SetColumnSeparation(0.2);
    for i, vov in enumerate(Vovs):
-      g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].SetMarkerStyle(24)
+      g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].SetMarkerStyle(20)
       g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].SetMarkerColor(cols[vov])
       g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].SetLineColor(cols[vov])
       g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].Draw('psame')
       fitRes = ROOT.TF1('fitRes','pol0',0,16)
       g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitRes,'QRN')
-      print 'Tot Corr     === >Vov = %0.02f --> Average tRes = %.01f, spread (RMS) of tRes = %.01f %%'%(vov, fitRes.GetParameter(0), 100*g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].GetRMS(2)/g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].GetMean(2))
+      print ('Tot Corr     === >Vov = %0.02f --> Average tRes = %.01f, spread (RMS) of tRes = %.01f %%'%(vov, fitRes.GetParameter(0), 100*g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].GetRMS(2)/g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].GetMean(2)))
       leg.AddEntry(g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
       outfile.cd()
       g_deltaT_totRatioCorr_bestTh_vs_bar[vov, enBin].Write('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.02f_enBin%02d'%(vov, enBin))
@@ -997,7 +1007,7 @@ for enBin in enBins:
       g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].Draw('psame')
       fitRes = ROOT.TF1('fitRes','pol0',0,16)
       g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].Fit(fitRes,'QRN')
-      print 'en.+Tot corr === Vov = %0.02f --> Average tRes = %.01f, spread (RMS) of tRes = %.01f %%'%(vov, fitRes.GetParameter(0), 100*g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].GetRMS(2)/g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].GetMean(2))
+      print ('en.+Tot corr === Vov = %0.02f --> Average tRes = %.01f, spread (RMS) of tRes = %.01f %%'%(vov, fitRes.GetParameter(0), 100*g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].GetRMS(2)/g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].GetMean(2)))
       leg.AddEntry(g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin], 'V_{OV}^{eff} = %.02f V'%VovsEff[vov], 'PL')
       outfile.cd()
       g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar[vov, enBin].Write('g_deltaT_energyRatioCorr_totRatioCorr_bestTh_vs_bar_Vov%.02f_enBin%02d'%(vov, enBin))
@@ -1010,4 +1020,3 @@ for enBin in enBins:
 outfile.Close()
 
 #raw_input('OK?')
-

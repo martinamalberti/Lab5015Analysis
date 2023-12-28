@@ -9,7 +9,7 @@ import os
 import numpy
 from collections import OrderedDict 
 
-from SiPM import *
+from SiPM_base import *
 
 aldos = ['A', 'B']
 
@@ -33,20 +33,36 @@ args = parser.parse_args()
 ### edit here
 ################################
 
-confs = [ '7.00']
+confs = [ '6.00',
+          '6.01',
+          '9.00',
+          '9.01']
 
 temps = {}
-temps['7.00'] = -35.
+temps['6.00'] = -40.
+temps['6.01'] = -35.
+temps['9.00'] = -35.
+temps['9.01'] = -40.
 
 sipmTypes = {}
-sipmTypes['7.00'] = 'HPK-MS' #15 um 
+sipmTypes['6.00'] = 'HPK-MS' #15 um 
+sipmTypes['6.01'] = 'HPK-MS' #15 um
+sipmTypes['9.00'] = 'FBK-W4C' #15 um 
+sipmTypes['9.01'] = 'FBK-W4C' #15 um 
+
 
 labels = {}
-labels['7.00'] = 'HPK_1E14_LYSO802'
+labels['6.00'] = 'HPK_2E14_LYSO796'
+labels['6.01'] = 'HPK_2E14_LYSO796'
+labels['9.00'] = 'FBK_2E14_LYSO797'
+labels['9.01'] = 'FBK_2E14_LYSO797'
 
 
 gainDrops = {}
-gainDrops['7.00'] = 0.04
+gainDrops['6.00'] = 0.08
+gainDrops['6.01'] = 0.08
+gainDrops['9.00'] = 0.08
+gainDrops['9.01'] = 0.08
 
 
 
@@ -80,7 +96,7 @@ for conf in confs:
         
             infilenames = glob.glob('%s/LOGS/logs_%s/logIV*_ASIC%d_ALDO%s_ch%d_*.root'%(inputfolder,conf,args.asic,aldo,channelMap[(args.asic,aldo)]))
             print ('%s/LOGS/logs_%s/logIV*_ASIC%d_ALDO%s_ch%d_*.root'%(inputfolder,conf,args.asic,aldo,channelMap[(args.asic,aldo)]))
-            print infilenames
+            print(infilenames)
             
             VbiasList = []
             
@@ -132,9 +148,7 @@ for conf in confs:
                 
 outfile.Close()
 
-#with open('VovsEff.json', 'w') as fp:
 with open('VovsEff_TBJune2022.json', 'w') as fp:
-#with open('VovsEff_TOFHIR2C.json', 'w') as fp:
         json.dump(output_dict, fp, indent=2)
 
 
