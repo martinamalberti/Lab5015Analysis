@@ -81,23 +81,24 @@ tofhir2b = False
 #tofhir2b = True
 
 # import file with VovEff and DCR
-with open('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/Currents/VovsEff.json', 'r') as f:
+#with open('/var/www/html/TOFHIR2X/MTDTB_CERN_June22/Currents/VovsEff.json', 'r') as f:
+with open('/eos/user/m/malberti/www/MTD/TOFHIR2B/MTDTB_CERN_Jun22/Currents/VovsEff.json', 'r') as f:
    data = json.load(f)   
 
 
-source = 'TB'
-tResMin = 0
-tResMax = 120
-tResMaxTh = 200
-vovMax = 7.5
+source = 'Laser'
+#tResMin = 0
+#tResMax = 120
+#tResMaxTh = 200
+#vovMax = 7.5
 #tResMin = 0
 #tResMax = 180
 #tResMaxTh = 240
 #vovMax = 5 
-#tResMin = 0
-#tResMax = 200
-#tResMaxTh = 250
-#vovMax = 3.0
+tResMin = 0
+tResMax = 120
+tResMaxTh = 200
+vovMax = 6.0
 
 # create files list
 label_list = (args.inputLabels.split(','))
@@ -109,8 +110,10 @@ if (args.resMode == 0): kscale = 1
 if (args.resMode == 1): kscale = math.sqrt(2)
 
 # output
-outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
-outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/'+args.outFolder+'.root'
+#outdir = '/var/www/html/TOFHIR2X/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
+#outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/'+args.outFolder+'.root'
+outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2X/Lab5015/ModuleCharacterization/'+args.outFolder
+outFileName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/'+args.outFolder+'.root'
 if (tofhir2b):
     outdir = '/var/www/html/TOFHIR2B/MTDTB_CERN_June22/ModuleCharacterization/'+args.outFolder
     outFileName = '/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/'+args.outFolder+'.root'
@@ -189,7 +192,8 @@ Vovs = []
 for label in label_list:
     inputFile = None
     if (tofhir2b == False):
-        inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+       #inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+       inputFile = ROOT.TFile.Open('/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
     if (tofhir2b == True):
         inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
     listOfKeys = [key.GetName().replace('h1_deltaT_energyRatioCorr_','') for key in ROOT.gDirectory.GetListOfKeys() if key.GetName().startswith('h1_deltaT_energyRatioCorr_bar')]
@@ -447,7 +451,8 @@ for label in label_list:
    print label
    inputFile == None
    if (tofhir2b == False):   
-      inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+      #inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
+      inputFile = ROOT.TFile.Open('/afs/cern.ch/work/m/malberti/MTD/TBatH8June2022/Lab5015Analysis/plots/moduleCharacterization_step2_%s.root'%label)
    if (tofhir2b == True):
       inputFile = ROOT.TFile.Open('/home/cmsdaq/Lab5015Analysis_new/martina_TB_CERN_June22/Lab5015Analysis/plots_tofhir2b/moduleCharacterization_step2_%s.root'%label)
 
@@ -538,13 +543,13 @@ for label in label_list:
             tRes_totCorr = {}
             tRes_energyCorr_totCorr = {}
             for enBin in enBins:
-               h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_energyRatioCorr_totRatioCorr_phaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               #h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               #h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioPhaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               #h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_energyRatioCorr_totRatioCorr_phaseCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
 
-               #h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               #h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
-               #h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               h1_deltaT_totCorr    = inputFile.Get('h1_deltaT_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               h1_deltaT_energyCorr = inputFile.Get('h1_deltaT_energyRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
+               h1_deltaT_energyCorr_totCorr = inputFile.Get('h1_deltaT_energyRatioCorr_totRatioCorr_bar%02dL-R_Vov%.02f_th%02d_energyBin%02d'%(bar, vov, thr, enBin))
 
                # energyRatio + phase corr
                if (h1_deltaT_energyCorr == None): continue

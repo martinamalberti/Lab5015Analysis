@@ -87,7 +87,8 @@ int main(int argc, char** argv)
     
     for(int run = runMin; run <= runMax; ++run) {
       std::string fileName;
-      if( !usePedestals ) fileName = Form("%s/%04d/*_e.root",inputDir.c_str(),run);
+      if( !usePedestals ) fileName = Form("%s/%s%04d_*e.root",inputDir.c_str(),fileBaseName.c_str(),run);
+      //if( !usePedestals ) fileName = Form("%s/%04d/*_e.root",inputDir.c_str(),run);
       //else                fileName = Form("%s/%s%04d_*ped_e.root",inputDir.c_str(),fileBaseName.c_str(),run);
       else                fileName = Form("%s/%04d/*ped_e.root",inputDir.c_str(),run);
       std::cout << ">>> Adding file " << fileName << std::endl;
@@ -104,10 +105,13 @@ int main(int argc, char** argv)
      
   //--- define channels (read mapping from the configuration file)
   std::vector<unsigned int> channelMapping = opts.GetOpt<std::vector<unsigned int> >("Channels.channelMapping");
+  std::vector<float> totOffsets = opts.GetOpt<std::vector<float> >("Channels.totOffsets");
   
   int chL[16];
   int chR[16];
-  
+  float totOffsetL[16];
+  float totOffsetR[16];    
+
   for(unsigned int iBar = 0; iBar < channelMapping.size()/2; ++iBar){
     if(opts.GetOpt<int>("Channels.array")==0){
       chL[iBar] = channelMapping[iBar*2+0];
@@ -117,6 +121,8 @@ int main(int argc, char** argv)
       chL[iBar] = channelMapping[iBar*2+0]+64;
       chR[iBar] = channelMapping[iBar*2+1]+64;
     }
+    totOffsetL[iBar] = totOffsets[iBar*2+0];                                                                                                                                                                 
+    totOffsetR[iBar] = totOffsets[iBar*2+1];
     std::cout << "Bar: " << iBar << "   chL: "<< chL[iBar] << "    chR: " <<chR[iBar] <<std::endl;
   }
   
@@ -454,8 +460,8 @@ int main(int argc, char** argv)
 	  
 	qfineL[iBar]=(*qfine)[channelIdx[chL[iBar]]];
 	qfineR[iBar]=(*qfine)[channelIdx[chR[iBar]]];
-	totL[iBar]=0.001*(*tot)[channelIdx[chL[iBar]]];
-	totR[iBar]=0.001*(*tot)[channelIdx[chR[iBar]]];
+	totL[iBar]=0.001*(*tot)[channelIdx[chL[iBar]]] - totOffsetL[iBar];
+	totR[iBar]=0.001*(*tot)[channelIdx[chR[iBar]]] - totOffsetR[iBar];
 	energyL[iBar]=(*energy)[channelIdx[chL[iBar]]];
 	energyR[iBar]=(*energy)[channelIdx[chR[iBar]]];
 	timeL[iBar]=(*time)[channelIdx[chL[iBar]]];
