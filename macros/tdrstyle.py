@@ -51,6 +51,7 @@ def setTDRStyle():
   #tdrStyle.SetErrorX(0.)
   
   tdrStyle.SetMarkerStyle(20)
+  tdrStyle.SetMarkerSize(1)
   
 #For the fit/function:
   tdrStyle.SetOptFit(1)
