@@ -1,6 +1,0 @@
-/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_1E13_LYSO829_Vov0.60_T0C.cfg
-/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_1E13_LYSO829_Vov0.80_T0C.cfg
-/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_1E13_LYSO829_Vov1.25_T0C.cfg
-/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_1E13_LYSO829_Vov1.50_T0C.cfg
-/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_1E13_LYSO829_Vov2.00_T0C.cfg
-/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/cfg/moduleCharacterization_HPK_1E13_LYSO829_Vov2.50_T0C.cfg
