@@ -35,27 +35,39 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 
 fnames = { #30 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2C.root',
-    30 : '/afs/cern.ch/work/m/malberti/MTD/TBatH8Sep2023/Lab5015Analysis/plots/TOFHIR2C/summaryPlots_HPK_2E14_LYSO200104_T-35C_angle52.root',
-    25 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2C.root',
-    20 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2C.root',
+           #30 : '/afs/cern.ch/work/m/malberti/MTD/TBatH8Sep2023/Lab5015Analysis/plots/TOFHIR2C/summaryPlots_HPK_2E14_LYSO200104_T-35C_angle52.root',
+    30 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
+    25 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
+    20 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
     15 : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/timeResolution_2E14_15um_T2/plots_timeResolution_2E14_15um_T2_TBJune22_TOFHIR2X.root',
 }
 
-gnames = { 30 : 'g_deltaT_energyRatioCorr_bestTh_vs_vov_enBin01_average',
+gnames = { 30 : 'g_data_vs_Vov_average_HPK_2E14_LYSO200104_T-35C_TOFHIR2C',
            25 : 'g_data_vs_Vov_average_HPK_2E14_LYSO815_T-35C_TOFHIR2C',
            20 : 'g_data_vs_Vov_average_HPK_2E14_LYSO825_T-35C_TOFHIR2C',
            15 : 'g_data_vs_Vov_average_HPK_2E14_LYSO796_T-40C'  # less annealing for this module
     }
 
-plotAttrs = { 30 : [23, ROOT.kOrange+1,  '30 #mum'],
+labels = { 30 : 'HPK_2E14_LYSO200104_T-35C_TOFHIR2C',
+           25 : 'HPK_2E14_LYSO815_T-35C_TOFHIR2C',
+           20 : 'HPK_2E14_LYSO825_T-35C_TOFHIR2C',
+           15 : 'HPK_2E14_LYSO796_T-40C',
+          }
+
+plotAttrs = { 30 : [23, ROOT.kOrange+1, '30 #mum'],
               25 : [20, ROOT.kGreen+2,  '25 #mum'],
               20 : [21, ROOT.kBlue,     '20 #mum'],
               15 : [22, ROOT.kRed,      '15 #mum'],
 }
 
+kscale = math.cos(52.*math.pi/180)/math.cos(55.*math.pi/180) # for 3 deg angle offset
 
 g = {}
 g_scaled = {}
+gNoise = {}
+gStoch = {}
+gDCR = {}
+gSR = {}
 f = {}
 
 for cell in [15,20,25,30]:
@@ -64,30 +76,42 @@ for cell in [15,20,25,30]:
     g_scaled[cell] = ROOT.TGraphErrors()
     
 # scale 15 um 2X --> 2C
-gNoise = f[15].Get('g_Noise_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
-gStoch = f[15].Get('g_Stoch_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
-gDCR   = f[15].Get('g_DCR_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
-gSR    = f[15].Get('g_SR_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
+gNoise[15] = f[15].Get('g_Noise_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
+gStoch[15] = f[15].Get('g_Stoch_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
+gDCR[15]   = f[15].Get('g_DCR_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
+gSR[15]    = f[15].Get('g_SR_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
 
 for i in range(0, g[15].GetN()):
     vov = g[15].GetX()[i]
-    sr = gSR.Eval(vov)
+    sr = gSR[15].Eval(vov)
     s_noise_scaled = sigma_noise(sr*1.20, '2C')
-    s_stoch = gStoch.Eval(vov)
-    s_dcr = gDCR.Eval(vov)
+    s_stoch = gStoch[15].Eval(vov)
+    s_dcr = gDCR[15].Eval(vov)
     s_tot = math.sqrt(s_noise_scaled*s_noise_scaled + s_stoch*s_stoch + s_dcr*s_dcr)
     g_scaled[15].SetPoint(i, vov, s_tot)
     g_scaled[15].SetPointError(i, 0, g[15].GetErrorY(i))
 
 
 # scale others
-for cell in [30, 25, 20]:
-    if (cell == 30 ):
-        for i in range(0, g[cell].GetN()):
-            g_scaled[cell].SetPoint(i, g[cell].GetX()[i], g[cell].GetY()[i]/1.06) # correct for angle offset 
-            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/1.06) # correct for angle offset
+for cell in [20, 25, 30]:
+    if (cell == 0): g_scaled[cell] = g[cell]
     else:
-        g_scaled[cell] = g[cell]
+        gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
+        gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
+        gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
+        print(g[cell].GetN())
+        for i in range(0, g[cell].GetN()):
+            vov = g[cell].GetX()[i]
+            s_noise = gNoise[cell].Eval(vov)/kscale
+            s_stoch = gStoch[cell].Eval(vov)/math.sqrt(kscale)
+            s_dcr = gDCR[cell].Eval(vov)/kscale
+            s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
+            print(cell, vov, gNoise[cell].Eval(vov), s_noise)
+            print(cell, vov, gStoch[cell].Eval(vov), s_stoch)
+            print(cell, vov, gDCR[cell].Eval(vov), s_dcr)
+            print(cell, vov, g[cell].GetY()[i], s_tot)
+            g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
+            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/kscale) # correct for angle offset
 
 
 
@@ -111,11 +135,11 @@ for cell in [30, 25, 20, 15]:
     g_scaled[cell].SetLineColor(plotAttrs[cell][1])
     leg.AddEntry(g_scaled[cell], '%s'%plotAttrs[cell][2],'PL')
     g_scaled[cell].Draw('plsame')
-    #g[cell].SetMarkerSize(1)
+    g[cell].SetMarkerSize(0.1)
     #g[cell].SetMarkerStyle(plotAttrs[cell][0]+4)
     #g[cell].SetMarkerColor(plotAttrs[cell][1])
-    #g[cell].SetLineColor(plotAttrs[cell][1])
-    #g[cell].SetLineStyle(2)
+    g[cell].SetLineColor(plotAttrs[cell][1])
+    g[cell].SetLineStyle(2)
     g[cell].Draw('lsame')
 leg.Draw()
 

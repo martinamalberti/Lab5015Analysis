@@ -66,7 +66,7 @@ int main(int argc, char** argv){
 
   // -- choose vth1
   //int mystep2 = 211102;
-  int myvth1  = 5;
+  int myvth1  = 11;
 
   // -- max energySum
   float maxEnergySum = 800;

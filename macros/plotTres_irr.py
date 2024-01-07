@@ -110,55 +110,28 @@ def findTimingThreshold(g2, ov):
 # =====================================
 # =====================================
 
-tofhir = 'TOFHIR2X'
-#tofhir = 'TOFHIR2C'
+tofhir = 'TOFHIR2C'
 
 
 # import file with VovEff and DCR
-if (tofhir=='TOFHIR2X'):
-    #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff.json', 'r') as f:
-    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_v2.json', 'r') as f:
-        data = json.load(f)       
-if (tofhir=='TOFHIR2C'):
-    #with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
-    with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C_v2.json', 'r') as f:
-        data = json.load(f)       
+with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_Sep2023/VovsEff_TOFHIR2C.json', 'r') as f:
+    data = json.load(f)       
 
-
-data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
-data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
-data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
-#data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E14_LYSO819_Tm22C) # 1E14 T1 25 um
-#data_structs.append(HPK_1E13_LYSO829_Tm32C) # 1E13 T1 25 um
-#data_structs.append(HPK_1E13_LYSO829_Tm19C) # 1E13 T1 25 um
-#data_structs.append(HPK_1E13_LYSO829_T0C) # 1E13 T1 25 um
-#data_structs.append(HPK_1E13_LYSO829_Tp12C) # 1E13 T1 25 um
-#data_structs.append(HPK_2E14_LYSO815_Tm35C_TOFHIR2C) # 2E14 T2 25 um 
+data_structs.append(HPK_2E14_LYSO815_Tm35C_TOFHIR2C) # 2E14 T2 25 um 
+data_structs.append(HPK_2E14_LYSO825_Tm35C_TOFHIR2C) # 2E14 T2 20 um 
+data_structs.append(HPK_2E14_LYSO200104_Tm35C_TOFHIR2C) # 2E14 T2 30 um 
 #data_structs.append(HPK_2E14_LYSO815_Tm30C_TOFHIR2C) # 2E14 T2 25 um 
-#data_structs.append(HPK_2E14_LYSO825_Tm35C_TOFHIR2C) # 2E14 T2 20 um 
-#data_structs.append(HPK_1E14_LYSO844_Tm30C_TOFHIR2C) # 1E14 T2 15 um 
+#data_structs.append(HPK_2E14_LYSO825_Tm30C_TOFHIR2C) # 2E14 T2 20 um 
+#data_structs.append(HPK_1E14_LYSO200104_Tm30C_TOFHIR2C) # 1E14 T2 30 um 
 
 
-outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_25um_T1_v2/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E13_25um_T1_v2/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_2E14_25um_T2_2X_2C/'%tofhir
-#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_1E14_15um_T2/'%tofhir
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/'%tofhir
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
 if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
-outfileName = 'plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir
-#outfileName = 'plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir
-#outfileName = 'plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir
-#outfileName = 'plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir
+outfileName = 'plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_%s.root'%tofhir
 
 outfile   = ROOT.TFile.Open(outdir+'/'+outfileName,'recreate')
 print('Output dir :', outdir)
@@ -225,7 +198,7 @@ f   = {}
 for ds in data_structs:
     f[ds.moduleLabel] = ROOT.TFile.Open(ds.fName)
     
-    g_data_average[ds.moduleLabel] = f[ds.moduleLabel].Get('g_deltaT_totRatioCorr_bestTh_vs_vov_enBin01_average')
+    g_data_average[ds.moduleLabel] = f[ds.moduleLabel].Get('g_deltaT_energyRatioCorr_bestTh_vs_vov_enBin01_average')
 
     Npe[ds.moduleLabel] = {}
     gain[ds.moduleLabel] = {}
@@ -266,7 +239,7 @@ for ds in data_structs:
         #        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_angle52_T%dC.root'%(ov,ds.temperature))
         #else:
         #    fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
-        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
+        fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC_angle52.root'%(ov,ds.temperature))
         
         g_SR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
@@ -276,7 +249,7 @@ for ds in data_structs:
 
         
     for bar in bars[ds.moduleLabel]:
-        g_data[ds.moduleLabel][bar] = f[ds.moduleLabel].Get('g_deltaT_totRatioCorr_bestTh_vs_vov_bar%02d_enBin01;1'%bar)
+        g_data[ds.moduleLabel][bar] = f[ds.moduleLabel].Get('g_deltaT_energyRatioCorr_bestTh_vs_vov_bar%02d_enBin01;1'%bar)
         if (g_data[ds.moduleLabel][bar].GetN()==0): 
             print('No data for bar ', bar)
             continue
@@ -310,7 +283,7 @@ for ds in data_structs:
 
 
             # get pulse shapes
-            if ( 'HPK_2E14_LYSO825' in ds.moduleLabel and ov == 0.6 ): continue # too small signals for reasonable SR fits     
+            #if ( 'HPK_2E14_LYSO825' in ds.moduleLabel and ov == 0.6 ): continue # too small signals for reasonable SR fits     
 
             g_psL = fPS[ds.moduleLabel][ov].Get('g_pulseShapeL_bar%02d_Vov%.2f'%(bar,ov))
             g_psR = fPS[ds.moduleLabel][ov].Get('g_pulseShapeR_bar%02d_Vov%.2f'%(bar,ov))
@@ -364,9 +337,9 @@ for ds in data_structs:
                 errSR = err_srR
             if (srL<0 and srR<0): continue
             errSR = math.sqrt(errSR*errSR+errSRsyst*errSRsyst*sr*sr) 
-
+            if ( errSR/sr > 1 ): continue
             
-
+            
             g_SR_vs_Vov[ds.moduleLabel][bar].SetPoint( g_SR_vs_Vov[ds.moduleLabel][bar].GetN(), ovEff, sr )
             g_SR_vs_Vov[ds.moduleLabel][bar].SetPointError( g_SR_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, errSR )
             
@@ -382,8 +355,9 @@ for ds in data_structs:
             g_bestTh_vs_bar[ds.moduleLabel][ov].SetPoint( g_bestTh_vs_bar[ds.moduleLabel][ov].GetN(), bar, timingThreshold )
             g_bestTh_vs_bar[ds.moduleLabel][ov].SetPointError( g_bestTh_vs_bar[ds.moduleLabel][ov].GetN()-1, 0, 0)
             
-            s_noise = sigma_noise(sr)
-            err_s_noise =  0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr)))
+            s_noise = sigma_noise(sr,'2C')
+            print(sr, errSR)
+            err_s_noise =  0.5*(sigma_noise(sr*(1-errSR/sr),'2C')-sigma_noise(sr*(1+errSR/sr),'2C'))
             g_Noise_vs_bar[ds.moduleLabel][ov].SetPoint( g_Noise_vs_bar[ds.moduleLabel][ov].GetN(), bar, s_noise )
             g_Noise_vs_bar[ds.moduleLabel][ov].SetPointError( g_Noise_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  err_s_noise)
             
@@ -479,11 +453,11 @@ for ds in data_structs:
             g_SR_vs_Vov_average[ds.moduleLabel].SetPointError(g_SR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, fitpol0_sr.GetParError(0))
             
             # noise using average SR
-            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, sigma_noise(sr))
+            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, sigma_noise(sr,'2C'))
             sr_err = max(fitpol0_sr.GetParError(0), errSRsyst*sr)
             sr_up   = sr + sr_err 
             sr_down = sr - sr_err 
-            noise_err  = 0.5 * ( sigma_noise(sr_down) - sigma_noise(sr_up) ) 
+            noise_err  = 0.5 * ( sigma_noise(sr_down, '2C') - sigma_noise(sr_up, '2C') ) 
             g_Noise_vs_Vov_average[ds.moduleLabel].SetPointError(g_Noise_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, noise_err) 
             
             # average stochastic 
@@ -497,22 +471,22 @@ for ds in data_structs:
             # average dcr
             fitpol0_dcr = ROOT.TF1('fitpol0_dcr','pol0',-100,100)  
             g_DCR_vs_bar[ds.moduleLabel][ov].Fit(fitpol0_dcr,'QNR')
-            s_dcr =  fitpol0_dcr.GetParameter(0)
-            #err_s_dcr = fitpol0_dcr.GetParError(0)
+            #s_dcr =  fitpol0_dcr.GetParameter(0)
             err_s_dcr = fitpol0_dcr.GetParError(0)
+            s_dcr = math.sqrt(pow(g_data_average[ds.moduleLabel].Eval(ovEff),2) - pow(g_Noise_vs_Vov_average[ds.moduleLabel].Eval(ovEff),2) - pow(g_Stoch_vs_Vov_average[ds.moduleLabel].Eval(ovEff),2))
             g_DCR_vs_Vov_average[ds.moduleLabel].SetPoint(g_DCR_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, s_dcr)
             g_DCR_vs_Vov_average[ds.moduleLabel].SetPointError(g_DCR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, err_s_dcr)
 
             # tot resolution summing noise + stochastic + dcr in quadrature
-            tot = math.sqrt( s_stoch*s_stoch + sigma_noise(sr)*sigma_noise(sr) + s_dcr*s_dcr )
-            err_tot = 1./tot * math.sqrt( pow( err_s_stoch*s_stoch,2) + pow(noise_err*sigma_noise(sr),2) + pow(s_dcr*err_s_dcr, 2) )
+            tot = math.sqrt( s_stoch*s_stoch + sigma_noise(sr,'2C')*sigma_noise(sr,'2C') + s_dcr*s_dcr )
+            err_tot = 1./tot * math.sqrt( pow( err_s_stoch*s_stoch,2) + pow(noise_err*sigma_noise(sr,'2C'),2) + pow(s_dcr*err_s_dcr, 2) )
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPoint(g_Tot_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, tot)
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPointError(g_Tot_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, err_tot)
 
             
         # average tRes vs Npe, DCR, static power, GainNpe            
         fitpol0 = ROOT.TF1('fitpol0','pol0',-100,100)
-        gg = f[ds.moduleLabel].Get('g_deltaT_totRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%ov)    
+        gg = f[ds.moduleLabel].Get('g_deltaT_energyRatioCorr_bestTh_vs_bar_Vov%.02f_enBin01'%ov)    
         gg.Fit(fitpol0,'QNR')
         g_data_vs_Npe[ds.moduleLabel].SetPoint(g_data_vs_Npe[ds.moduleLabel].GetN(), Npe[ds.moduleLabel][ov], fitpol0.GetParameter(0))
         g_data_vs_Npe[ds.moduleLabel].SetPointError(g_data_vs_Npe[ds.moduleLabel].GetN()-1, 0, fitpol0.GetParError(0))
