@@ -460,9 +460,9 @@ for ds in data_structs:
             # average dcr
             fitpol0_dcr = ROOT.TF1('fitpol0_dcr','pol0',-100,100)  
             g_DCR_vs_bar[ds.moduleLabel][ov].Fit(fitpol0_dcr,'QNR')
-            s_dcr =  fitpol0_dcr.GetParameter(0)
-            #err_s_dcr = fitpol0_dcr.GetParError(0)
+            #s_dcr =  fitpol0_dcr.GetParameter(0)
             err_s_dcr = fitpol0_dcr.GetParError(0)
+            s_dcr = math.sqrt(pow(g_data_average[ds.moduleLabel].Eval(ovEff),2) - pow(g_Noise_vs_Vov_average[ds.moduleLabel].Eval(ovEff),2) - pow(g_Stoch_vs_Vov_average[ds.moduleLabel].Eval(ovEff),2))
             g_DCR_vs_Vov_average[ds.moduleLabel].SetPoint(g_DCR_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, s_dcr)
             g_DCR_vs_Vov_average[ds.moduleLabel].SetPointError(g_DCR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, err_s_dcr)
 
