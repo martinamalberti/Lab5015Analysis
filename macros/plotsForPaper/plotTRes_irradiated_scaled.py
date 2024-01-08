@@ -32,35 +32,62 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 
+
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 
-fnames = { #30 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2C.root',
-           #30 : '/afs/cern.ch/work/m/malberti/MTD/TBatH8Sep2023/Lab5015Analysis/plots/TOFHIR2C/summaryPlots_HPK_2E14_LYSO200104_T-35C_angle52.root',
-    30 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
-    25 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
-    20 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
-    15 : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/timeResolution_2E14_15um_T2/plots_timeResolution_2E14_15um_T2_TBJune22_TOFHIR2X.root',
-}
+sipmProd = 'HPK'
+#sipmProd = 'FBK'
 
-gnames = { 30 : 'g_data_vs_Vov_average_HPK_2E14_LYSO200104_T-35C_TOFHIR2C',
-           25 : 'g_data_vs_Vov_average_HPK_2E14_LYSO815_T-35C_TOFHIR2C',
-           20 : 'g_data_vs_Vov_average_HPK_2E14_LYSO825_T-35C_TOFHIR2C',
-           15 : 'g_data_vs_Vov_average_HPK_2E14_LYSO796_T-40C'  # less annealing for this module
-    }
+enScale = math.cos(52.*math.pi/180)/math.cos(55.*math.pi/180) # for 3 deg angle offset in Sep2023 TB
+srScale = 1.20 # scaling SR from TOPFHIR2X to 2C
 
-labels = { 30 : 'HPK_2E14_LYSO200104_T-35C_TOFHIR2C',
-           25 : 'HPK_2E14_LYSO815_T-35C_TOFHIR2C',
-           20 : 'HPK_2E14_LYSO825_T-35C_TOFHIR2C',
-           15 : 'HPK_2E14_LYSO796_T-40C',
-          }
+fnames = {}
+gnames = {}
+labels = {}
 
+if sipmProd == 'HPK':
+
+    cells = [15, 20, 25, 30]
+
+    fnames = { 30 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
+               25 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
+               20 : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_Sep23/timeResolution_2E14_20um_25um_30um_T2/plots_timeResolution_2E14_20um_25um_30um_T2_TBSep23_TOFHIR2C.root',
+               15 : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/timeResolution_2E14_15um_T2/plots_timeResolution_2E14_15um_T2_TBJune22_TOFHIR2X.root'}
+
+    gnames = { 30 : 'g_data_vs_Vov_average_HPK_2E14_LYSO200104_T-35C_TOFHIR2C',
+               25 : 'g_data_vs_Vov_average_HPK_2E14_LYSO815_T-35C_TOFHIR2C',
+               20 : 'g_data_vs_Vov_average_HPK_2E14_LYSO825_T-35C_TOFHIR2C',
+               15 : 'g_data_vs_Vov_average_HPK_2E14_LYSO796_T-40C'  # less annealing for this module
+              }
+
+    labels = { 30 : 'HPK_2E14_LYSO200104_T-35C_TOFHIR2C',
+               25 : 'HPK_2E14_LYSO815_T-35C_TOFHIR2C',
+               20 : 'HPK_2E14_LYSO825_T-35C_TOFHIR2C',
+               15 : 'HPK_2E14_LYSO796_T-40C'
+              }
+
+else:
+
+    cells = [15]
+             
+    fnames = { 15 : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/timeResolution_2E14_15um_T2/plots_timeResolution_2E14_15um_T2_TBJune22_TOFHIR2X.root',
+              }
+
+    gnames = { 15 : 'g_data_vs_Vov_average_FBK_2E14_LYSO797_T-40C'  # less annealing for this module
+              }
+    
+    labels = { 15 : 'FBK_2E14_LYSO797_T-40C',
+              }
+
+
+
+
+              
 plotAttrs = { 30 : [23, ROOT.kOrange+1, '30 #mum'],
               25 : [20, ROOT.kGreen+2,  '25 #mum'],
               20 : [21, ROOT.kBlue,     '20 #mum'],
-              15 : [22, ROOT.kRed,      '15 #mum'],
-}
+              15 : [22, ROOT.kRed,      '15 #mum']}
 
-kscale = math.cos(52.*math.pi/180)/math.cos(55.*math.pi/180) # for 3 deg angle offset
 
 g = {}
 g_scaled = {}
@@ -70,21 +97,23 @@ gDCR = {}
 gSR = {}
 f = {}
 
-for cell in [15,20,25,30]:
+for cell in cells:
     f[cell] = ROOT.TFile.Open(fnames[cell])
     g[cell] = f[cell].Get(gnames[cell])
     g_scaled[cell] = ROOT.TGraphErrors()
     
 # scale 15 um 2X --> 2C
-gNoise[15] = f[15].Get('g_Noise_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
-gStoch[15] = f[15].Get('g_Stoch_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
-gDCR[15]   = f[15].Get('g_DCR_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
-gSR[15]    = f[15].Get('g_SR_vs_Vov_average_HPK_2E14_LYSO796_T-40C')
+gNoise[15] = f[15].Get('g_Noise_vs_Vov_average_%s'%labels[15])
+gStoch[15] = f[15].Get('g_Stoch_vs_Vov_average_%s'%labels[15])
+gDCR[15]   = f[15].Get('g_DCR_vs_Vov_average_%s'%labels[15])
+gSR[15]    = f[15].Get('g_SR_vs_Vov_average_%s'%labels[15])
+
+print()
 
 for i in range(0, g[15].GetN()):
     vov = g[15].GetX()[i]
     sr = gSR[15].Eval(vov)
-    s_noise_scaled = sigma_noise(sr*1.20, '2C')
+    s_noise_scaled = sigma_noise(sr*srScale, '2C')
     s_stoch = gStoch[15].Eval(vov)
     s_dcr = gDCR[15].Eval(vov)
     s_tot = math.sqrt(s_noise_scaled*s_noise_scaled + s_stoch*s_stoch + s_dcr*s_dcr)
@@ -92,27 +121,25 @@ for i in range(0, g[15].GetN()):
     g_scaled[15].SetPointError(i, 0, g[15].GetErrorY(i))
 
 
-# scale others
+# scale others (2C) to take into account angle offset in 2023 Sep TB 
 for cell in [20, 25, 30]:
-    if (cell == 0): g_scaled[cell] = g[cell]
-    else:
-        gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
-        gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
-        gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
-        print(g[cell].GetN())
-        for i in range(0, g[cell].GetN()):
-            vov = g[cell].GetX()[i]
-            s_noise = gNoise[cell].Eval(vov)/kscale
-            s_stoch = gStoch[cell].Eval(vov)/math.sqrt(kscale)
-            s_dcr = gDCR[cell].Eval(vov)/kscale
-            s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
-            print(cell, vov, gNoise[cell].Eval(vov), s_noise)
-            print(cell, vov, gStoch[cell].Eval(vov), s_stoch)
-            print(cell, vov, gDCR[cell].Eval(vov), s_dcr)
-            print(cell, vov, g[cell].GetY()[i], s_tot)
-            g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
-            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/kscale) # correct for angle offset
-
+    if (cell not in fnames.keys()): continue
+    gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
+    gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
+    gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
+    for i in range(0, g[cell].GetN()):
+        vov = g[cell].GetX()[i]
+        s_noise = gNoise[cell].Eval(vov)/enScale
+        s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
+        s_dcr = gDCR[cell].Eval(vov)/enScale
+        s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
+        #print(cell, vov, gNoise[cell].Eval(vov), s_noise)
+        #print(cell, vov, gStoch[cell].Eval(vov), s_stoch)
+        #print(cell, vov, gDCR[cell].Eval(vov), s_dcr)
+        #print(cell, vov, g[cell].GetY()[i], s_tot)
+        g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
+        g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset
+        
 
 
 # plot
@@ -123,13 +150,15 @@ leg.SetFillStyle(0)
 leg.SetTextFont(42)
 leg.SetTextSize(0.045) 
 
-c = ROOT.TCanvas('c_timeResolution_HPK_2E14_vs_Vov','c_timeResolution_HPK_2E14_vs_Vov', 600, 500)
+c = ROOT.TCanvas('c_timeResolution_%s_2E14_vs_Vov'%sipmProd,'c_timeResolution_%s_2E14_vs_Vov'%sipmProd, 600, 500)
 hPad = ROOT.gPad.DrawFrame(0.,40.,2.0,140.)
+if (sipmProd == 'FBK'): hPad = ROOT.gPad.DrawFrame(0.5,40.,2.5,140.)
 hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
 hPad.Draw()
 ROOT.gPad.SetTicks(1)
-for cell in [30, 25, 20, 15]:
+for cell in cells:
     g_scaled[cell].SetMarkerSize(1)
+    if (plotAttrs[cell][0] == 22 or plotAttrs[cell][0] == 23): g_scaled[cell].SetMarkerSize(1.15)
     g_scaled[cell].SetMarkerStyle(plotAttrs[cell][0])
     g_scaled[cell].SetMarkerColor(plotAttrs[cell][1])
     g_scaled[cell].SetLineColor(plotAttrs[cell][1])
@@ -140,13 +169,14 @@ for cell in [30, 25, 20, 15]:
     #g[cell].SetMarkerColor(plotAttrs[cell][1])
     g[cell].SetLineColor(plotAttrs[cell][1])
     g[cell].SetLineStyle(2)
-    g[cell].Draw('lsame')
+    #g[cell].Draw('lsame')
 leg.Draw()
 
 tl2 = ROOT.TLatex()
 tl2.SetNDC()
 tl2.SetTextFont(42)
 tl2.SetTextSize(0.045)
+tl2.DrawLatex(0.20,0.20,'%s'%sipmProd)
 
 tl = ROOT.TLatex()
 tl.SetNDC()
