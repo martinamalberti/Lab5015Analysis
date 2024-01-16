@@ -97,18 +97,19 @@ def findTimingThreshold(g2):
     
 # =====================================
 
-#tofhir = 'TOFHIR2X'
-tofhir = 'TOFHIR2C'
+tofhir = 'TOFHIR2X'
+#tofhir = 'TOFHIR2C'
 
-#data_struct.append(HPK_nonIrr_LYSO813_Tp5C) # TOFHIR2X 
-data_struct.append(HPK_nonIrr_LYSO813_Tm30C) # TOFHIR2X
-#data_struct.append(HPK_nonIrr_LYSO813_Tm15C) # TOFHIR2X
-#data_struct.append(HPK_nonIrr_LYSO813_T0C)   # TOFHIR2X
-#data_struct.append(HPK_nonIrr_LYSO813_Tp15C) # TOFHIR2X
-#data_struct.append(HPK_nonIrr_LYSO813_Tp5C_TOFHIR2C)  # TOFHIR2C
-data_struct.append(HPK_nonIrr_LYSO813_Tm30C_TOFHIR2C) # TOFHIR2C
+#data_structs.append(HPK_nonIrr_LYSO813_Tp5C) # TOFHIR2X 
+data_structs.append(HPK_nonIrr_LYSO813_Tm30C) # TOFHIR2X
+data_structs.append(HPK_nonIrr_LYSO813_Tm15C) # TOFHIR2X
+data_structs.append(HPK_nonIrr_LYSO813_T0C)   # TOFHIR2X
+data_structs.append(HPK_nonIrr_LYSO813_Tp15C) # TOFHIR2X
+#data_structs.append(HPK_nonIrr_LYSO813_Tp5C_TOFHIR2C)  # TOFHIR2C
+#data_structs.append(HPK_nonIrr_LYSO813_Tm30C_TOFHIR2C) # TOFHIR2C
 
-outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr_new/'%tofhir
+#outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr_new/'%tofhir
+outdir = '/eos/user/m/malberti/www/MTD/%s/MTDTB_CERN_May23/timeResolution_nonIrr_T2_Temperatures/'%tofhir
 
 if (os.path.exists(outdir)==False):
     os.mkdir(outdir)
@@ -191,7 +192,7 @@ for ds in data_structs:
     fPS[ds.moduleLabel] = {}
     for ov in Vovs[ds.moduleLabel]:
         fPS[ds.moduleLabel][ov] = ROOT.TFile.Open(ds.fNamePS+'_Vov%.2f_T%dC.root'%(ov,ds.temperature))
-
+        
         g_SR_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_bestTh_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
         g_Noise_vs_bar[ds.moduleLabel][ov] = ROOT.TGraphErrors()
@@ -239,12 +240,14 @@ for ds in data_structs:
             sr = srR
             errSR = err_srR/sr
         errSR = math.sqrt(errSR*errSR+errSRsyst*errSRsyst) 
-        if (data>=sigma_noise(sr)):
-            stoch_ref = math.sqrt(data*data - sigma_noise(sr)*sigma_noise(sr))
-            noise_err = 0.5*(sigma_noise(sr*(1-errSR))-sigma_noise(sr*(1+errSR)))
-            stoch_ref_err = 1./stoch_ref*math.sqrt( pow(data_err*data,2)+pow( sigma_noise(sr)*noise_err ,2) )
+        tofhirLabel = '2X'
+        if ( '2C' in ds.moduleLabel): tofhirLabel = '2C' 
+        if (data>=sigma_noise(sr,tofhirLabel)):
+            stoch_ref = math.sqrt(data*data - sigma_noise(sr,tofhirLabel)*sigma_noise(sr,tofhirLabel))
+            noise_err = 0.5*(sigma_noise(sr*(1-errSR),tofhirLabel)-sigma_noise(sr*(1+errSR),tofhirLabel))
+            stoch_ref_err = 1./stoch_ref*math.sqrt( pow(data_err*data,2)+pow( sigma_noise(sr,tofhirLabel)*noise_err ,2) )
         else:
-            print('skipping bar%02d:  %.1f   %.1f'%(bar, data,sigma_noise(sr)))
+            print('skipping bar%02d:  %.1f   %.1f'%(bar, data,sigma_noise(sr, tofhirLabel)))
             continue
                 
         for i in range(0,g_data[ds.moduleLabel][bar].GetN()):
@@ -296,6 +299,10 @@ for ds in data_structs:
             if (srL<0 and srR<0): continue
             errSR = math.sqrt(errSR*errSR+errSRsyst*errSRsyst*sr*sr) 
             #print (ov, gain, Npe, srL, srR, sr, errSR)
+
+            tofhirLabel = '2X'
+            if ( '2C' in ds.moduleLabel): tofhirLabel = '2C'
+        
             g_SR_vs_Vov[ds.moduleLabel][bar].SetPoint( g_SR_vs_Vov[ds.moduleLabel][bar].GetN(), ov, sr )
             g_SR_vs_Vov[ds.moduleLabel][bar].SetPointError( g_SR_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, errSR )
             
@@ -311,14 +318,14 @@ for ds in data_structs:
             g_bestTh_vs_bar[ds.moduleLabel][ov].SetPoint( g_bestTh_vs_bar[ds.moduleLabel][ov].GetN(), bar, timingThreshold )
             g_bestTh_vs_bar[ds.moduleLabel][ov].SetPointError( g_bestTh_vs_bar[ds.moduleLabel][ov].GetN()-1, 0, 0)
             
-            g_Noise_vs_bar[ds.moduleLabel][ov].SetPoint( g_Noise_vs_bar[ds.moduleLabel][ov].GetN(), bar, sigma_noise(sr) )
-            g_Noise_vs_bar[ds.moduleLabel][ov].SetPointError( g_Noise_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr))) )
-            g_Noise_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN(), ov, sigma_noise(sr))
-            g_Noise_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, 0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr))))
+            g_Noise_vs_bar[ds.moduleLabel][ov].SetPoint( g_Noise_vs_bar[ds.moduleLabel][ov].GetN(), bar, sigma_noise(sr, tofhirLabel) )
+            g_Noise_vs_bar[ds.moduleLabel][ov].SetPointError( g_Noise_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  0.5*(sigma_noise(sr*(1-errSR/sr), tofhirLabel)-sigma_noise(sr*(1+errSR/sr), tofhirLabel)) )
+            g_Noise_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN(), ov, sigma_noise(sr, tofhirLabel))
+            g_Noise_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, 0.5*(sigma_noise(sr*(1-errSR/sr), tofhirLabel)-sigma_noise(sr*(1+errSR/sr), tofhirLabel)))
             # compute s_stoch as diff in quadrature between measured tRes and noise term
-            if ( sigma_meas > sigma_noise(sr) ):
-                s = math.sqrt(sigma_meas*sigma_meas-sigma_noise(sr)*sigma_noise(sr))
-                es = 1./s * math.sqrt( pow(sigma_meas*g_data[ds.moduleLabel][bar].GetErrorY(i),2) + pow( sigma_noise(sr)*g_Noise_vs_Vov[ds.moduleLabel][bar].GetErrorY(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1),2) )
+            if ( sigma_meas > sigma_noise(sr, tofhirLabel) ):
+                s = math.sqrt(sigma_meas*sigma_meas-sigma_noise(sr, tofhirLabel)*sigma_noise(sr, tofhirLabel))
+                es = 1./s * math.sqrt( pow(sigma_meas*g_data[ds.moduleLabel][bar].GetErrorY(i),2) + pow( sigma_noise(sr, tofhirLabel)*g_Noise_vs_Vov[ds.moduleLabel][bar].GetErrorY(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1),2) )
                 g_Stoch_vs_Npe[ds.moduleLabel][bar].SetPoint(g_Stoch_vs_Npe[ds.moduleLabel][bar].GetN(), Npe[ds.moduleLabel][ov], s)
                 g_Stoch_vs_Npe[ds.moduleLabel][bar].SetPointError(g_Stoch_vs_Npe[ds.moduleLabel][bar].GetN()-1, 0., es )
             
@@ -334,8 +341,8 @@ for ds in data_structs:
             g_Stoch_vs_bar[ds.moduleLabel][ov].SetPointError( g_Stoch_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  stoch_err)
             
             # tot resolution summing noise + stochastic in quadrature
-            tot = math.sqrt( stoch*stoch + sigma_noise(sr)*sigma_noise(sr) )
-            tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(sigma_noise(sr)*g_Noise_vs_Vov[ds.moduleLabel][bar].GetErrorY(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1),2))
+            tot = math.sqrt( stoch*stoch + sigma_noise(sr, tofhirLabel)*sigma_noise(sr, tofhirLabel) )
+            tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(sigma_noise(sr, tofhirLabel)*g_Noise_vs_Vov[ds.moduleLabel][bar].GetErrorY(g_Noise_vs_Vov[ds.moduleLabel][bar].GetN()-1),2))
             g_Tot_vs_Vov[ds.moduleLabel][bar].SetPoint(g_Tot_vs_Vov[ds.moduleLabel][bar].GetN(), ov, tot)
             g_Tot_vs_Vov[ds.moduleLabel][bar].SetPointError(g_Tot_vs_Vov[ds.moduleLabel][bar].GetN()-1, 0, tot_err)
             #print sipm,' OV = %.2f  gain = %d  Npe = %d  bar = %02d  thr = %02d  SR = %.1f   noise = %.1f    stoch = %.1f   tot = %.1f'%(ov, gain, Npe, bar, timingThreshold, sr, sigma_noise(sr), stoch, tot)
@@ -375,11 +382,13 @@ for ds in data_structs:
             g_SR_vs_Vov_average[ds.moduleLabel].SetPointError(g_SR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, fitpol0_sr.GetParError(0)) 
 
             # noise using average SR
-            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ov, sigma_noise(sr))
+            tofhirLabel = '2X'
+            if ( '2C' in ds.moduleLabel): tofhirLabel = '2C'
+            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ov, sigma_noise(sr, tofhirLabel))
             sr_err = max(fitpol0_sr.GetParError(0), errSRsyst*sr)
             sr_up   = sr + sr_err 
             sr_down = sr - sr_err 
-            noise_err  = 0.5 * ( sigma_noise(sr_down) - sigma_noise(sr_up) ) 
+            noise_err  = 0.5 * ( sigma_noise(sr_down, tofhirLabel) - sigma_noise(sr_up, tofhirLabel) ) 
             g_Noise_vs_Vov_average[ds.moduleLabel].SetPointError(g_Noise_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, noise_err) 
     
             # compute stoch by scaling from 3.5 V OV
@@ -389,8 +398,8 @@ for ds in data_structs:
             g_Stoch_vs_Vov_average[ds.moduleLabel].SetPointError(g_Stoch_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, stoch_err)
 
             # tot resolution summing noise + stochastic in quadrature
-            tot = math.sqrt( stoch*stoch + sigma_noise(sr)*sigma_noise(sr) )
-            tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(noise_err*sigma_noise(sr),2))
+            tot = math.sqrt( stoch*stoch + sigma_noise(sr, tofhirLabel)*sigma_noise(sr, tofhirLabel) )
+            tot_err = 1./tot * math.sqrt( pow( stoch_err*stoch,2) + pow(noise_err*sigma_noise(sr, tofhirLabel),2))
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPoint(g_Tot_vs_Vov_average[ds.moduleLabel].GetN(), ov, tot)
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPointError(g_Tot_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, tot_err)
 

@@ -33,12 +33,12 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 srScale = 1.2
 
-labels = ['HPK_2E14_LYSO815_T-35C', 'HPK_2E14_LYSO825_T-35C']
+labels = ['HPK_nonIrr_LYSO813_T-30C']
 
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/Test_2Xto2C/'
 
-fnames = { '2X' : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2X.root',
-           '2C' : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_2E14_20um_25um_T2_v2/plots_timeResolution_2E14_20um_25um_T2_TBMay23_TOFHIR2C.root'
+fnames = { '2X' : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_nonIrr_v2/plots_timeResolution_HPK_nonIrr_TBMay23_TOFHIR2C.root',
+           '2C' : '/eos/user/m/malberti/www/MTD/TOFHIR2C/MTDTB_CERN_May23/timeResolution_nonIrr_v2/plots_timeResolution_HPK_nonIrr_TBMay23_TOFHIR2C.root',
 }
 
 plotAttrs = { '2X' : [20, ROOT.kRed,  'TOFHIR2X'],
@@ -48,7 +48,6 @@ plotAttrs = { '2X' : [20, ROOT.kRed,  'TOFHIR2X'],
 
 gNoise = {}
 gStoch = {}
-gDCR = {}
 gSR = {}
 gData = {}
 gData_scaled = {}
@@ -61,7 +60,6 @@ for tofhir in ['2X','2C']:
     for label in labels:
         gNoise[tofhir, label] = f[tofhir].Get('g_Noise_vs_Vov_average_%s'%(label+suffix))
         gStoch[tofhir, label] = f[tofhir].Get('g_Stoch_vs_Vov_average_%s'%(label+suffix))
-        gDCR[tofhir, label]   = f[tofhir].Get('g_DCR_vs_Vov_average_%s'%(label+suffix))
         gSR[tofhir, label]    = f[tofhir].Get('g_SR_vs_Vov_average_%s'%(label+suffix))
         gData[tofhir, label] = f[tofhir].Get('g_data_vs_Vov_average_%s'%(label+suffix))
         gData_scaled[tofhir, label] = ROOT.TGraphErrors()
@@ -70,30 +68,30 @@ for tofhir in ['2X','2C']:
         if (tofhir == '2X'):
             for i in range(0, gData[tofhir, label].GetN()):
                 vov = gData[tofhir, label].GetX()[i]
+                sr = gSR[tofhir, label].Eval(vov)
                 s_data = gData[tofhir, label].Eval(vov)
                 s_noise = gNoise[tofhir, label].Eval(vov)
-                s_stoch_dcr = math.sqrt(s_data*s_data - s_noise*s_noise)
                 #s_stoch = gStoch[tofhir, label].Eval(vov)
-                #s_dcr = gDCR[tofhir, label].Eval(vov)
-                #s_stoch_dcr = math.sqrt(s_stoch*s_stoch+s_dcr*s_dcr)
-                sr = gSR[tofhir, label].Eval(vov)
+                s_stoch = math.sqrt(s_data*s_data-s_noise*s_noise)
+                print(vov, s_data, s_noise, s_stoch, gStoch[tofhir, label].Eval(vov))
                 s_noise_scaled = sigma_noise(sr*srScale, '2C')
-                s_tot = math.sqrt(s_noise_scaled*s_noise_scaled + s_stoch_dcr*s_stoch_dcr)
-                s_tot_up = math.sqrt(s_noise_scaled*s_noise_scaled*1.05*1.05 + s_stoch_dcr*s_stoch_dcr) # assume 5% error on noise estimation (... to be checked)
-                s_tot_down = math.sqrt(s_noise_scaled*s_noise_scaled*0.95*0.95 + s_stoch_dcr*s_stoch_dcr)
+                s_tot = math.sqrt(s_noise_scaled*s_noise_scaled + s_stoch*s_stoch)
+                s_tot_up = math.sqrt(s_noise_scaled*s_noise_scaled*1.05*1.05 + s_stoch*s_stoch) # assume 5% error on noise estimation (... to be checked)
+                s_tot_down = math.sqrt(s_noise_scaled*s_noise_scaled*0.95*0.95 + s_stoch*s_stoch)
                 gData_scaled[tofhir, label].SetPoint(i, vov, s_tot)
+                #gData_scaled[tofhir, label].SetPointError(i, 0, gData[tofhir, label].GetErrorY(i))
                 gData_scaled[tofhir, label].SetPointError(i, 0, abs(s_tot_up-s_tot_down)/2)
         
                 
 # plot
 for label in labels:
-    c = ROOT.TCanvas('c_timeResolution_%s_scaling2Xto2C'%label,'c_timeResolution_%s_scaling2Xto2C'%label, 600, 500)
+    c = ROOT.TCanvas('c_timeResolution_%s_scaling2Xto2C_nonIrr'%label,'c_timeResolution_%s_scaling2Xto2C_nonIrr'%label, 600, 500)
     leg = ROOT.TLegend(0.50, 0.65, 0.89, 0.89)
     leg.SetBorderSize(0)
     leg.SetFillStyle(0)
     leg.SetTextFont(42)
     leg.SetTextSize(0.045)
-    hPad = ROOT.gPad.DrawFrame(0.,40.,1.8,110.)
+    hPad = ROOT.gPad.DrawFrame(0.,10.,4.5,80.)
     hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
     hPad.Draw()
     ROOT.gPad.SetTicks(1)
@@ -107,14 +105,15 @@ for label in labels:
         gData[tofhir,label].Draw('plsame')
         leg.AddEntry(gData[tofhir,label], '%s'%plotAttrs[tofhir][2],'PL')
         if (tofhir == '2X'):
-            gData_scaled[tofhir,label].SetLineColor(plotAttrs[tofhir][1]+1)
-            gData_scaled[tofhir,label].SetMarkerColor(plotAttrs[tofhir][1]+1)
-            gData_scaled[tofhir,label].SetMarkerStyle(24)
+            gData_scaled[tofhir,label].SetLineColor(plotAttrs[tofhir][1])
+            gData_scaled[tofhir,label].SetMarkerColor(plotAttrs[tofhir][1])
             gData_scaled[tofhir,label].SetMarkerSize(1.1)
+            gData_scaled[tofhir,label].SetMarkerStyle(24)
             gData_scaled[tofhir,label].SetLineStyle(2)
+            #gData_scaled[tofhir,label].SetLineWidth(1)
             gData_scaled[tofhir,label].SetFillStyle(1)
             gData_scaled[tofhir,label].SetFillColorAlpha(plotAttrs[tofhir][1]+1, 0.2)            
-            leg.AddEntry(gData_scaled[tofhir,label], '%s - scaled'%plotAttrs[tofhir][2],'FL')
+            leg.AddEntry(gData_scaled[tofhir,label], '%s - scaled'%plotAttrs[tofhir][2],'PL')
             gData_scaled[tofhir,label].Draw('E3plsame')
     gData_scaled['2X',label].Draw('plsame')
     leg.Draw()
@@ -128,7 +127,7 @@ for label in labels:
     tl.SetNDC()
     tl.SetTextFont(42)
     tl.SetTextSize(0.045)
-    tl.DrawLatex(0.58,0.20,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
+    tl.DrawLatex(0.58,0.20,'non-irradiated')
 
     cms_logo = draw_logo()
     cms_logo.Draw()

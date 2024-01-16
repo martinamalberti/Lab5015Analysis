@@ -477,7 +477,7 @@ HPK_2E14_LYSO815_Tm35C_TOFHIR2C = DataStruct(
     sipmType = 'HPK-PIT-C25-ES2',
     irradiation = '2E14',
     temperature = -35,
-    fName = '/afs/cern.cch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2C/summaryPlots_HPK_2E14_LYSO815_T-35C.root',
+    fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2C/summaryPlots_HPK_2E14_LYSO815_T-35C.root',
     fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8May2023/Lab5015Analysis/plots/TOFHIR2C/pulseShape_HPK_2E14_LYSO815',
     plotLabel = 'HPK(25#mum,2E14) - T=-35#circC (TOFHIR2C)',
     stoch_ref = 30., # tRes for non-irradiated at 1.0 V

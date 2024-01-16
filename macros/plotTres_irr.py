@@ -110,8 +110,8 @@ def findTimingThreshold(g2, ov):
 # =====================================
 # =====================================
 
-tofhir = 'TOFHIR2X'
-#tofhir = 'TOFHIR2C'
+#tofhir = 'TOFHIR2X'
+tofhir = 'TOFHIR2C'
 
 
 # import file with VovEff and DCR
@@ -125,12 +125,12 @@ if (tofhir=='TOFHIR2C'):
         data = json.load(f)       
 
 
-data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
-data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
-data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
-data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
+#data_structs.append(HPK_2E14_LYSO815_Tm40C) # 2E14 T2 25 um
+#data_structs.append(HPK_2E14_LYSO815_Tm35C) # 2E14 T2 25 um
+#data_structs.append(HPK_2E14_LYSO815_Tm30C) # 2E14 T2 25 um
+#data_structs.append(HPK_2E14_LYSO825_Tm40C) # 2E14 T2 20 um
+#data_structs.append(HPK_2E14_LYSO825_Tm35C) # 2E14 T2 20 um
+#data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
 #data_structs.append(HPK_1E14_LYSO819_Tm37C) # 1E14 T1 25 um
 #data_structs.append(HPK_1E14_LYSO819_Tm32C) # 1E14 T1 25 um
 #data_structs.append(HPK_1E14_LYSO819_Tm27C) # 1E14 T1 25 um
@@ -139,9 +139,9 @@ data_structs.append(HPK_2E14_LYSO825_Tm30C) # 2E14 T2 20 um
 #data_structs.append(HPK_1E13_LYSO829_Tm19C) # 1E13 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_T0C) # 1E13 T1 25 um
 #data_structs.append(HPK_1E13_LYSO829_Tp12C) # 1E13 T1 25 um
-#data_structs.append(HPK_2E14_LYSO815_Tm35C_TOFHIR2C) # 2E14 T2 25 um 
+data_structs.append(HPK_2E14_LYSO815_Tm35C_TOFHIR2C) # 2E14 T2 25 um 
 #data_structs.append(HPK_2E14_LYSO815_Tm30C_TOFHIR2C) # 2E14 T2 25 um 
-#data_structs.append(HPK_2E14_LYSO825_Tm35C_TOFHIR2C) # 2E14 T2 20 um 
+data_structs.append(HPK_2E14_LYSO825_Tm35C_TOFHIR2C) # 2E14 T2 20 um 
 #data_structs.append(HPK_1E14_LYSO844_Tm30C_TOFHIR2C) # 1E14 T2 15 um 
 
 
@@ -156,6 +156,8 @@ if (os.path.exists(outdir+'/plotsSR')==False):
     os.mkdir(outdir+'/plotsSR/')
 
 outfileName = 'plots_timeResolution_2E14_20um_25um_T2_TBMay23_%s.root'%tofhir
+#outfileName = 'plots_timeResolution_2E14_25um_T2_TBMay23_%s.root'%tofhir
+#outfileName = 'plots_timeResolution_2E14_20um_T2_TBMay23_%s.root'%tofhir
 #outfileName = 'plots_timeResolution_1E14_25um_T1_TBMay23_%s.root'%tofhir
 #outfileName = 'plots_timeResolution_1E13_25um_T1_TBMay23_%s.root'%tofhir
 #outfileName = 'plots_timeResolution_1E14_15um_T2_TBMay23_%s.root'%tofhir
@@ -294,12 +296,15 @@ for ds in data_structs:
         g_bestTh_vs_Vov[ds.moduleLabel][bar] = ROOT.TGraphErrors()
                    
         for ov in Vovs[ds.moduleLabel]:
+
             ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0]
                                 
             # get measured time resolution
             s_data = g_data[ds.moduleLabel][bar].Eval(ovEff)
+            #indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) >= ovEff]
             indref = [i for i in range(0, g_data[ds.moduleLabel][bar].GetN()) if g_data[ds.moduleLabel][bar].GetPointX(i) == ovEff]
-            if ( len(indref)<1 ): continue
+            if ( len(indref)<1 ):
+                continue
             err_s_data = g_data[ds.moduleLabel][bar].GetErrorY(indref[0])            
 
             # Npe and Gain at this OVeff
@@ -384,6 +389,10 @@ for ds in data_structs:
             
             s_noise = sigma_noise(sr)
             err_s_noise =  0.5*(sigma_noise(sr*(1-errSR/sr))-sigma_noise(sr*(1+errSR/sr)))
+            if ('2C' in ds.moduleLabel):
+                s_noise = sigma_noise(sr,'2C')
+                err_s_noise =  0.5*(sigma_noise(sr*(1-errSR/sr),'2C')-sigma_noise(sr*(1+errSR/sr),'2C'))
+
             g_Noise_vs_bar[ds.moduleLabel][ov].SetPoint( g_Noise_vs_bar[ds.moduleLabel][ov].GetN(), bar, s_noise )
             g_Noise_vs_bar[ds.moduleLabel][ov].SetPointError( g_Noise_vs_bar[ds.moduleLabel][ov].GetN()-1, 0,  err_s_noise)
             
@@ -479,11 +488,14 @@ for ds in data_structs:
             g_SR_vs_Vov_average[ds.moduleLabel].SetPointError(g_SR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, fitpol0_sr.GetParError(0))
             
             # noise using average SR
-            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, sigma_noise(sr))
+            s_noise = sigma_noise(sr)
+            if ('2C' in ds.moduleLabel):s_noise = sigma_noise(sr,'2C')
+            g_Noise_vs_Vov_average[ds.moduleLabel].SetPoint(g_Noise_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, s_noise)
             sr_err = max(fitpol0_sr.GetParError(0), errSRsyst*sr)
             sr_up   = sr + sr_err 
             sr_down = sr - sr_err 
-            noise_err  = 0.5 * ( sigma_noise(sr_down) - sigma_noise(sr_up) ) 
+            noise_err  = 0.5 * ( sigma_noise(sr_down) - sigma_noise(sr_up) )
+            if ('2C' in ds.moduleLabel): noise_err  = 0.5 * ( sigma_noise(sr_down, '2C') - sigma_noise(sr_up, '2C') )
             g_Noise_vs_Vov_average[ds.moduleLabel].SetPointError(g_Noise_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, noise_err) 
             
             # average stochastic 
@@ -497,15 +509,18 @@ for ds in data_structs:
             # average dcr
             fitpol0_dcr = ROOT.TF1('fitpol0_dcr','pol0',-100,100)  
             g_DCR_vs_bar[ds.moduleLabel][ov].Fit(fitpol0_dcr,'QNR')
-            s_dcr =  fitpol0_dcr.GetParameter(0)
-            #err_s_dcr = fitpol0_dcr.GetParError(0)
+            #s_dcr =  fitpol0_dcr.GetParameter(0)
             err_s_dcr = fitpol0_dcr.GetParError(0)
+            s_dcr = math.sqrt(pow(g_data_average[ds.moduleLabel].Eval(ovEff),2) - pow(g_Noise_vs_Vov_average[ds.moduleLabel].Eval(ovEff),2) - pow(g_Stoch_vs_Vov_average[ds.moduleLabel].Eval(ovEff),2))
             g_DCR_vs_Vov_average[ds.moduleLabel].SetPoint(g_DCR_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, s_dcr)
             g_DCR_vs_Vov_average[ds.moduleLabel].SetPointError(g_DCR_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, err_s_dcr)
 
             # tot resolution summing noise + stochastic + dcr in quadrature
             tot = math.sqrt( s_stoch*s_stoch + sigma_noise(sr)*sigma_noise(sr) + s_dcr*s_dcr )
             err_tot = 1./tot * math.sqrt( pow( err_s_stoch*s_stoch,2) + pow(noise_err*sigma_noise(sr),2) + pow(s_dcr*err_s_dcr, 2) )
+            if ('2C' in ds.moduleLabel):
+                tot = math.sqrt( s_stoch*s_stoch + sigma_noise(sr,'2C')*sigma_noise(sr,'2C') + s_dcr*s_dcr )
+                err_tot = 1./tot * math.sqrt( pow( err_s_stoch*s_stoch,2) + pow(noise_err*sigma_noise(sr,'2C'),2) + pow(s_dcr*err_s_dcr, 2) )
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPoint(g_Tot_vs_Vov_average[ds.moduleLabel].GetN(), ovEff, tot)
             g_Tot_vs_Vov_average[ds.moduleLabel].SetPointError(g_Tot_vs_Vov_average[ds.moduleLabel].GetN()-1, 0, err_tot)
 
@@ -685,7 +700,7 @@ for ds in data_structs:
     g_Tot_vs_Vov_average[ds.moduleLabel].SetFillColor(ROOT.kRed+1)
     g_Tot_vs_Vov_average[ds.moduleLabel].SetFillColorAlpha(ROOT.kRed+1,0.5)
     g_Tot_vs_Vov_average[ds.moduleLabel].SetFillStyle(3001)
-    #g_Tot_vs_Vov_average[ds.moduleLabel].Draw('E3lsame')
+    g_Tot_vs_Vov_average[ds.moduleLabel].Draw('E3lsame')
     leg[ds.moduleLabel].Draw()
     latex.Draw()
     outfile.cd()
