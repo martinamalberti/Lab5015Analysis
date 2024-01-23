@@ -429,8 +429,6 @@ for ds in data_structs:
     for ov in Vovs[ds.moduleLabel]:
         ovEff = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[0] 
         dcr   = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[1] 
-        #staticCurrent = dcr*1E09 * Gain(ds.sipmType, ovEff, ds.irradiation) * 1.602E-19; 
-        #staticPower = staticCurrent * (37. + ovEff) * 1000.; #in mW
         staticCurrent = getVovEffDCR(data, ds.moduleLabel, ('%.02f'%ov))[2] # per SiPM current in mA
         staticPower = staticCurrent * (37. + ovEff) #in mW
 
@@ -520,17 +518,6 @@ for ds in data_structs:
         g_DCRNpe_vs_DCR_average_all.SetPoint( g_DCRNpe_vs_DCR_average_all.GetN(), dcr, y)
         g_DCRNpe_vs_DCR_average_all.SetPointError( g_DCRNpe_vs_DCR_average_all.GetN()-1, 0, err_y)
         
-
-
-
-
-# Andrea's model
-#fitFun_tRes_dcr_model = ROOT.TF1('fitFun_tRes_dcr_model','[1] * 2 * pow(x,[0]/0.5)', 0,10)  # factor 2 as Andrea normalize to 6000 pe # questa e' sbagliata! 
-#fitFun_tRes_dcr_model.SetParameter(0,0.4)
-#fitFun_tRes_dcr_model.SetParameter(1,40)
-#fitFun_tRes_dcr_model.SetLineColor(1)
-#g_DCR_vs_DCRNpe_average_all.Fit(fitFun_tRes_dcr_model)
-
 
 
 # draw

@@ -35,8 +35,8 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 
-sipmProd = 'HPK'
-#sipmProd = 'FBK'
+#sipmProd = 'HPK'
+sipmProd = 'FBK'
 
 enScale = math.cos(52.*math.pi/180)/math.cos(55.*math.pi/180) # for 3 deg angle offset in Sep2023 TB
 srScale = 1.20 # scaling SR from TOPFHIR2X to 2C
@@ -89,6 +89,7 @@ plotAttrs = { 30 : [23, ROOT.kOrange+1, '30 #mum'],
               15 : [22, ROOT.kRed,      '15 #mum']}
 
 
+
 g = {}
 g_scaled = {}
 gNoise = {}
@@ -101,6 +102,8 @@ for cell in cells:
     f[cell] = ROOT.TFile.Open(fnames[cell])
     g[cell] = f[cell].Get(gnames[cell])
     g_scaled[cell] = ROOT.TGraphErrors()
+    print(gnames[cell].replace('g_data','g_data_scaled'))
+    g_scaled[cell].SetName(gnames[cell].replace('g_data','g_data_scaled'))
     
 # scale 15 um 2X --> 2C
 gNoise[15] = f[15].Get('g_Noise_vs_Vov_average_%s'%labels[15])
@@ -191,5 +194,9 @@ c.SaveAs(outdir+'%s.png'%c.GetName())
 c.SaveAs(outdir+'%s.pdf'%c.GetName())
 
 
+outfile   = ROOT.TFile.Open(outdir+'/%s.root'%c.GetName(),'recreate')
 
+for cell in cells:
+    outfile.cd()
+    g_scaled[cell].Write(g_scaled[cell].GetName())
 

@@ -109,5 +109,6 @@ def fit_PDE_ECF_Gain(x, par):
 def sigma_noise(sr, tofhir = '2X'):
     noise_single = math.sqrt( pow(420./sr,2) + 16.7*16.7 )
     if ('2C' in tofhir):
-        noise_single = math.sqrt( pow( 278./pow(sr,0.8)  ,2) + 19.1*19.1 ) 
+        #noise_single = math.sqrt( pow( 278./pow(sr,0.8)  ,2) + 19.1*19.1 ) 
+        noise_single = math.sqrt( pow(463./sr,2) + 19.1*19.1 ) # da fittone Andrea
     return noise_single / math.sqrt(2)

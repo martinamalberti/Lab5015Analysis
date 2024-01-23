@@ -520,7 +520,7 @@ HPK_2E14_LYSO825_Tm35C_TOFHIR2C = DataStruct(
     fName = '/afs/cern.ch/work/m/malberti/MTD/TBatH8Sep2023/Lab5015Analysis/plots/TOFHIR2C/summaryPlots_HPK_2E14_LYSO825_T-35C_angle52.root',
     fNamePS = '/afs/cern.ch/work/m/malberti/MTD/TBatH8Sep2023/Lab5015Analysis/plots/TOFHIR2C/pulseShape_HPK_2E14_LYSO825',
     plotLabel = 'HPK(20#mum, 2E14) - T=-35#circC (TOFHIR2C)',
-    stoch_ref = 35., # tRes for non-irradiated at 1.0 V
+    stoch_ref = 33., # tRes for non-irradiated at 1.0 V
     ov_ref    = 1.00,
     LO = 2050, # LO at 3.5 V non-irradiated
     marker = 24,
@@ -544,7 +544,7 @@ HPK_2E14_LYSO200104_Tm35C_TOFHIR2C = DataStruct(
     plotLabel = 'HPK(30#mum) - T=-35#circC (TOFHIR2C)',
     stoch_ref = 28., # tRes for non-irradiated at 1.0 V
     ov_ref    = 1.00,
-    LO = 2500, # LO at 3.5 V non-irradiated
+    LO = 2400, # LO at 3.5 V non-irradiated
     marker = 20,
     color = 2                                                                                                                                                           
 )                                                                                                                                                                        
