@@ -35,8 +35,8 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 
-#sipmProd = 'HPK'
-sipmProd = 'FBK'
+sipmProd = 'HPK'
+#sipmProd = 'FBK'
 
 enScale = math.cos(52.*math.pi/180)/math.cos(55.*math.pi/180) # for 3 deg angle offset in Sep2023 TB
 srScale = 1.20 # scaling SR from TOPFHIR2X to 2C
@@ -166,13 +166,15 @@ for cell in cells:
     g_scaled[cell].SetMarkerColor(plotAttrs[cell][1])
     g_scaled[cell].SetLineColor(plotAttrs[cell][1])
     leg.AddEntry(g_scaled[cell], '%s'%plotAttrs[cell][2],'PL')
-    g_scaled[cell].Draw('plsame')
-    g[cell].SetMarkerSize(0.1)
-    #g[cell].SetMarkerStyle(plotAttrs[cell][0]+4)
-    #g[cell].SetMarkerColor(plotAttrs[cell][1])
+    g[cell].SetMarkerStyle(plotAttrs[cell][0])
+    g[cell].SetMarkerColor(plotAttrs[cell][1])
+    g[cell].SetMarkerSize(1.15)
     g[cell].SetLineColor(plotAttrs[cell][1])
-    g[cell].SetLineStyle(2)
-    #g[cell].Draw('lsame')
+    g[cell].SetLineWidth(1)
+    if (cell != 15):
+        g_scaled[cell].Draw('plsame')
+    else:
+        g[cell].Draw('plsame')
 leg.Draw()
 
 tl2 = ROOT.TLatex()
