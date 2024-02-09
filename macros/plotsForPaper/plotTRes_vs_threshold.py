@@ -44,7 +44,7 @@ Vovs = [0.60, 0.80, 1.25, 1.50, 3.50]
 g = {}
 
 c = ROOT.TCanvas('c_timeResolution_HPK_nonIrr_vs_th','c_timeResolution_HPK_nonIrr_vs_th', 600, 500)
-hPad = ROOT.gPad.DrawFrame(0.,0.,10.0,180.)
+hPad = ROOT.gPad.DrawFrame(0.,0.,10.0,200.)
 hPad.SetTitle(";threshold [#muA];time resolution [ps]")
 hPad.Draw()
 ROOT.gPad.SetTicks(1)
@@ -59,6 +59,7 @@ for vov in Vovs:
     gg = f.Get('g_deltaT_energyRatioCorr_vs_th_bar07_Vov%.02f_enBin01'%vov)
     g[vov] = ROOT.TGraphErrors()
     g[vov].SetMarkerColor(gg.GetMarkerColor())
+    g[vov].SetMarkerSize(1)
     g[vov].SetLineColor(gg.GetLineColor())
     for i in range(0, gg.GetN()):
         th = 0.313 * gg.GetPointX(i)
@@ -69,6 +70,18 @@ for vov in Vovs:
     leg.AddEntry(g[vov], 'V_{OV} = %.2f V'%vov, 'PL')
 
 leg.Draw()
+
+tl = ROOT.TLatex()
+tl.SetNDC()
+tl.SetTextFont(42)
+tl.SetTextSize(0.045)
+tl.DrawLatex(0.75,0.85,'HPK 25 #mum')
+
+tl2 = ROOT.TLatex()
+tl2.SetNDC()
+tl2.SetTextFont(42)
+tl2.SetTextSize(0.045)
+tl2.DrawLatex(0.72,0.80,'non-irradiated')
 
 cms_logo = draw_logo()
 cms_logo.Draw()
@@ -84,12 +97,12 @@ f2 = ROOT.TFile.Open(fname2)
 with open('/eos/cms/store/group/dpg_mtd/comm_mtd/TB/MTDTB_H8_May2023/VovsEff_TOFHIR2C.json', 'r') as f:
       data = json.load(f)
       
-#Vovs = [0.60, 0.80, 1.25, 1.50, 2.00]
-Vovs = [0.60, 0.80, 1.25, 1.50]
+Vovs = [0.60, 0.80, 1.25, 1.50, 2.00]
+#Vovs = [0.60, 0.80, 1.25, 1.50]
 g2 = {}
 
 c2 = ROOT.TCanvas('c_timeResolution_HPK_2E14_vs_th','c_timeResolution_HPK_2E14_vs_th', 600, 500)
-hPad2 = ROOT.gPad.DrawFrame(0.,0.,10.0,180.)
+hPad2 = ROOT.gPad.DrawFrame(0.,0.,10.0,200.)
 hPad2.SetTitle(";threshold [#muA];time resolution [ps]")
 hPad2.Draw()
 ROOT.gPad.SetTicks(1)
@@ -104,6 +117,7 @@ for vov in Vovs:
     gg = f2.Get('g_deltaT_energyRatioCorr_vs_th_bar07_Vov%.02f_enBin01'%vov)
     g2[vov] = ROOT.TGraphErrors()
     g2[vov].SetMarkerColor(gg.GetMarkerColor())
+    g2[vov].SetMarkerSize(1)
     g2[vov].SetLineColor(gg.GetLineColor())
     for i in range(0, gg.GetN()):
         th = 0.313 * gg.GetPointX(i)
@@ -115,6 +129,9 @@ for vov in Vovs:
     leg2.AddEntry(g2[vov], 'V_{OV} = %.2f V'%vovEff, 'PL')
 
 leg2.Draw()
+
+tl.DrawLatex(0.75,0.85,'HPK 25 #mum')
+tl2.DrawLatex(0.60,0.80,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
 
 cms_logo = draw_logo()
 cms_logo.Draw()
