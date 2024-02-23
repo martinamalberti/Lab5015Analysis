@@ -38,7 +38,7 @@ outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 sipmProd = 'HPK'
 #sipmProd = 'FBK'
 
-enScale = math.cos(52.*math.pi/180)/math.cos(55.*math.pi/180) # for 3 deg angle offset in Sep2023 TB
+enScale = math.cos(49.*math.pi/180.)/math.cos(52.*math.pi/180.) # for 3 deg angle offset in Sep2023 TB
 srScale = 1.20 # scaling SR from TOPFHIR2X to 2C
 
 fnames = {}
