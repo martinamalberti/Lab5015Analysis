@@ -35,8 +35,8 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 
-sipmProd = 'HPK'
-#sipmProd = 'FBK'
+#sipmProd = 'HPK'
+sipmProd = 'FBK'
 
 enScale = math.cos(49.*math.pi/180.)/math.cos(52.*math.pi/180.) # for 3 deg angle offset in Sep2023 TB
 srScale = 1.20 # scaling SR from TOFHIR2X to 2C
@@ -197,6 +197,7 @@ cms_logo.Draw()
 
 c.SaveAs(outdir+'%s.png'%c.GetName())
 c.SaveAs(outdir+'%s.pdf'%c.GetName())
+c.SaveAs(outdir+'%s.C'%c.GetName())
 
 
 outfile   = ROOT.TFile.Open(outdir+'/%s.root'%c.GetName(),'recreate')

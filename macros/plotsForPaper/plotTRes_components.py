@@ -193,5 +193,6 @@ for cell in cells:
         
     c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/%s.png'%c.GetName())
     c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/%s.pdf'%c.GetName())
+    c.SaveAs('/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/%s.C'%c.GetName())
 
     

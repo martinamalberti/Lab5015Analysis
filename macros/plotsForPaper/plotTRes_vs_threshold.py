@@ -138,3 +138,4 @@ cms_logo.Draw()
 
 c2.SaveAs(outdir+'%s.png'%c2.GetName())
 c2.SaveAs(outdir+'%s.pdf'%c2.GetName())
+c2.SaveAs(outdir+'%s.C'%c2.GetName())
