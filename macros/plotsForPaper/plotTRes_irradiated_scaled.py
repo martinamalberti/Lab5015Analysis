@@ -39,7 +39,7 @@ sipmProd = 'HPK'
 #sipmProd = 'FBK'
 
 enScale = math.cos(49.*math.pi/180.)/math.cos(52.*math.pi/180.) # for 3 deg angle offset in Sep2023 TB
-srScale = 1.20 # scaling SR from TOPFHIR2X to 2C
+srScale = 1.20 # scaling SR from TOFHIR2X to 2C
 
 fnames = {}
 gnames = {}
@@ -130,9 +130,12 @@ for cell in [20, 25, 30]:
     gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
     gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
     gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
+    gSR[cell]   = f[cell].Get('g_SR_vs_Vov_average_%s'%labels[cell])
     for i in range(0, g[cell].GetN()):
         vov = g[cell].GetX()[i]
-        s_noise = gNoise[cell].Eval(vov)/enScale
+        #s_noise = gNoise[cell].Eval(vov)/enScale
+        sr = gSR[cell].Eval(vov)
+        s_noise =  sigma_noise(sr*enScale, '2C')
         s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
         s_dcr = gDCR[cell].Eval(vov)/enScale
         s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)

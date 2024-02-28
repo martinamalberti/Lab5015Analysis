@@ -304,7 +304,8 @@ for ds in data_structs:
             gtempL = ROOT.TGraphErrors()
             gtempR = ROOT.TGraphErrors()
             
-            if ( ov == 0.60 and 'LYSO825' in ds.moduleLabel): np = 2 # reduce npoints for SR fit
+            #if ( ov == 0.60 and 'LYSO825' in ds.moduleLabel): np = 2 # reduce npoints for SR fit
+            if ( ov == 0.60 and 'LYSO825' in ds.moduleLabel): np = 3 # reduce npoints for SR fit
             else: np = 3
                 
             if (g_psL!=None): 
