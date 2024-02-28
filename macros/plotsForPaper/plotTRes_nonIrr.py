@@ -96,7 +96,6 @@ g = {}
 g_scaled = {}
 g_Noise = {}
 g_Stoch = {}
-g_DCR = {}
 g_SR = {}
 f = {}
 
@@ -104,7 +103,6 @@ for cell in cells:
     f[cell] = ROOT.TFile.Open(fnames[cell])
     g[cell] = f[cell].Get(gnames[cell])
     g_scaled[cell] = ROOT.TGraphErrors()
-    print(gnames[cell].replace('g_data','g_data_scaled'))
     g_scaled[cell].SetName(gnames[cell].replace('g_data','g_data_scaled'))
 
 # scale (2C) to take into account angle offset in 2023 Sep TB 
@@ -112,7 +110,6 @@ for cell in [20, 25, 30]:
     if (cell not in cells): continue
     gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
     gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
-    gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
     gSR[cell]   = f[cell].Get('g_SR_vs_Vov_average_%s'%labels[cell])
     for i in range(0, g[cell].GetN()):
         vov = g[cell].GetX()[i]
@@ -120,12 +117,8 @@ for cell in [20, 25, 30]:
         sr = gSR[cell].Eval(vov)
         s_noise =  sigma_noise(sr*enScale, '2C')
         s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
-        s_dcr = gDCR[cell].Eval(vov)/enScale
+        s_dcr = 0.
         s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
-        #print(cell, vov, gNoise[cell].Eval(vov), s_noise)
-        #print(cell, vov, gStoch[cell].Eval(vov), s_stoch)
-        #print(cell, vov, gDCR[cell].Eval(vov), s_dcr)
-        #print(cell, vov, g[cell].GetY()[i], s_tot)
         g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
         g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset
 
