@@ -108,7 +108,7 @@ if (args.versionTOFHIR == 'TOFHIR2X'):
 tResMin = 0
 tResMax = 200
 tResMaxTh = 240
-vovMax = 3.0
+vovMax = 7.0
 
 
 # create files list
@@ -221,14 +221,22 @@ if ('528' in args.outFolder):
    plots_label = 'HPK (15#mum) + LYSO528 (prod5, type2)'
    for vov in Vovs:
       VovsEff[vov] = vov 
-      if (args.versionTOFHIR=='TOFHIR2C'): 
-         goodBars[vov] = bars
-      else:
-         goodBars[3.50] = [2,3,4,5,7,8,9,10,11,12,13] 
-         goodBars[2.00] = [2,3,4,5,7,8,9,10,11,12,13] 
-         goodBars[1.50] = [2,3,4,5,7,8,9,10,11,12,13] 
-         goodBars[1.00] = [2,3,4,5,7,8,9,10,11,12,13] 
+   goodBars[5.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
+   goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14] 
+   goodBars[2.50] = [0,3,4,5,6,7,8,9,10,11,12,13,14] 
+   goodBars[1.50] = [0,3,7,8,9,10,11,13,14] 
 
+elif ('800' in args.outFolder):
+   plots_label = 'FBK + LYSO800 (prod5, type2)'
+   for vov in Vovs:
+      VovsEff[vov] = vov 
+   goodBars[7.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+   goodBars[4.00] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+   goodBars[3.50] = [0,2,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+   goodBars[3.00] = [0,3,4,5,6,7,8,9,10,11,12,13,14,15] 
+   goodBars[2.00] = [0,3,6,7,8,9,10,11,12,13,14,15] 
+   goodBars[1.50] = [0,3,7,8,9,10,11,13,14,15]
+         
 elif ('HPK_2E14_LYSO796_T-40C' in args.outFolder):
     plots_label = 'HPK 2E14 + LYSO796 (prod10)  T=-40#circC'
     for ov in Vovs : 
