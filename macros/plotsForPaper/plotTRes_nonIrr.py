@@ -38,12 +38,14 @@ outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 #sipmProd = 'HPK'
 sipmProd = 'FBK'
 
+enScale = math.cos(49.*math.pi/180.)/math.cos(52.*math.pi/180.) # for 3 deg angle offset in Sep2023 TB
+print(enScale)
+
 fnames = {}
 gnames = {}
 labels = {}
 
-#cells = [15, 20, 25, 30]
-cells = [15]
+cells = [15, 20, 25, 30]
 
 if (sipmProd == 'HPK'):  # USE FILES FROM SIMONA
     fnames = { 30 : '',
@@ -64,14 +66,14 @@ if (sipmProd == 'HPK'):  # USE FILES FROM SIMONA
               }
 
 else: # FILES FROM JIN WANG (20,25,30) and MARTINA (15 un June22 TB)
-    fnames = { 30 : '',
-               25 : '',
-               20 : '',
+    fnames = { 30 : '/afs/cern.ch/work/f/fcetorel/public/btlpaper/tres_vs_Vov_all_result.root',
+               25 : '/afs/cern.ch/work/f/fcetorel/public/btlpaper/tres_vs_Vov_all_result.root',
+               20 : '/afs/cern.ch/work/f/fcetorel/public/btlpaper/tres_vs_Vov_all_result.root',
                15 : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/timeResolution_nonIrr/plots_timeResolution_HPK_FBK_nonIrr_TBJun22_TOFHIR2X.root'}
 
-    gnames = { 30 : '',
-               25 : '',
-               20 : '',
+    gnames = { 30 : ' module 28 (LYSO 200 046, FBK C30 Rq2 -T2 non-irr)',
+               25 : ' module 27 (LYSO 200 075, FBK C25 Rq2 -T2 non-irr)',
+               20 : 'module 29 (LYSO 200 074, FBK C20 Rq2 -T2 non-irr)',
                15 : 'g_data_vs_Vov_average_FBK_nonIrr_LYSO800_T10C',
               }
 
@@ -108,31 +110,38 @@ for cell in cells:
 # scale (2C) to take into account angle offset in 2023 Sep TB 
 for cell in [20, 25, 30]:
     if (cell not in cells): continue
-    gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
-    gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
-    gSR[cell]   = f[cell].Get('g_SR_vs_Vov_average_%s'%labels[cell])
-    for i in range(0, g[cell].GetN()):
-        vov = g[cell].GetX()[i]
-        #s_noise = gNoise[cell].Eval(vov)/enScale
-        sr = gSR[cell].Eval(vov)
-        s_noise =  sigma_noise(sr*enScale, '2C')
-        s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
-        s_dcr = 0.
-        s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
-        g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
-        g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset
+    if (sipmProd == 'HPK'):
+        gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
+        gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
+        gSR[cell]   = f[cell].Get('g_SR_vs_Vov_average_%s'%labels[cell])
+        for i in range(0, g[cell].GetN()):
+            vov = g[cell].GetX()[i]
+            sr = gSR[cell].Eval(vov)
+            s_noise =  sigma_noise(sr*enScale, '2C')
+            s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
+            s_dcr = 0.
+            s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
+            g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
+            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset
+    else:
+        # for FBK just scale the total resolution with enScale as we don't have the different contributions separately
+        for i in range(0, g[cell].GetN()):
+            vov = g[cell].GetX()[i]
+            s_tot = g[cell].GetY()[i]/enScale
+            g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset
+            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset         
 
-# plot
         
-leg = ROOT.TLegend(0.20, 0.60, 0.50, 0.89)
+# plot        
+leg = ROOT.TLegend(0.70, 0.60, 0.89, 0.89)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 leg.SetTextFont(42)
 leg.SetTextSize(0.045) 
 
 c = ROOT.TCanvas('c_timeResolution_%s_nonIrr_vs_Vov'%sipmProd,'c_timeResolution_%s_nonIrr_vs_Vov'%sipmProd, 600, 500)
-hPad = ROOT.gPad.DrawFrame(0.,0.,4.0,120.)
-if (sipmProd == 'FBK'): hPad = ROOT.gPad.DrawFrame(0., 0., 7.5, 120.)
+hPad = ROOT.gPad.DrawFrame(0.,0.,4.0,160.)
+if (sipmProd == 'FBK'): hPad = ROOT.gPad.DrawFrame(0., 0., 7.5, 160.)
 hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
 hPad.Draw()
 ROOT.gPad.SetTicks(1)
