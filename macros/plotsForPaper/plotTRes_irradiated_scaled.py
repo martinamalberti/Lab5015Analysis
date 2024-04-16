@@ -35,8 +35,8 @@ ROOT.gErrorIgnoreLevel = ROOT.kWarning
 
 outdir = '/eos/user/m/malberti/www/MTD/TOFHIR2C/plotsForPaper/'
 
-#sipmProd = 'HPK'
-sipmProd = 'FBK'
+sipmProd = 'HPK'
+#sipmProd = 'FBK'
 
 enScale = math.cos(49.*math.pi/180.)/math.cos(52.*math.pi/180.) # for 3 deg angle offset in Sep2023 TB
 srScale = 1.20 # scaling SR from TOFHIR2X to 2C
@@ -68,15 +68,18 @@ if sipmProd == 'HPK':
 
 else:
 
-    cells = [15]
+    cells = [15, 25]
              
     fnames = { 15 : '/eos/user/m/malberti/www/MTD/TOFHIR2X/MTDTB_CERN_Jun22/timeResolution_2E14_15um_T2/plots_timeResolution_2E14_15um_T2_TBJune22_TOFHIR2X.root',
+               25 : '/afs/cern.ch/work/f/fcetorel/public/btlpaper/tres_vs_Vov_all_result.root'
               }
 
-    gnames = { 15 : 'g_data_vs_Vov_average_FBK_2E14_LYSO797_T-40C'  # less annealing for this module
+    gnames = { 15 : 'g_data_vs_Vov_average_FBK_2E14_LYSO797_T-40C',  # less annealing for this module - TB June2022
+               25 : 'module 25 (LYSO 200 113, FBK C25 Rq2 -T2 2e14)'# TB Sept 2023
               }
     
     labels = { 15 : 'FBK_2E14_LYSO797_T-40C',
+               25 : ''
               }
 
 
@@ -111,8 +114,6 @@ gStoch[15] = f[15].Get('g_Stoch_vs_Vov_average_%s'%labels[15])
 gDCR[15]   = f[15].Get('g_DCR_vs_Vov_average_%s'%labels[15])
 gSR[15]    = f[15].Get('g_SR_vs_Vov_average_%s'%labels[15])
 
-print()
-
 for i in range(0, g[15].GetN()):
     vov = g[15].GetX()[i]
     sr = gSR[15].Eval(vov)
@@ -127,38 +128,46 @@ for i in range(0, g[15].GetN()):
 # scale others (2C) to take into account angle offset in 2023 Sep TB 
 for cell in [20, 25, 30]:
     if (cell not in fnames.keys()): continue
-    gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
-    gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
-    gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
-    gSR[cell]   = f[cell].Get('g_SR_vs_Vov_average_%s'%labels[cell])
-    for i in range(0, g[cell].GetN()):
-        vov = g[cell].GetX()[i]
-        #s_noise = gNoise[cell].Eval(vov)/enScale
-        sr = gSR[cell].Eval(vov)
-        s_noise =  sigma_noise(sr*enScale, '2C')
-        s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
-        s_dcr = gDCR[cell].Eval(vov)/enScale
-        s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
-        #print(cell, vov, gNoise[cell].Eval(vov), s_noise)
-        #print(cell, vov, gStoch[cell].Eval(vov), s_stoch)
-        #print(cell, vov, gDCR[cell].Eval(vov), s_dcr)
-        #print(cell, vov, g[cell].GetY()[i], s_tot)
-        g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
-        g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset
-        
+    if (cell not in cells): continue
+    if (sipmProd == 'HPK'):
+        gNoise[cell] = f[cell].Get('g_Noise_vs_Vov_average_%s'%labels[cell])
+        gStoch[cell] = f[cell].Get('g_Stoch_vs_Vov_average_%s'%labels[cell])
+        gDCR[cell]   = f[cell].Get('g_DCR_vs_Vov_average_%s'%labels[cell])
+        gSR[cell]   = f[cell].Get('g_SR_vs_Vov_average_%s'%labels[cell])
+        for i in range(0, g[cell].GetN()):
+            vov = g[cell].GetX()[i]
+            #s_noise = gNoise[cell].Eval(vov)/enScale
+            sr = gSR[cell].Eval(vov)
+            s_noise =  sigma_noise(sr*enScale, '2C')
+            s_stoch = gStoch[cell].Eval(vov)/math.sqrt(enScale)
+            s_dcr = gDCR[cell].Eval(vov)/enScale
+            s_tot = math.sqrt(s_noise*s_noise + s_stoch*s_stoch + s_dcr*s_dcr)
+            print(vov, cell, s_stoch, s_noise, s_dcr)
+            g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset 
+            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset
+    else:
+        # for FBK just scale the total resolution with enScale as we don't have the different contributions separately
+        for i in range(0, g[cell].GetN()):
+            vov = g[cell].GetX()[i]
+            s_tot = g[cell].GetY()[i]/enScale
+            g_scaled[cell].SetPoint(i, vov, s_tot) # correct for angle offset
+            g_scaled[cell].SetPointError(i, 0, g[cell].GetErrorY(i)/enScale) # correct for angle offset    
+            
 
-
-# plot
-        
-leg = ROOT.TLegend(0.20, 0.60, 0.50, 0.89)
+# plot        
+#leg = ROOT.TLegend(0.19, 0.60, 0.50, 0.89)
+#if (sipmProd == 'FBK'): leg = ROOT.TLegend(0.70, 0.75, 0.89, 0.89)
+leg = ROOT.TLegend(0.75, 0.60, 0.89, 0.89)
+if (sipmProd == 'FBK'): leg = ROOT.TLegend(0.75, 0.75, 0.89, 0.89)
 leg.SetBorderSize(0)
 leg.SetFillStyle(0)
 leg.SetTextFont(42)
 leg.SetTextSize(0.045) 
 
 c = ROOT.TCanvas('c_timeResolution_%s_2E14_vs_Vov'%sipmProd,'c_timeResolution_%s_2E14_vs_Vov'%sipmProd, 600, 500)
-hPad = ROOT.gPad.DrawFrame(0.,40.,2.0,140.)
-if (sipmProd == 'FBK'): hPad = ROOT.gPad.DrawFrame(0.5,40.,2.5,140.)
+#hPad = ROOT.gPad.DrawFrame(0.,40.,2.0,140.)
+#if (sipmProd == 'FBK'): hPad = ROOT.gPad.DrawFrame(0.3,40.,2.3,140.)
+hPad = ROOT.gPad.DrawFrame(0.,40.,2.4,140.)
 hPad.SetTitle(";V_{OV} [V];time resolution [ps]")
 hPad.Draw()
 ROOT.gPad.SetTicks(1)

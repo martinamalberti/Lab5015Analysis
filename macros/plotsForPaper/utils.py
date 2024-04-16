@@ -12,5 +12,5 @@ def draw_logo():
     logo.DrawText(logo_x,0.95,'CMS')
     logo.SetTextFont(52)
     #logo.DrawText(logo_x+0.07, 0.95, '  Phase-2 Preliminary')
-    logo.DrawText(logo_x+0.07, 0.95, '  MTD Test beam')
+    logo.DrawText(logo_x+0.07, 0.95, '   MTD Test beam')
     return logo

@@ -180,7 +180,7 @@ for cell in cells:
     tl.SetNDC()
     tl.SetTextFont(42)
     tl.SetTextSize(0.050)
-    tl.DrawLatex(0.20,0.86,'%d #mum'%cell)
+    tl.DrawLatex(0.20,0.86,'HPK, %d #mum'%cell)
 
     tl3 = ROOT.TLatex()
     tl3.SetNDC()
