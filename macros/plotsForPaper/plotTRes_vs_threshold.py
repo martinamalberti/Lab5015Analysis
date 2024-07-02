@@ -83,8 +83,8 @@ tl2.SetTextFont(42)
 tl2.SetTextSize(0.045)
 tl2.DrawLatex(0.72,0.80,'non-irradiated')
 
-cms_logo = draw_logo()
-cms_logo.Draw()
+#cms_logo = draw_logo()
+#cms_logo.Draw()
 
 c.SaveAs(outdir+'%s.png'%c.GetName())
 c.SaveAs(outdir+'%s.pdf'%c.GetName())
@@ -133,8 +133,8 @@ leg2.Draw()
 tl.DrawLatex(0.75,0.85,'HPK 25 #mum')
 tl2.DrawLatex(0.60,0.80,'2 #times 10^{14} 1 MeV n_{eq}/cm^{2}')
 
-cms_logo = draw_logo()
-cms_logo.Draw()
+#cms_logo = draw_logo()
+#cms_logo.Draw()
 
 c2.SaveAs(outdir+'%s.png'%c2.GetName())
 c2.SaveAs(outdir+'%s.pdf'%c2.GetName())
