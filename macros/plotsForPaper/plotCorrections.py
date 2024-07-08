@@ -111,7 +111,7 @@ removeOffset2D(h2PhaseCorr_0, 0, h2PhaseCorr)
 
     
 # MIP Peak
-c = ROOT.TCanvas('c_MIPpeak','c_MIPpeak', 500, 500)
+c = ROOT.TCanvas('c_MIPpeak','c_MIPpeak', 600, 500)
 #c.SetLogy()
 #hPad = ROOT.gPad.DrawFrame(0.,0.1,1000.0,hMIPpeak.GetMaximum()*10)
 hPad = ROOT.gPad.DrawFrame(0.,0.1,1000.0,hMIPpeak.GetMaximum()*1.05)
@@ -168,7 +168,7 @@ xmin = p1EnergyCorr_0.GetMean(1)-0.22
 xmax = p1EnergyCorr_0.GetMean(1)+0.22
 ymin = p1EnergyCorr.GetMean(2)-100
 ymax = p1EnergyCorr.GetMean(2)+100.
-c = ROOT.TCanvas('c_energyCorr','c_energyCorr', 500, 500)
+c = ROOT.TCanvas('c_energyCorr','c_energyCorr', 600, 500)
 hPad = ROOT.gPad.DrawFrame(xmin, ymin , xmax, ymax)
 hPad.SetTitle(';energy ratio; #Deltat [ps]')
 hPad.GetXaxis().SetNdivisions(205)
@@ -190,7 +190,7 @@ xmin = 300
 xmax = 840
 ymin = p1PhaseCorr.GetMean(2)-400
 ymax = p1PhaseCorr.GetMean(2)+400
-c = ROOT.TCanvas('c_phaseCorr','c_phaseCorr', 500, 500)
+c = ROOT.TCanvas('c_phaseCorr','c_phaseCorr', 600, 500)
 hPad = ROOT.gPad.DrawFrame(xmin, ymin , xmax, ymax)
 hPad.SetTitle('; phase [a.u.]; #Deltat [ps]')
 hPad.GetXaxis().SetNdivisions(205)
